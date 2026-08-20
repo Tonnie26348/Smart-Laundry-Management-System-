@@ -2,8 +2,13 @@ import { useState, useEffect } from 'react';
 import { analyticsService } from '../services/analyticsService';
 import { Card } from './ui/Card';
 
+interface Metrics {
+  today_orders: number;
+  pending_orders: number;
+  total_revenue: number;
+}
 export const AdminDashboard = () => {
-  const [metrics, setMetrics] = useState<any>(null);
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
 
   useEffect(() => {
     analyticsService.getDashboardMetrics().then(setMetrics);

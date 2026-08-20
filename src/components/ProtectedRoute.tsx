@@ -4,11 +4,10 @@ import { supabase } from '../lib/supabase';
 
 type ProtectedRouteProps = {
   children: ReactNode;
-  allowedRoles?: string[];
 };
 
-export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
-  const [session, setSession] = useState<any>(null);
+export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  const [session, setSession] = useState<import('@supabase/supabase-js').Session | null>(null);
   const [loading, setLoading] = useState(true);
   const location = useLocation();
 

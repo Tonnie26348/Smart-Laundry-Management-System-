@@ -1,5 +1,4 @@
 import { supabase } from '../lib/supabase';
-import { Order } from './orderService';
 
 export const invoiceService = {
   async getInvoiceData(orderId: string) {

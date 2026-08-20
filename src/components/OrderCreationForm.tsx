@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Card } from './ui/Card';
 
 export const OrderCreationForm = () => {
-  const [total, setTotal] = useState(0);
+  const total = 0;
 
   return (
     <Card>

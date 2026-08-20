@@ -1,6 +1,18 @@
 import { Card } from './ui/Card';
 
-export const Invoice = ({ data }: { data: any }) => {
+interface InvoiceProps {
+  data: {
+    order_number: string;
+    created_at: string;
+    customers: { phone: string };
+    order_items: { id: string; quantity: number; laundry_items: { name: string }; price_at_time: number }[];
+    delivery_fee: number;
+    discount_amount: number;
+    total_amount: number;
+  };
+}
+
+export const Invoice = ({ data }: InvoiceProps) => {
   return (
     <Card className="max-w-3xl mx-auto print:shadow-none print:border-none">
       <h1 className="text-2xl font-bold">Invoice #{data.order_number}</h1>
@@ -16,7 +28,7 @@ export const Invoice = ({ data }: { data: any }) => {
           </tr>
         </thead>
         <tbody>
-          {data.order_items.map((item: any) => (
+          {data.order_items.map((item) => (
             <tr key={item.id}>
               <td className="py-2">{item.laundry_items.name} x {item.quantity}</td>
               <td className="text-right">${item.price_at_time.toFixed(2)}</td>

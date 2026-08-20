@@ -10,8 +10,14 @@ export interface Order {
   discount_amount: number;
 }
 
+export interface OrderItem {
+  item_id: string;
+  quantity: number;
+  price_at_time: number;
+}
+
 export const orderService = {
-  async createOrder(order: Omit<Order, 'id' | 'order_number'>, items: any[]) {
+  async createOrder(order: Omit<Order, 'id' | 'order_number'>, _items: OrderItem[]) {
     const { data, error } = await supabase.from('orders').insert(order).select().single();
     if (error) throw error;
     
