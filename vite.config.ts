@@ -36,4 +36,21 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('@supabase')) {
+              return 'supabase';
+            }
+            if (id.includes('recharts')) {
+              return 'recharts';
+            }
+            return 'vendor';
+          }
+        }
+      }
+    }
+  }
 });
