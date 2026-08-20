@@ -10,12 +10,12 @@ export interface Customer {
 
 export const customerService = {
   async getCustomers() {
-    const { data, error } = await supabase.from('customers').select('*');
+    const { data, error } = await supabase.from('customers').select('id, user_id, phone, address, loyalty_points');
     if (error) throw error;
     return data as Customer[];
   },
   async getCustomer(id: string) {
-    const { data, error } = await supabase.from('customers').select('*').eq('id', id).single();
+    const { data, error } = await supabase.from('customers').select('id, user_id, phone, address, loyalty_points').eq('id', id).single();
     if (error) throw error;
     return data as Customer;
   },
