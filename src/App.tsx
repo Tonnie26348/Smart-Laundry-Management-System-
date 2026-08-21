@@ -14,6 +14,7 @@ const CustomerDashboard = lazy(() => import('./pages/CustomerDashboard').then(m 
 const OrderWizard = lazy(() => import('./pages/OrderWizard').then(m => ({ default: m.OrderWizard })));
 const ServiceList = lazy(() => import('./components/ServiceList').then(m => ({ default: m.ServiceList })));
 const CustomerProfile = lazy(() => import('./components/CustomerProfile').then(m => ({ default: m.CustomerProfile })));
+const OfflinePage = lazy(() => import('./pages/Offline').then(m => ({ default: m.OfflinePage })));
 
 function App() {
   return (
@@ -24,8 +25,9 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
+          <Route path="/offline" element={<OfflinePage />} />
           <Route path="/services" element={<div className="p-8"><ServiceList /></div>} />
-
+...
           {/* Protected Customer Routes */}
           <Route path="/dashboard" element={
             <ProtectedRoute>
