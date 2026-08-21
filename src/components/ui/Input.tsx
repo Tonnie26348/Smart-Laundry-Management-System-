@@ -18,6 +18,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             error && 'border-red-500',
             className
           )}
+          aria-label={label || props.placeholder}
           {...props}
         />
         {error && <span className="text-sm text-red-500">{error}</span>}
