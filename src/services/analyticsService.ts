@@ -1,10 +1,9 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 export const analyticsService = {
   async getDashboardMetrics() {
-    // Aggregation queries for Admin dashboard
-    const { data: metrics, error } = await supabase.rpc('get_dashboard_metrics');
+    const { data, error } = await supabase.rpc('get_admin_analytics');
     if (error) throw error;
-    return metrics;
+    return data[0];
   }
 };
