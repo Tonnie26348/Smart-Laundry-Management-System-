@@ -1,6 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { supabase } from '@/lib/supabase';
 
+export interface Order {
+  id: string;
+  customer_id: string;
+  status: 'pending' | 'processing' | 'completed' | 'cancelled';
+  total_price: number;
+  order_number: string;
+}
+
 export interface OrderItem {
   laundry_item_id: string;
   quantity: number;
