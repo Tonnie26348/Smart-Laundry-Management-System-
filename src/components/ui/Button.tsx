@@ -24,6 +24,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn('rounded-lg font-medium transition-colors', variants[variant], sizes[size], className)}
+        aria-label={props['aria-label'] || (typeof props.children === 'string' ? props.children : undefined)}
         {...props}
       />
     );
