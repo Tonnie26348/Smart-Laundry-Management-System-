@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { supabase } from '../lib/supabase';
 
 export interface Order {
@@ -18,14 +19,20 @@ export interface OrderItem {
 
 export const orderService = {
   async createOrder(order: Omit<Order, 'id' | 'order_number'>, _items: OrderItem[]) {
-    const { data, error } = await supabase.from('orders').insert(order).select().single();
+    const { data, error } = await (supabase.from('orders') as any)
+      .insert(order)
+      .select()
+      .single();
     if (error) throw error;
-    
+
     // Add items...
     return data;
   },
   async getOrderHistory(customerId: string) {
-    const { data, error } = await supabase.from('orders').select('*').eq('customer_id', customerId);
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('customer_id', customerId);
     if (error) throw error;
     return data as Order[];
   }

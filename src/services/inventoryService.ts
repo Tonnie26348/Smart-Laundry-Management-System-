@@ -1,23 +1,2 @@
-import { supabase } from '../lib/supabase';
-
-export interface InventoryItem {
-  id: string;
-  name: string;
-  sku: string;
-  current_stock: number;
-  min_stock_level: number;
-  unit: string;
-}
-
-export const inventoryService = {
-  async getItems() {
-    const { data, error } = await supabase.from('inventory_items').select('*');
-    if (error) throw error;
-    return data as InventoryItem[];
-  },
-  async updateStock(itemId: string, quantity: number, type: 'addition' | 'deduction') {
-    const { data, error } = await supabase.rpc('update_stock', { item_id: itemId, quantity, type });
-    if (error) throw error;
-    return data;
-  }
-};
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { supabase } from '../lib/supabase';  export interface InventoryItem {   id: string;   name: string;   sku: string;   current_stock: number;   min_stock_level: number;   unit: string; }  export const inventoryService = {   async getItems() {     const { data, error } = await supabase.from('inventory_items').select('*');     if (error) throw error;     return data as InventoryItem[];   },   async updateStock(itemId: string, quantity: number, type: 'addition' | 'deduction') {     const { data, error } = await supabase.rpc('update_stock', { item_id: itemId, quantity, type } as any);     if (error) throw error;     return data;   } };
