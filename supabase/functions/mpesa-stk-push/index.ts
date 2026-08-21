@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // This Edge Function handles M-Pesa STK Push safely.
 // Credentials are NOT hardcoded. Fetch from Deno.env.get('SUPABASE_VAULT_KEY')
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
