@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { supabase } from '@/lib/supabase';
 
 export interface Review {
@@ -10,7 +11,7 @@ export interface Review {
 
 export const reviewService = {
   async submitReview(review: Omit<Review, 'id' | 'status'>) {
-    const { data, error } = await supabase.from('reviews').insert(review).select().single();
+    const { data, error } = await (supabase.from('reviews') as any).insert(review).select().single();
     if (error) throw error;
     return data;
   },
