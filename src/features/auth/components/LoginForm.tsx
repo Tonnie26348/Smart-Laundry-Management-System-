@@ -22,15 +22,19 @@ export const LoginForm = () => {
       const { data } = await authService.login(email, password);
       
       // Fetch user profile to determine role
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', data.user.id)
         .single();
         
+      console.log('Login successful. Profile fetched:', profile, 'Error:', profileError);
+        
       if (profile?.role === 'administrator') {
+        console.log('Redirecting to /admin');
         navigate('/admin');
       } else {
+        console.log('Redirecting to /dashboard');
         navigate('/dashboard');
       }
     } catch (err: any) {
