@@ -27,7 +27,7 @@ export const AuditLogsPage = () => {
   }, [role, roleLoading]);
 
   if (roleLoading) return <AdminLayout><LoadingSpinner /></AdminLayout>;
-  if (role !== 'administrator') return <AdminLayout>Access Denied</AdminLayout>;
+  if (role !== 'administrator') return <AdminLayout><div className="p-4 text-red-500">Access Denied</div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -35,12 +35,19 @@ export const AuditLogsPage = () => {
         <h1 className="text-2xl font-bold">Audit Logs</h1>
         {loading ? <LoadingSpinner /> : (
           <div className="bg-white shadow rounded-lg overflow-hidden">
-            <table className="min-w-full">
-              <thead><tr className="bg-gray-100"><th className="p-4">Action</th><th className="p-4">Timestamp</th></tr></thead>
+            <table className="min-w-full text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="p-4 text-left">Action</th>
+                  <th className="p-4 text-left">Entity</th>
+                  <th className="p-4 text-left">Timestamp</th>
+                </tr>
+              </thead>
               <tbody>
                 {logs.map(l => (
                   <tr key={l.id} className="border-t">
-                    <td className="p-4">{l.action}</td>
+                    <td className="p-4 font-mono">{l.action}</td>
+                    <td className="p-4">{l.entity_type}</td>
                     <td className="p-4">{new Date(l.created_at).toLocaleString()}</td>
                   </tr>
                 ))}
