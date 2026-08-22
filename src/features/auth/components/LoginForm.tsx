@@ -44,6 +44,8 @@ export const LoginForm = () => {
           navigate('/admin');
           break;
         case 'manager':
+          navigate('/manager');
+          break;
         case 'laundry_staff':
         case 'delivery_staff':
         case 'customer':
