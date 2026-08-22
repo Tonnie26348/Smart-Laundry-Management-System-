@@ -50,6 +50,8 @@ export const LoginForm = () => {
           navigate('/laundrystaff');
           break;
         case 'delivery_staff':
+          navigate('/deliverystaff');
+          break;
         case 'customer':
           navigate('/dashboard');
           break;

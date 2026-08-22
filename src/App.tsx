@@ -23,6 +23,7 @@ const LoyaltyPage = lazy(() => import('./pages/admin/LoyaltyPage').then(m => ({ 
 const ReviewsPage = lazy(() => import('./pages/admin/ReviewsPage').then(m => ({ default: m.ReviewsPage })));
 const ManagerDashboard = lazy(() => import('./pages/admin/ManagerDashboard').then(m => ({ default: m.ManagerDashboard })));
 const LaundryStaffDashboard = lazy(() => import('./pages/admin/LaundryStaffDashboard').then(m => ({ default: m.LaundryStaffDashboard })));
+const DeliveryStaffDashboard = lazy(() => import('./pages/admin/DeliveryStaffDashboard').then(m => ({ default: m.DeliveryStaffDashboard })));
 const InspectionsPage = lazy(() => import('./pages/admin/InspectionsPage').then(m => ({ default: m.InspectionsPage })));
 const ServicesPage = lazy(() => import('./pages/admin/ServicesPage').then(m => ({ default: m.ServicesPage })));
 const PricingPage = lazy(() => import('./pages/admin/PricingPage').then(m => ({ default: m.PricingPage })));
@@ -79,6 +80,11 @@ function App() {
           <Route path="/laundrystaff" element={
             <ProtectedRoute>
               <LaundryStaffDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/deliverystaff" element={
+            <ProtectedRoute>
+              <DeliveryStaffDashboard />
             </ProtectedRoute>
           } />
           <Route path="/admin/customers" element={
