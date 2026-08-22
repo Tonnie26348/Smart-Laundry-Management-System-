@@ -33,11 +33,25 @@ export const LoginForm = () => {
         return;
       }
 
-      if (profile && profile.role === 'administrator') {
-        navigate('/admin');
-      } else {
-        setError('Login successful, but role is: ' + (profile?.role || 'null'));
+      if (!profile) {
+        setError('Profile not found.');
         setLoading(false);
+        return;
+      }
+
+      switch (profile.role) {
+        case 'administrator':
+          navigate('/admin');
+          break;
+        case 'manager':
+        case 'laundry_staff':
+        case 'delivery_staff':
+        case 'customer':
+          navigate('/dashboard');
+          break;
+        default:
+          setError('Unknown role: ' + profile.role);
+          setLoading(false);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to login');
