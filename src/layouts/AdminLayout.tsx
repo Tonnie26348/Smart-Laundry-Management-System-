@@ -35,38 +35,37 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="text-xl font-bold text-primary-600">Laundry Portal</div>
           <div className="flex items-center gap-4">
-            <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-gray-600">
-              {/* Common Links */}
-              <a href={isStaff ? "/laundrystaff" : "/admin"} className="hover:text-primary-600">Dashboard</a>
-              
-              {/* Laundry Staff Operational Links */}
-              {isStaff && (
-                <>
-                  <a href="/admin/orders" className="hover:text-primary-600">Orders</a>
-                  <a href="/admin/inspections" className="hover:text-primary-600">Inspections</a>
-                  <a href="/admin/inventory" className="hover:text-primary-600">Inventory</a>
-                </>
-              )}
+            <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-gray-600 flex-wrap">
+            {/* Common Links */}
+            <a href={isStaff ? "/laundrystaff" : "/admin"} className="hover:text-primary-600">Dashboard</a>
 
-              {/* Manager/Admin Operational Links */}
-              {isAuthorized && (
-                <>
-                  <a href="/admin/orders" className="hover:text-primary-600">Orders</a>
-                  <a href="/admin/customers" className="hover:text-primary-600">Customers</a>
-                  <a href="/admin/inventory" className="hover:text-primary-600">Inventory</a>
-                  <a href="/admin/payments" className="hover:text-primary-600">Payments</a>
-                  <a href="/admin/employees" className="hover:text-primary-600">Employees</a>
-                  <a href="/admin/deliveries" className="hover:text-primary-600">Deliveries</a>
-                </>
-              )}
-              
-              {/* Admin-Only Links */}
-              {isAdmin && (
-                <>
-                  <a href="/admin/audit" className="hover:text-primary-600">Audit Logs</a>
-                  <a href="/admin/settings" className="hover:text-primary-600">Settings</a>
-                </>
-              )}
+            {/* Operational Links */}
+            {isAuthorized && (
+              <>
+                <a href="/admin/orders" className="hover:text-primary-600">Orders</a>
+                <a href="/admin/customers" className="hover:text-primary-600">Customers</a>
+                <a href="/admin/services" className="hover:text-primary-600">Services</a>
+                <a href="/admin/pricing" className="hover:text-primary-600">Pricing</a>
+                <a href="/admin/inventory" className="hover:text-primary-600">Inventory</a>
+                <a href="/admin/payments" className="hover:text-primary-600">Payments</a>
+                <a href="/admin/employees" className="hover:text-primary-600">Employees</a>
+                <a href="/admin/deliveries" className="hover:text-primary-600">Deliveries</a>
+                <a href="/admin/analytics" className="hover:text-primary-600">Analytics</a>
+                <a href="/admin/reports" className="hover:text-primary-600">Reports</a>
+              </>
+            )}
+
+            {/* Admin-Only Links */}
+            {isAdmin && (
+              <>
+                <a href="/admin/audit" className="hover:text-primary-600">Audit Logs</a>
+                <a href="/admin/settings" className="hover:text-primary-600">Settings</a>
+                <a href="/admin/notifications" className="hover:text-primary-600">Notifications</a>
+                <a href="/admin/discounts" className="hover:text-primary-600">Discounts</a>
+                <a href="/admin/loyalty" className="hover:text-primary-600">Loyalty</a>
+                <a href="/admin/reviews" className="hover:text-primary-600">Reviews</a>
+              </>
+            )}
             </nav>
             <Button variant="ghost" size="sm" onClick={handleLogout}>Logout</Button>
           </div>
