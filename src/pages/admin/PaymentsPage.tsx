@@ -10,7 +10,7 @@ export const PaymentsPage = () => {
   useEffect(() => {
     const fetchPayments = async () => {
       setLoading(true);
-      const { data, error } = await supabase.from('payments').select('*, orders(id)');
+      const { data, error } = await supabase.from('payments').select('*, orders(order_number)');
       if (error) console.error('Error fetching payments:', error);
       else setPayments(data || []);
       setLoading(false);
@@ -25,13 +25,13 @@ export const PaymentsPage = () => {
         {loading ? <LoadingSpinner /> : (
           <div className="bg-white shadow rounded-lg overflow-hidden">
             <table className="min-w-full">
-              <thead><tr className="bg-gray-100"><th className="p-4">Order ID</th><th className="p-4">Amount</th><th className="p-4">Status</th></tr></thead>
+              <thead><tr className="bg-gray-100"><th className="p-4">Order #</th><th className="p-4">Amount</th><th className="p-4">Status</th></tr></thead>
               <tbody>
                 {payments.map(p => (
                   <tr key={p.id} className="border-t">
-                    <td className="p-4">{p.order_id}</td>
-                    <td className="p-4">{p.amount}</td>
-                    <td className="p-4">{p.status}</td>
+                    <td className="p-4">{p.orders?.order_number}</td>
+                    <td className="p-4">KSh {p.amount}</td>
+                    <td className="p-4 uppercase">{p.status}</td>
                   </tr>
                 ))}
               </tbody>
