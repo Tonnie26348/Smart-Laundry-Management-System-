@@ -24,6 +24,12 @@ export const OrdersPage = () => {
     fetchOrders();
   }, []);
 
+  const updateStatus = async (id: string, newStatus: string) => {
+    const { error } = await (supabase.from('orders') as any).update({ status: newStatus }).eq('id', id);
+    if (error) alert('Failed to update status');
+    else fetchOrders();
+  };
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -31,13 +37,21 @@ export const OrdersPage = () => {
         {loading ? <LoadingSpinner /> : (
           <div className="bg-white shadow rounded-lg overflow-hidden">
             <table className="min-w-full">
-              <thead><tr className="bg-gray-100"><th className="p-4">Customer</th><th className="p-4">Status</th><th className="p-4">Total</th></tr></thead>
+              <thead><tr className="bg-gray-100 text-left"><th className="p-4">Order #</th><th className="p-4">Customer</th><th className="p-4">Status</th><th className="p-4">Actions</th></tr></thead>
               <tbody>
                 {orders.map(o => (
                   <tr key={o.id} className="border-t">
+                    <td className="p-4">{o.order_number}</td>
                     <td className="p-4">{o.customers?.profiles?.full_name}</td>
-                    <td className="p-4">{o.status}</td>
-                    <td className="p-4">{o.total_amount}</td>
+                    <td className="p-4 capitalize">{o.status}</td>
+                    <td className="p-4">
+                      <select onChange={(e) => updateStatus(o.id, e.target.value)} value={o.status}>
+                        <option value="pending">Pending</option>
+                        <option value="washing">Washing</option>
+                        <option value="ready">Ready</option>
+                        <option value="completed">Completed</option>
+                      </select>
+                    </td>
                   </tr>
                 ))}
               </tbody>
