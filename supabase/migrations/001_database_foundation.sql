@@ -1,9 +1,8 @@
--- Foundation: Enable Extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Enable pgcrypto extension for UUID generation
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- set_updated_at function
-CREATE OR REPLACE FUNCTION set_updated_at()
+-- Function to automatically update the 'updated_at' column
+CREATE OR REPLACE FUNCTION public.set_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
   NEW.updated_at = NOW();

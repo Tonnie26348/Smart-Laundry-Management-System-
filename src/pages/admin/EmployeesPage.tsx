@@ -11,7 +11,8 @@ export const EmployeesPage = () => {
 
   useEffect(() => {
     if (roleLoading) return;
-    if (role !== 'administrator') {
+    const isAuthorized = role === 'administrator' || role === 'manager';
+    if (!isAuthorized) {
       setLoading(false);
       return;
     }
@@ -27,7 +28,8 @@ export const EmployeesPage = () => {
   }, [role, roleLoading]);
 
   if (roleLoading) return <AdminLayout><LoadingSpinner /></AdminLayout>;
-  if (role !== 'administrator') return <AdminLayout><div className="p-4 text-red-500">Access Denied</div></AdminLayout>;
+  const isAuthorized = role === 'administrator' || role === 'manager';
+  if (!isAuthorized) return <AdminLayout><div className="p-4 text-red-500">Access Denied</div></AdminLayout>;
 
   return (
     <AdminLayout>
