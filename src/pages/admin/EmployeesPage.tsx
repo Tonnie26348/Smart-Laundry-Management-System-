@@ -18,7 +18,7 @@ export const EmployeesPage = () => {
 
     const fetchEmployees = async () => {
       setLoading(true);
-      const { data, error } = await supabase.from('profiles').select('*').eq('role', 'employee');
+      const { data, error } = await supabase.from('employees').select('*, profiles(full_name, email)');
       if (error) console.error('Error fetching employees:', error);
       else setEmployees(data || []);
       setLoading(false);
@@ -40,8 +40,8 @@ export const EmployeesPage = () => {
               <tbody>
                 {employees.map(e => (
                   <tr key={e.id} className="border-t">
-                    <td className="p-4">{e.full_name}</td>
-                    <td className="p-4">{e.email}</td>
+                    <td className="p-4">{e.profiles?.full_name}</td>
+                    <td className="p-4">{e.profiles?.email}</td>
                   </tr>
                 ))}
               </tbody>

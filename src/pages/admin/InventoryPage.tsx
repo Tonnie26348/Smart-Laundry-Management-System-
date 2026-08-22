@@ -10,7 +10,7 @@ export const InventoryPage = () => {
   useEffect(() => {
     const fetchInventory = async () => {
       setLoading(true);
-      const { data, error } = await supabase.from('inventory').select('*');
+      const { data, error } = await supabase.from('inventory_items').select('*');
       if (error) console.error('Error fetching inventory:', error);
       else setInventory(data || []);
       setLoading(false);
@@ -29,8 +29,8 @@ export const InventoryPage = () => {
               <tbody>
                 {inventory.map(i => (
                   <tr key={i.id} className="border-t">
-                    <td className="p-4">{i.item_name}</td>
-                    <td className="p-4">{i.quantity}</td>
+                    <td className="p-4">{i.name}</td>
+                    <td className="p-4">{i.current_stock}</td>
                   </tr>
                 ))}
               </tbody>
