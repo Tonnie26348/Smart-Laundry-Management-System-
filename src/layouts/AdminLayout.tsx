@@ -1,15 +1,30 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '@/services/authService';
 import { Button } from '@/components/ui/Button';
+import { supabase } from '@/lib/supabase';
 
 export const AdminLayout = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+        setRole(data?.role || null);
+      }
+    };
+    fetchRole();
+  }, []);
 
   const handleLogout = async () => {
     await authService.logout();
     navigate('/');
   };
+
+  const isAdmin = role === 'administrator';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -17,10 +32,19 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="text-xl font-bold text-primary-600">Admin Portal</div>
           <div className="flex items-center gap-4">
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+            <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-gray-600">
               <a href="/admin" className="hover:text-primary-600">Dashboard</a>
               <a href="/admin/orders" className="hover:text-primary-600">Orders</a>
+              <a href="/admin/customers" className="hover:text-primary-600">Customers</a>
               <a href="/admin/inventory" className="hover:text-primary-600">Inventory</a>
+              <a href="/admin/payments" className="hover:text-primary-600">Payments</a>
+              {isAdmin && (
+                <>
+                  <a href="/admin/employees" className="hover:text-primary-600">Employees</a>
+                  <a href="/admin/audit" className="hover:text-primary-600">Audit Logs</a>
+                  <a href="/admin/settings" className="hover:text-primary-600">Settings</a>
+                </>
+              )}
             </nav>
             <Button variant="ghost" size="sm" onClick={handleLogout}>Logout</Button>
           </div>
