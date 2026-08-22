@@ -15,10 +15,13 @@ export const AdminDashboard = () => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single<{ role: string }>();
-        setRole(data?.role || null);
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single<{ role: string }>();
+        setRole(profile?.role || null);
+        
+        if (profile?.role === 'administrator') {
+          analyticsService.getDashboardMetrics().then(setMetrics);
+        }
       }
-      analyticsService.getDashboardMetrics().then(setMetrics);
       setLoading(false);
     };
     init();
