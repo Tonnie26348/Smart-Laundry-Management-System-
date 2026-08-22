@@ -10,7 +10,7 @@ export const OrdersPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
-      const { data, error } = await supabase.from('orders').select('*, customers(profiles(full_name))');
+      const { data, error } = await supabase.from('orders').select('*, customers(profile_id, profiles(full_name))');
       if (error) console.error('Error fetching orders:', error);
       else setOrders(data || []);
       setLoading(false);
