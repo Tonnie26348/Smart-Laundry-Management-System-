@@ -11,12 +11,19 @@ export const DeliveryStaffDashboard = () => {
 
   const fetchAssignedDeliveries = async () => {
     setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError) {
+        console.error('Error getting user:', userError);
+        setLoading(false);
+        return;
+    }
     if (!user) {
+        console.log('No user logged in');
         setLoading(false);
         return;
     }
 
+    console.log('Fetching deliveries for user:', user.id);
     const { data, error } = await supabase
       .from('deliveries')
       .select('*, orders(order_number)')
@@ -24,7 +31,9 @@ export const DeliveryStaffDashboard = () => {
       
     if (error) {
         console.error('Error fetching deliveries:', error);
+        console.error('Error details:', JSON.stringify(error, null, 2));
     } else {
+        console.log('Fetched deliveries:', data);
         setDeliveries(data || []);
     }
     setLoading(false);
