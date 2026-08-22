@@ -2,14 +2,23 @@
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { analyticsService } from '../services/analyticsService';
+import { authService } from '@/services/authService';
+import { useNavigate } from 'react-router-dom';
 import { Card } from './ui/Card';
+import { Button } from './ui/Button';
 
 export const AdminDashboard = () => {
   const [metrics, setMetrics] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     analyticsService.getDashboardMetrics().then(setMetrics);
   }, []);
+
+  const handleLogout = async () => {
+    await authService.logout();
+    navigate('/login');
+  };
 
   if (!metrics) return <div>Loading...</div>;
 
@@ -21,7 +30,10 @@ export const AdminDashboard = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold">Admin Dashboard</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Admin Dashboard</h2>
+        <Button onClick={handleLogout} variant="outline">Logout</Button>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <h3 className="text-sm text-gray-500">Today's Orders</h3>
