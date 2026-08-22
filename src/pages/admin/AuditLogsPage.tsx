@@ -40,6 +40,7 @@ export const AuditLogsPage = () => {
                 <tr>
                   <th className="p-4 text-left">Action</th>
                   <th className="p-4 text-left">Entity</th>
+                  <th className="p-4 text-left">Actor ID</th>
                   <th className="p-4 text-left">Timestamp</th>
                 </tr>
               </thead>
@@ -48,6 +49,7 @@ export const AuditLogsPage = () => {
                   <tr key={l.id} className="border-t">
                     <td className="p-4 font-mono">{l.action}</td>
                     <td className="p-4">{l.entity_type}</td>
+                    <td className="p-4 font-mono text-xs">{l.actor_id}</td>
                     <td className="p-4">{new Date(l.created_at).toLocaleString()}</td>
                   </tr>
                 ))}
