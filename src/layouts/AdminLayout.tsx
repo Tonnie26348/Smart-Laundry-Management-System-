@@ -25,26 +25,37 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
   };
 
   const isAdmin = role === 'administrator';
-  const isAuthorized = role === 'administrator' || role === 'manager';
+  const isManager = role === 'manager';
+  const isStaff = role === 'laundry_staff';
+  const isAuthorized = isAdmin || isManager || isStaff;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="text-xl font-bold text-primary-600">Admin/Manager Portal</div>
+          <div className="text-xl font-bold text-primary-600">Laundry Portal</div>
           <div className="flex items-center gap-4">
             <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-gray-600">
+              {/* Common Links */}
               <a href="/admin" className="hover:text-primary-600">Dashboard</a>
-              <a href="/admin/orders" className="hover:text-primary-600">Orders</a>
-              <a href="/admin/customers" className="hover:text-primary-600">Customers</a>
-              <a href="/admin/inventory" className="hover:text-primary-600">Inventory</a>
-              <a href="/admin/payments" className="hover:text-primary-600">Payments</a>
+              
+              {/* Operational Links */}
               {isAuthorized && (
                 <>
+                  <a href="/admin/orders" className="hover:text-primary-600">Orders</a>
+                  <a href="/admin/customers" className="hover:text-primary-600">Customers</a>
+                </>
+              )}
+              {isAuthorized && (
+                <>
+                  <a href="/admin/inventory" className="hover:text-primary-600">Inventory</a>
+                  <a href="/admin/payments" className="hover:text-primary-600">Payments</a>
                   <a href="/admin/employees" className="hover:text-primary-600">Employees</a>
                   <a href="/admin/deliveries" className="hover:text-primary-600">Deliveries</a>
                 </>
               )}
+              
+              {/* Admin-Only Links */}
               {isAdmin && (
                 <>
                   <a href="/admin/audit" className="hover:text-primary-600">Audit Logs</a>
