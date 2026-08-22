@@ -10,7 +10,9 @@ export const PaymentsPage = () => {
   useEffect(() => {
     const fetchPayments = async () => {
       setLoading(true);
-      const { data, error } = await supabase.from('payments').select('*, orders(order_number)');
+      const { data, error } = await supabase
+        .from('payments')
+        .select('*, orders(order_number)');
       if (error) console.error('Error fetching payments:', error);
       else setPayments(data || []);
       setLoading(false);
