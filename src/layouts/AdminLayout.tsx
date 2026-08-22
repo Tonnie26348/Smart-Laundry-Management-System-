@@ -36,12 +36,12 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
           <div className="text-xl font-bold text-primary-600">Laundry Portal</div>
           <div className="flex items-center gap-4">
             <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-gray-600 flex-wrap">
-            {/* Common Links */}
-            <a href={isStaff ? "/laundrystaff" : "/admin"} className="hover:text-primary-600">Dashboard</a>
+              {/* Common Links */}
+              <a href={isStaff ? "/laundrystaff" : isManager ? "/manager" : "/admin"} className="hover:text-primary-600">Dashboard</a>
 
-            {/* Operational Links */}
-            {isAuthorized && (
-              <>
+              {/* Operational Links */}
+              {isAuthorized && (
+                <>
                 <a href="/admin/orders" className="hover:text-primary-600">Orders</a>
                 <a href="/admin/customers" className="hover:text-primary-600">Customers</a>
                 <a href="/admin/services" className="hover:text-primary-600">Services</a>

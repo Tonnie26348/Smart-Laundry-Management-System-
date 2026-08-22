@@ -3,18 +3,32 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { analyticsService } from '../services/analyticsService';
 import { Card } from './ui/Card';
 import { AdminLayout } from '../layouts/AdminLayout';
+import { supabase } from '@/lib/supabase';
+import { LoadingSpinner } from './ui/LoadingSpinner';
 
 export const AdminDashboard = () => {
   const [metrics, setMetrics] = useState<any>(null);
+  const [role, setRole] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    analyticsService.getDashboardMetrics().then(setMetrics);
+    const init = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single<{ role: string }>();
+        setRole(data?.role || null);
+      }
+      analyticsService.getDashboardMetrics().then(setMetrics);
+      setLoading(false);
+    };
+    init();
   }, []);
 
-  if (!metrics) return <div>Loading...</div>;
+  if (loading) return <AdminLayout><LoadingSpinner /></AdminLayout>;
+  if (role !== 'administrator') return <AdminLayout><div className="p-4 text-red-500">Access Denied</div></AdminLayout>;
 
   // Transform revenue_data for Recharts
-  const chartData = (metrics.revenue_data || []).map((item: any) => ({
+  const chartData = (metrics?.revenue_data || []).map((item: any) => ({
     name: new Date(item.date).toLocaleDateString('en-US', { weekday: 'short' }),
     revenue: item.revenue
   })).reverse();
