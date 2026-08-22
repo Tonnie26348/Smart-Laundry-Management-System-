@@ -7,20 +7,19 @@ export const OrdersPage = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchOrders = async () => {
+    setLoading(true);
+    const { data, error } = await supabase.from('orders').select('*, customers(profile_id, profiles(full_name))');
+    
+    if (error) {
+      console.error('Error fetching orders:', error);
+    } else {
+      setOrders(data || []);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      const { data, error } = await supabase.from('orders').select('*, customers(profile_id, profiles(full_name))');
-      
-      console.log('Orders fetch debug:', { data, error });
-      
-      if (error) {
-        console.error('Error fetching orders:', error);
-      } else {
-        setOrders(data || []);
-      }
-      setLoading(false);
-    };
     fetchOrders();
   }, []);
 
