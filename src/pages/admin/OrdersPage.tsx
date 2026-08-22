@@ -11,8 +11,14 @@ export const OrdersPage = () => {
     const fetchOrders = async () => {
       setLoading(true);
       const { data, error } = await supabase.from('orders').select('*, customers(profile_id, profiles(full_name))');
-      if (error) console.error('Error fetching orders:', error);
-      else setOrders(data || []);
+      
+      console.log('Orders fetch debug:', { data, error });
+      
+      if (error) {
+        console.error('Error fetching orders:', error);
+      } else {
+        setOrders(data || []);
+      }
       setLoading(false);
     };
     fetchOrders();
