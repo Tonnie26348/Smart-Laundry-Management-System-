@@ -17,36 +17,34 @@ export const LoginForm = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    try {
-      const { data } = await authService.login(email, password);
-      
-      // Fetch user profile to determine role
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', data.user.id)
-        .single();
-        
-      if (profileError) {
-        setError('Error fetching profile: ' + profileError.message);
-        setLoading(false);
-        return;
-      }
-        
-      if (profile && profile.role === 'administrator') {
-        navigate('/admin');
-      } else {
-        setError('Login successful, but role is: ' + (profile?.role || 'null'));
-        setLoading(false);
-        // navigate('/dashboard'); // Commented out to prevent immediate redirection
+    // Fetch user profile to determine role
+    const { data: authData } = await authService.login(email, password);
+
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', authData.user.id)
+      .single<{ role: string }>();
+
+    if (profileError) {
+      setError('Error fetching profile: ' + profileError.message);
+      setLoading(false);
+      return;
+    }
+
+    if (profile && profile.role === 'administrator') {
+      navigate('/admin');
+    } else {
+      setError('Login successful, but role is: ' + (profile?.role || 'null'));
+      setLoading(false);
+    }
       }
     } catch (err: any) {
       setError(err.message || 'Failed to login');
     } finally {
       setLoading(false);
     }
-  };
+    } catch (err: any) { setError(err.message || 'Failed to login'); } finally { setLoading(false); } };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6 py-12">
@@ -84,3 +82,4 @@ export const LoginForm = () => {
     </div>
   );
 };
+
