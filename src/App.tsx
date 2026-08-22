@@ -20,6 +20,10 @@ const SettingsPage = lazy(() => import('./pages/admin/SettingsPage').then(m => (
 const ManagerDashboard = lazy(() => import('./pages/admin/ManagerDashboard').then(m => ({ default: m.ManagerDashboard })));
 const LaundryStaffDashboard = lazy(() => import('./pages/admin/LaundryStaffDashboard').then(m => ({ default: m.LaundryStaffDashboard })));
 const InspectionsPage = lazy(() => import('./pages/admin/InspectionsPage').then(m => ({ default: m.InspectionsPage })));
+const ServicesPage = lazy(() => import('./pages/admin/ServicesPage').then(m => ({ default: m.ServicesPage })));
+const PricingPage = lazy(() => import('./pages/admin/PricingPage').then(m => ({ default: m.PricingPage })));
+const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage').then(m => ({ default: m.AnalyticsPage })));
+const ReportsPage = lazy(() => import('./pages/admin/ReportsPage').then(m => ({ default: m.ReportsPage })));
 const CustomerDashboard = lazy(() => import('./pages/CustomerDashboard').then(m => ({ default: m.CustomerDashboard })));
 const OrderWizard = lazy(() => import('./pages/OrderWizard').then(m => ({ default: m.OrderWizard })));
 const ServiceList = lazy(() => import('./components/ServiceList').then(m => ({ default: m.ServiceList })));
@@ -31,14 +35,11 @@ function App() {
     <AppProvider>
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>
-          {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/offline" element={<OfflinePage />} />
           <Route path="/services" element={<div className="p-8"><ServiceList /></div>} />
-...
-          {/* Protected Customer Routes */}
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <CustomerLayout>
@@ -60,8 +61,6 @@ function App() {
               </CustomerLayout>
             </ProtectedRoute>
           } />
-
-          {/* Admin Routes */}
           <Route path="/admin" element={
             <ProtectedRoute>
               <AdminDashboard />
@@ -115,6 +114,26 @@ function App() {
           <Route path="/admin/settings" element={
             <ProtectedRoute>
               <SettingsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/services" element={
+            <ProtectedRoute>
+              <ServicesPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/pricing" element={
+            <ProtectedRoute>
+              <PricingPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/analytics" element={
+            <ProtectedRoute>
+              <AnalyticsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/reports" element={
+            <ProtectedRoute>
+              <ReportsPage />
             </ProtectedRoute>
           } />
         </Routes>
