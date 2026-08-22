@@ -8,14 +8,15 @@ export const InventoryPage = () => {
   const [inventory, setInventory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchInventory = async () => {
+    setLoading(true);
+    const { data, error } = await supabase.from('inventory_items').select('*');
+    if (error) console.error('Error fetching inventory:', error);
+    else setInventory(data || []);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchInventory = async () => {
-      setLoading(true);
-      const { data, error } = await supabase.from('inventory_items').select('*');
-      if (error) console.error('Error fetching inventory:', error);
-      else setInventory(data || []);
-      setLoading(false);
-    };
     fetchInventory();
   }, []);
 
