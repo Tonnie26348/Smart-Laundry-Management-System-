@@ -19,6 +19,7 @@ const AuditLogsPage = lazy(() => import('./pages/admin/AuditLogsPage').then(m =>
 const SettingsPage = lazy(() => import('./pages/admin/SettingsPage').then(m => ({ default: m.SettingsPage })));
 const ManagerDashboard = lazy(() => import('./pages/admin/ManagerDashboard').then(m => ({ default: m.ManagerDashboard })));
 const LaundryStaffDashboard = lazy(() => import('./pages/admin/LaundryStaffDashboard').then(m => ({ default: m.LaundryStaffDashboard })));
+const InspectionsPage = lazy(() => import('./pages/admin/InspectionsPage').then(m => ({ default: m.InspectionsPage })));
 const CustomerDashboard = lazy(() => import('./pages/CustomerDashboard').then(m => ({ default: m.CustomerDashboard })));
 const OrderWizard = lazy(() => import('./pages/OrderWizard').then(m => ({ default: m.OrderWizard })));
 const ServiceList = lazy(() => import('./components/ServiceList').then(m => ({ default: m.ServiceList })));
@@ -79,6 +80,11 @@ function App() {
           <Route path="/admin/customers" element={
             <ProtectedRoute>
               <CustomersPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/inspections" element={
+            <ProtectedRoute>
+              <InspectionsPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/orders" element={
