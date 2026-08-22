@@ -17,6 +17,10 @@ const PaymentsPage = lazy(() => import('./pages/admin/PaymentsPage').then(m => (
 const EmployeesPage = lazy(() => import('./pages/admin/EmployeesPage').then(m => ({ default: m.EmployeesPage })));
 const AuditLogsPage = lazy(() => import('./pages/admin/AuditLogsPage').then(m => ({ default: m.AuditLogsPage })));
 const SettingsPage = lazy(() => import('./pages/admin/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const NotificationsPage = lazy(() => import('./pages/admin/NotificationsPage').then(m => ({ default: m.NotificationsPage })));
+const DiscountsPage = lazy(() => import('./pages/admin/DiscountsPage').then(m => ({ default: m.DiscountsPage })));
+const LoyaltyPage = lazy(() => import('./pages/admin/LoyaltyPage').then(m => ({ default: m.LoyaltyPage })));
+const ReviewsPage = lazy(() => import('./pages/admin/ReviewsPage').then(m => ({ default: m.ReviewsPage })));
 const ManagerDashboard = lazy(() => import('./pages/admin/ManagerDashboard').then(m => ({ default: m.ManagerDashboard })));
 const LaundryStaffDashboard = lazy(() => import('./pages/admin/LaundryStaffDashboard').then(m => ({ default: m.LaundryStaffDashboard })));
 const InspectionsPage = lazy(() => import('./pages/admin/InspectionsPage').then(m => ({ default: m.InspectionsPage })));
@@ -114,6 +118,26 @@ function App() {
           <Route path="/admin/settings" element={
             <ProtectedRoute>
               <SettingsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/notifications" element={
+            <ProtectedRoute>
+              <NotificationsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/discounts" element={
+            <ProtectedRoute>
+              <DiscountsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/loyalty" element={
+            <ProtectedRoute>
+              <LoyaltyPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/reviews" element={
+            <ProtectedRoute>
+              <ReviewsPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/services" element={
