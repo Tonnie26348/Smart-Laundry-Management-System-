@@ -37,7 +37,9 @@ export const LoginForm = () => {
       if (profile && profile.role === 'administrator') {
         navigate('/admin');
       } else {
-        navigate('/dashboard');
+        setError('Login successful, but role is: ' + (profile?.role || 'null'));
+        setLoading(false);
+        // navigate('/dashboard'); // Commented out to prevent immediate redirection
       }
     } catch (err: any) {
       setError(err.message || 'Failed to login');
