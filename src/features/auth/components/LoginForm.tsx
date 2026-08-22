@@ -28,13 +28,13 @@ export const LoginForm = () => {
         .eq('id', data.user.id)
         .single();
         
-      console.log('Login successful. Profile fetched:', profile, 'Error:', profileError);
+      console.log('Login debug:', { profile, profileError, dataUserId: data.user.id });
         
-      if (profile?.role === 'administrator') {
-        console.log('Redirecting to /admin');
+      if (profile && profile.role === 'administrator') {
+        console.log('Role matches administrator, redirecting to /admin');
         navigate('/admin');
       } else {
-        console.log('Redirecting to /dashboard');
+        console.log('Role does not match administrator or profile is null, redirecting to /dashboard');
         navigate('/dashboard');
       }
     } catch (err: any) {
