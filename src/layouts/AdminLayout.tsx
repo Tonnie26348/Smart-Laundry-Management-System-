@@ -27,7 +27,7 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
   const isAdmin = role === 'administrator';
   const isManager = role === 'manager';
   const isStaff = role === 'laundry_staff';
-  const isAuthorized = isAdmin || isManager || isStaff;
+  const isAuthorized = isAdmin || isManager;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -37,17 +37,22 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
           <div className="flex items-center gap-4">
             <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-gray-600">
               {/* Common Links */}
-              <a href="/admin" className="hover:text-primary-600">Dashboard</a>
+              <a href={isStaff ? "/laundrystaff" : "/admin"} className="hover:text-primary-600">Dashboard</a>
               
-              {/* Operational Links */}
+              {/* Laundry Staff Operational Links */}
+              {isStaff && (
+                <>
+                  <a href="/admin/orders" className="hover:text-primary-600">Orders</a>
+                  <a href="/admin/inspections" className="hover:text-primary-600">Inspections</a>
+                  <a href="/admin/inventory" className="hover:text-primary-600">Inventory</a>
+                </>
+              )}
+
+              {/* Manager/Admin Operational Links */}
               {isAuthorized && (
                 <>
                   <a href="/admin/orders" className="hover:text-primary-600">Orders</a>
                   <a href="/admin/customers" className="hover:text-primary-600">Customers</a>
-                </>
-              )}
-              {isAuthorized && (
-                <>
                   <a href="/admin/inventory" className="hover:text-primary-600">Inventory</a>
                   <a href="/admin/payments" className="hover:text-primary-600">Payments</a>
                   <a href="/admin/employees" className="hover:text-primary-600">Employees</a>
