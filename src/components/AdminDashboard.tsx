@@ -24,11 +24,11 @@ export const AdminDashboard = () => {
     init();
   }, []);
 
-  if (loading) return <AdminLayout><LoadingSpinner /></AdminLayout>;
+  if (loading || !metrics) return <AdminLayout><LoadingSpinner /></AdminLayout>;
   if (role !== 'administrator') return <AdminLayout><div className="p-4 text-red-500">Access Denied</div></AdminLayout>;
 
   // Transform revenue_data for Recharts
-  const chartData = (metrics?.revenue_data || []).map((item: any) => ({
+  const chartData = (metrics.revenue_data || []).map((item: any) => ({
     name: new Date(item.date).toLocaleDateString('en-US', { weekday: 'short' }),
     revenue: item.revenue
   })).reverse();
