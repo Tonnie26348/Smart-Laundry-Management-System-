@@ -8,51 +8,28 @@ import { Button } from '@/components/ui/Button';
 export const DeliveryStaffDashboard = () => {
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [debugLog, setDebugLog] = useState<string>('');
-
-  const appendDebug = (msg: string) => {
-    setDebugLog(prev => prev + `\n[${new Date().toLocaleTimeString()}] ${msg}`);
-  };
 
   const fetchAssignedDeliveries = async () => {
     setLoading(true);
-    appendDebug('Initiating fetchAssignedDeliveries...');
     
     try {
         const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) {
-            appendDebug(`Error getting user: ${userError.message}`);
-            throw userError;
-        }
+        if (userError) throw userError;
         if (!user) {
-            appendDebug('No user logged in according to supabase.auth.getUser()');
-            setUserId(null);
             setLoading(false);
             return;
         }
 
-        setUserId(user.id);
-        appendDebug(`Logged in user ID: ${user.id}`);
-
-        appendDebug('Querying "deliveries" table...');
         const { data, error } = await supabase
           .from('deliveries')
           .select('*, orders(order_number)')
           .eq('assigned_to', user.id)
           .order('created_at', { ascending: false });
           
-        if (error) {
-            appendDebug(`Database Query Error: ${error.message}`);
-            throw error;
-        } else {
-            appendDebug(`Query successful. Found ${data?.length || 0} matching rows.`);
-            setDeliveries(data || []);
-        }
+        if (error) throw error;
+        setDeliveries(data || []);
     } catch (err) {
-        const errMsg = err instanceof Error ? err.message : 'Unknown error';
-        appendDebug(`Caught exception: ${errMsg}`);
-        alert('Failed to refresh deliveries: ' + errMsg);
+        console.error('Error fetching deliveries:', err);
     } finally {
         setLoading(false);
     }
@@ -92,33 +69,6 @@ export const DeliveryStaffDashboard = () => {
           <h2 className="text-2xl font-bold text-gray-900">Delivery Staff</h2>
           <Button onClick={fetchAssignedDeliveries} variant="outline" size="sm">Refresh</Button>
         </div>
-
-        {/* Visual Debug Panel */}
-        <Card className="p-4 bg-gray-900 text-gray-100 font-mono text-xs space-y-2">
-          <div className="flex justify-between items-center border-b border-gray-700 pb-2">
-            <span className="font-bold text-yellow-400">🔍 Visual Debug Panel</span>
-            <Button 
-              size="xs" 
-              variant="outline" 
-              className="text-white border-gray-600 hover:bg-gray-800"
-              onClick={() => setDebugLog(`[${new Date().toLocaleTimeString()}] Log cleared.`)}
-            >
-              Clear Logs
-            </Button>
-          </div>
-          <div>
-            <span className="text-gray-400">User ID:</span> {userId || 'No user logged in'}
-          </div>
-          <div>
-            <span className="text-gray-400">Supabase Endpoint:</span> {import.meta.env.VITE_SUPABASE_URL || 'Not specified'}
-          </div>
-          <div className="space-y-1">
-            <span className="text-gray-400">Execution Logs:</span>
-            <pre className="p-2 bg-black rounded overflow-x-auto max-h-40 overflow-y-auto whitespace-pre-wrap">
-              {debugLog || 'No logs generated yet. Click Refresh to test.'}
-            </pre>
-          </div>
-        </Card>
         
         {loading ? (
           <div className="flex justify-center p-12">
@@ -129,7 +79,7 @@ export const DeliveryStaffDashboard = () => {
             <h3 className="text-lg font-semibold text-gray-700">Assigned Deliveries ({deliveries.length})</h3>
             {deliveries.length === 0 ? (
               <Card className="p-8 text-center text-gray-500">
-                No deliveries found. Please ensure you are logged in as delivery staff and have assigned deliveries.
+                No assigned deliveries found.
               </Card>
             ) : (
               deliveries.map(delivery => (
