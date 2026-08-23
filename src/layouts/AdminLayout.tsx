@@ -12,8 +12,10 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
     const fetchRole = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle() as any;
-        setRole(data?.role || null);
+        const { data } = await (supabase.from('profiles').select('role').eq('id', user.id) as any);
+        if (data && data.length > 0) {
+            setRole(data[0].role || null);
+        }
       }
     };
     fetchRole();
