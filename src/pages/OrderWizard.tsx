@@ -1,11 +1,56 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
 
 export const OrderWizard = () => {
   const [step, setStep] = useState(1);
+  const [customerId, setCustomerId] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    items: 'Wash & Fold',
+    pickup_address: '',
+    delivery_address: '',
+  });
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCustomerId = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      
+      const { data: customer } = await (supabase
+        .from('customers')
+        .select('id')
+        .eq('user_id', user.id)
+        .single() as any);
+        
+      if (customer) setCustomerId(customer.id);
+    };
+    fetchCustomerId();
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!customerId) return;
+    setSubmitting(true);
+    
+    const { error } = await (supabase.from('orders') as any).insert({
+      customer_id: customerId,
+      status: 'pending',
+      total_amount: 1200,
+      order_number: `ORD-${Date.now().toString().slice(-4)}`
+    });
+
+    if (error) {
+      console.error('Error creating order:', error);
+      alert('Failed to submit order.');
+    } else {
+      alert('Order submitted successfully!');
+      navigate('/dashboard');
+    }
+    setSubmitting(false);
+  };
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
@@ -24,23 +69,20 @@ export const OrderWizard = () => {
         {step === 1 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold">What are we cleaning?</h2>
-            <p className="text-gray-600">Select the items you'd like us to clean.</p>
-            {/* Item selection UI would go here */}
-            <div className="h-48 flex items-center justify-center border-2 border-dashed rounded-lg text-gray-400">
-              Service/Item Selection List
-            </div>
+            <select className="w-full p-2 border rounded" onChange={(e) => setFormData({...formData, items: e.target.value})}>
+                <option>Wash & Fold</option>
+                <option>Dry Clean</option>
+                <option>Ironing Only</option>
+            </select>
             <Button className="w-full" onClick={() => setStep(2)}>Next: Delivery Details</Button>
           </div>
         )}
 
         {step === 2 && (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold">Where and When?</h2>
-            <p className="text-gray-600">Select your preferred pickup and delivery details.</p>
-            {/* Delivery/Address UI would go here */}
-            <div className="h-48 flex items-center justify-center border-2 border-dashed rounded-lg text-gray-400">
-              Address & Schedule Selector
-            </div>
+            <h2 className="text-xl font-bold">Where?</h2>
+            <input placeholder="Pickup Address" className="w-full p-2 border rounded" onChange={(e) => setFormData({...formData, pickup_address: e.target.value})} />
+            <input placeholder="Delivery Address" className="w-full p-2 border rounded" onChange={(e) => setFormData({...formData, delivery_address: e.target.value})} />
             <div className="flex gap-4">
               <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>Back</Button>
               <Button className="flex-1" onClick={() => setStep(3)}>Next: Review</Button>
@@ -51,15 +93,15 @@ export const OrderWizard = () => {
         {step === 3 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold">Review Your Order</h2>
-            <p className="text-gray-600">Please confirm everything is correct before submitting.</p>
-            <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-              <div className="flex justify-between text-sm"><span>Subtotal</span><span>KSh 1,100</span></div>
-              <div className="flex justify-between text-sm"><span>Delivery</span><span>KSh 100</span></div>
-              <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2"><span>Total</span><span>KSh 1,200</span></div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+                <p>Items: {formData.items}</p>
+                <p>Pickup: {formData.pickup_address}</p>
             </div>
             <div className="flex gap-4">
               <Button variant="outline" className="flex-1" onClick={() => setStep(2)}>Back</Button>
-              <Button className="flex-1" onClick={() => navigate('/dashboard')}>Submit & Pay</Button>
+              <Button className="flex-1" onClick={handleSubmit} disabled={submitting}>
+                {submitting ? 'Submitting...' : 'Submit Order'}
+              </Button>
             </div>
           </div>
         )}
