@@ -13,6 +13,7 @@ export const OrderWizard = () => {
     delivery_address: '',
   });
   const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,28 +21,19 @@ export const OrderWizard = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       
-      // Fetch a sample record to inspect column names
       const { data, error } = await (supabase
         .from('customers')
         .select('*')
-        .limit(1) as any);
+        .eq('user_id', user.id)
+        .single() as any);
         
       if (error) {
         console.error('Error fetching customers:', error);
         return;
       }
         
-      if (data && data.length > 0) {
-        console.log('Customer record keys:', Object.keys(data[0]));
-        // Try to find the user ID based on the logged in user ID
-        const customer = data.find((c: any) => 
-            Object.values(c).includes(user.id)
-        );
-        if (customer) {
-            setCustomerId(customer.id);
-        }
-      } else {
-        setCustomerId(null);
+      if (data) {
+        setCustomerId(data.id);
       }
     };
     fetchCustomerId();
@@ -50,8 +42,7 @@ export const OrderWizard = () => {
   const handleSubmit = async () => {
     if (!customerId) return;
     setSubmitting(true);
-    
-    console.log('Submitting order for customer:', customerId);
+    setErrorMsg(null);
     
     // 1. Insert order
     const payload = {
@@ -59,7 +50,6 @@ export const OrderWizard = () => {
         status: 'pending',
         total_amount: 1200
     };
-    console.log('Order payload:', payload);
 
     const { data: order, error: orderError } = await (supabase.from('orders') as any)
       .insert(payload)
@@ -68,13 +58,12 @@ export const OrderWizard = () => {
 
     if (orderError) {
       console.error('SERVER ERROR (ORDER INSERT):', orderError);
-      alert('Order submission failed. Please check console for details.');
+      setErrorMsg(`Order submission failed: ${orderError.message}`);
       setSubmitting(false);
       return;
     }
 
     // 2. Insert delivery records
-    console.log('Order created, inserting deliveries for order:', order.id);
     const { error: deliveryError } = await (supabase.from('deliveries') as any).insert([
         {
             order_id: order.id,
@@ -92,7 +81,7 @@ export const OrderWizard = () => {
 
     if (deliveryError) {
         console.error('SERVER ERROR (DELIVERY INSERT):', deliveryError);
-        alert('Order created, but failed to schedule pickup/delivery.');
+        setErrorMsg(`Delivery record creation failed: ${deliveryError.message}`);
     } else {
         alert('Order submitted successfully!');
         navigate('/dashboard');
@@ -114,6 +103,11 @@ export const OrderWizard = () => {
       </div>
 
       <Card>
+        {errorMsg && (
+          <div className="p-4 mb-4 bg-red-100 text-red-700 text-sm rounded">
+            <strong>Submission Failed:</strong> {errorMsg}
+          </div>
+        )}
         {step === 1 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold">What are we cleaning?</h2>
