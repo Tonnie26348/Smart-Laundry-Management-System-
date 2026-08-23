@@ -40,14 +40,14 @@ export const OrderWizard = () => {
       .insert({
         customer_id: customerId,
         status: 'pending',
-        total_amount: 1200 // Ensure this matches decimal constraints
+        total_amount: 1200
       })
       .select('id')
       .single();
 
     if (orderError) {
-      console.error('Error creating order:', orderError);
-      alert('Failed to submit order.');
+      console.error('Full Order Error:', orderError);
+      alert('Failed to submit order: ' + orderError.message);
       setSubmitting(false);
       return;
     }
@@ -69,8 +69,8 @@ export const OrderWizard = () => {
     ]);
 
     if (deliveryError) {
-        console.error('Error creating delivery records:', deliveryError);
-        alert('Order created, but failed to schedule pickup/delivery.');
+        console.error('Full Delivery Error:', deliveryError);
+        alert('Order created, but failed to schedule pickup/delivery: ' + deliveryError.message);
     } else {
         alert('Order submitted successfully!');
         navigate('/dashboard');
