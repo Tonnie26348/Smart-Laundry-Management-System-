@@ -12,8 +12,12 @@ export const CustomerLayout = ({ children }: { children: ReactNode }) => {
     const fetchProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data } = await (supabase.from('profiles').select('full_name').eq('id', user.id).single() as any);
-        if (data) setUserName(data.full_name);
+        const { data, error } = await (supabase.from('profiles').select('full_name').eq('id', user.id) as any);
+        if (data && data.length > 0) {
+            setUserName(data[0].full_name);
+        } else if (error) {
+            console.error('Error fetching profile:', error);
+        }
       }
     };
     fetchProfile();
