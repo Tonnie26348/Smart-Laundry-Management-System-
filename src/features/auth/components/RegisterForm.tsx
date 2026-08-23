@@ -80,11 +80,10 @@ export const RegisterForm = () => {
             {loading ? 'Creating account...' : 'Sign Up'}
           </Button>
         </form>
-        {/* ... */}
-      </Card>
-    </div>
-  );
-};
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Already have an account?{' '}
+          <a href="/login" className="text-primary-600 font-medium hover:underline">
+            Login
           </a>
         </p>
       </Card>
