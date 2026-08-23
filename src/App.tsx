@@ -80,7 +80,7 @@ function App() {
           <Route path="/notifications" element={
             <ProtectedRoute>
               <CustomerLayout>
-                <NotificationsPage />
+                <CustomerNotificationsPage />
               </CustomerLayout>
             </ProtectedRoute>
           } />
