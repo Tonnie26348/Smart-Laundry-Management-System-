@@ -51,24 +51,30 @@ export const OrderWizard = () => {
     if (!customerId) return;
     setSubmitting(true);
     
+    console.log('Submitting order for customer:', customerId);
+    
     // 1. Insert order
-    const { data: order, error: orderError } = await (supabase.from('orders') as any)
-      .insert({
+    const payload = {
         customer_id: customerId,
         status: 'pending',
         total_amount: 1200
-      })
+    };
+    console.log('Order payload:', payload);
+
+    const { data: order, error: orderError } = await (supabase.from('orders') as any)
+      .insert(payload)
       .select('id')
       .single();
 
     if (orderError) {
-      console.error('Full Order Error:', orderError);
-      alert('Failed to submit order: ' + orderError.message);
+      console.error('SERVER ERROR (ORDER INSERT):', orderError);
+      alert('Order submission failed. Please check console for details.');
       setSubmitting(false);
       return;
     }
 
     // 2. Insert delivery records
+    console.log('Order created, inserting deliveries for order:', order.id);
     const { error: deliveryError } = await (supabase.from('deliveries') as any).insert([
         {
             order_id: order.id,
@@ -85,8 +91,8 @@ export const OrderWizard = () => {
     ]);
 
     if (deliveryError) {
-        console.error('Full Delivery Error:', deliveryError);
-        alert('Order created, but failed to schedule pickup/delivery: ' + deliveryError.message);
+        console.error('SERVER ERROR (DELIVERY INSERT):', deliveryError);
+        alert('Order created, but failed to schedule pickup/delivery.');
     } else {
         alert('Order submitted successfully!');
         navigate('/dashboard');
