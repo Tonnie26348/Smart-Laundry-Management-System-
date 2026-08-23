@@ -20,7 +20,7 @@ export const CustomerLoyaltyPage = () => {
     const { data, error } = await (supabase
       .from('customers')
       .select('loyalty_points')
-      .eq('profile_id', user.id)
+      .eq('user_id', user.id)
       .single() as any);
     
     if (error) {

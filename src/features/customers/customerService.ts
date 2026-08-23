@@ -13,7 +13,7 @@ export const customerService = {
   async getOwnProfile(): Promise<Customer | null> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
-    const { data, error } = await supabase.from('customers').select('*').eq('profile_id', user.id).single();
+    const { data, error } = await supabase.from('customers').select('*').eq('user_id', user.id).single();
     if (error) throw error;
     return data;
   },
