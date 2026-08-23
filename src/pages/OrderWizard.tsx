@@ -40,8 +40,7 @@ export const OrderWizard = () => {
       .insert({
         customer_id: customerId,
         status: 'pending',
-        total_amount: 1200,
-        order_number: `ORD-${Date.now().toString().slice(-4)}`
+        total_amount: 1200 // Ensure this matches decimal constraints
       })
       .select('id')
       .single();
