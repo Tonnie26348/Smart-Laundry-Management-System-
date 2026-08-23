@@ -10,31 +10,42 @@ export const DeliveryStaffDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchAssignedDeliveries = async () => {
+    if (loading) return; // Prevent multiple simultaneous fetches
     setLoading(true);
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError) {
-        console.error('Error getting user:', userError);
-        setLoading(false);
-        return;
-    }
-    if (!user) {
-        console.log('No user logged in');
-        setLoading(false);
-        return;
-    }
+    console.log('Fetching assigned deliveries...');
+    
+    try {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError) {
+            console.error('Error getting user:', userError);
+            throw userError;
+        }
+        if (!user) {
+            console.warn('No user logged in');
+            setLoading(false);
+            return;
+        }
 
-    const { data, error } = await supabase
-      .from('deliveries')
-      .select('*, orders(order_number)')
-      .eq('assigned_to', user.id)
-      .order('created_at', { ascending: false });
-      
-    if (error) {
-        console.error('Error fetching deliveries:', error);
-    } else {
-        setDeliveries(data || []);
+        console.log('Fetching deliveries for user ID:', user.id);
+        const { data, error } = await supabase
+          .from('deliveries')
+          .select('*, orders(order_number)')
+          .eq('assigned_to', user.id)
+          .order('created_at', { ascending: false });
+          
+        if (error) {
+            console.error('Error fetching deliveries:', error);
+            throw error;
+        } else {
+            console.log('Fetched deliveries successfully:', data);
+            setDeliveries(data || []);
+        }
+    } catch (err) {
+        console.error('Caught error in fetchAssignedDeliveries:', err);
+        alert('Failed to refresh deliveries: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    } finally {
+        setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
