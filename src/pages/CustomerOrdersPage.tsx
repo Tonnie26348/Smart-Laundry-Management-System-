@@ -18,11 +18,11 @@ export const CustomerOrdersPage = () => {
     }
 
     // Fetch customer ID first
-    const { data: customer } = await supabase
+    const { data: customer } = await (supabase
       .from('customers')
       .select('id')
       .eq('user_id', user.id)
-      .single();
+      .single() as any);
 
     if (customer) {
         const { data, error } = await supabase
