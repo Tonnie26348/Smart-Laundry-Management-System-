@@ -19,17 +19,22 @@ export const OrderWizard = () => {
     const fetchCustomerId = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-
-      // Select * to see what columns exist
+      
       const { data, error } = await (supabase
         .from('customers')
-        .select('*')
-        .limit(1) as any);
-
-      console.log('Customer Data:', data);
-      console.log('Customer Fetch Error JSON:', JSON.stringify(error, null, 2));
+        .select('id')
+        .eq('user_id', user.id) as any);
         
-      if (data && data.length > 0) setCustomerId(data[0].id);
+      if (error) {
+        console.error('Error fetching customer ID:', error);
+        return;
+      }
+        
+      if (data && data.length > 0) {
+        setCustomerId(data[0].id);
+      } else {
+        setCustomerId(null); // Explicitly handle no customer record
+      }
     };
     fetchCustomerId();
   }, []);
@@ -95,7 +100,12 @@ export const OrderWizard = () => {
       </div>
 
       <Card>
-        {step === 1 && (
+        {!customerId && (
+          <div className="p-8 text-center text-gray-500">
+            No customer profile found. Please contact support.
+          </div>
+        )}
+        {customerId && step === 1 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold">What are we cleaning?</h2>
             <select className="w-full p-2 border rounded" onChange={(e) => setFormData({...formData, items: e.target.value})}>
@@ -107,7 +117,7 @@ export const OrderWizard = () => {
           </div>
         )}
 
-        {step === 2 && (
+        {customerId && step === 2 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold">Where?</h2>
             <input placeholder="Pickup Address" className="w-full p-2 border rounded" onChange={(e) => setFormData({...formData, pickup_address: e.target.value})} />
@@ -119,7 +129,7 @@ export const OrderWizard = () => {
           </div>
         )}
 
-        {step === 3 && (
+        {customerId && step === 3 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold">Review Your Order</h2>
             <div className="bg-gray-50 p-4 rounded-lg">
