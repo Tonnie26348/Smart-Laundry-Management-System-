@@ -20,21 +20,36 @@ useEffect(() => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // Query information_schema to find columns for 'customers'
+    // Fetch all customers, then we'll check what columns exist in the resulting objects
     const { data, error } = await (supabase
-      .from('information_schema.columns' as any)
-      .select('column_name')
-      .eq('table_name', 'customers') as any);
+      .from('customers')
+      .select('*') as any);
 
     if (error) {
-      setErrorMsg(`Schema Query Error: ${error.message}`);
+      setErrorMsg(`Fetch Error: ${error.message}`);
+      console.error('Error fetching customers:', error);
       return;
     }
 
-    if (data) {
-      const columns = data.map((c: any) => c.column_name);
-      setErrorMsg(`Columns found: ${columns.join(', ')}`);
-      console.log('Customers table columns:', columns);
+    if (data && data.length > 0) {
+      const keys = Object.keys(data[0]);
+      setErrorMsg(`Columns found: ${keys.join(', ')}`);
+      console.log('Customers table columns:', keys);
+
+      // Try to find the user ID based on common naming conventions
+      const userColumn = keys.find(k => k.includes('user') || k.includes('profile'));
+      if (userColumn) {
+          const customer = data.find((c: any) => c[userColumn] === user.id);
+          if (customer) {
+              setCustomerId(customer.id);
+          } else {
+              setErrorMsg(`Columns found but no match for user ID ${user.id} in column ${userColumn}`);
+          }
+      } else {
+          setErrorMsg(`Could not find a user reference column in: ${keys.join(', ')}`);
+      }
+    } else {
+      setErrorMsg(`No customer records found to inspect.`);
     }
   };
   fetchCustomerId();
