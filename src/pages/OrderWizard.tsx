@@ -24,16 +24,23 @@ export const OrderWizard = () => {
       const { data, error } = await (supabase
         .from('customers')
         .select('*')
-        .eq('user_id', user.id)
-        .single() as any);
+        .limit(1) as any);
         
       if (error) {
-        console.error('Error fetching customers:', error);
+        console.error('Error fetching customers:', JSON.stringify(error, null, 2));
         return;
       }
         
-      if (data) {
-        setCustomerId(data.id);
+      if (data && data.length > 0) {
+        console.log('Customer record columns:', Object.keys(data[0]));
+        const customer = data.find((c: any) => 
+            Object.values(c).includes(user.id)
+        );
+        if (customer) {
+            setCustomerId(customer.id);
+        }
+      } else {
+        setCustomerId(null);
       }
     };
     fetchCustomerId();
