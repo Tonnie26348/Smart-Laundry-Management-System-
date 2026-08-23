@@ -20,20 +20,24 @@ export const OrderWizard = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       
+      // Select * without filter to see what the columns are actually called
       const { data, error } = await (supabase
         .from('customers')
-        .select('id')
-        .eq('user_id', user.id) as any);
+        .select('*')
+        .limit(1) as any);
         
       if (error) {
-        console.error('Error fetching customer ID:', error);
+        console.error('Error fetching customers schema:', error);
         return;
       }
         
+      console.log('Customer record sample:', data);
+
       if (data && data.length > 0) {
-        setCustomerId(data[0].id);
+        // Based on the log, I'll ask the user to tell me the column name
+        setCustomerId(null); 
       } else {
-        setCustomerId(null); // Explicitly handle no customer record
+        setCustomerId(null);
       }
     };
     fetchCustomerId();
