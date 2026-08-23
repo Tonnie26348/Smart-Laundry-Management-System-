@@ -34,6 +34,8 @@ const CustomerDashboard = lazy(() => import('./pages/CustomerDashboard').then(m 
 const OrderWizard = lazy(() => import('./pages/OrderWizard').then(m => ({ default: m.OrderWizard })));
 const ServiceList = lazy(() => import('./components/ServiceList').then(m => ({ default: m.ServiceList })));
 const CustomerProfile = lazy(() => import('./components/CustomerProfile').then(m => ({ default: m.CustomerProfile })));
+const CustomerOrdersPage = lazy(() => import('./pages/CustomerOrdersPage').then(m => ({ default: m.CustomerOrdersPage })));
+// ...
 const OfflinePage = lazy(() => import('./pages/Offline').then(m => ({ default: m.OfflinePage })));
 
 function App() {
@@ -56,7 +58,7 @@ function App() {
           <Route path="/orders" element={
             <ProtectedRoute>
               <CustomerLayout>
-                <OrdersPage />
+                <CustomerOrdersPage />
               </CustomerLayout>
             </ProtectedRoute>
           } />
