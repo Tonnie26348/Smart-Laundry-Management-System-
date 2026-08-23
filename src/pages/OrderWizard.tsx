@@ -21,16 +21,15 @@ export const OrderWizard = () => {
       if (!user) return;
 
       // Select * to see what columns exist
-      const { data: customer, error } = await (supabase
+      const { data, error } = await (supabase
         .from('customers')
         .select('*')
-        .limit(1)
-        .single() as any);
+        .limit(1) as any);
 
-      console.log('Customer Data structure:', customer);
-      console.error('Customer Fetch Error:', error);
-
-      if (customer) setCustomerId(customer.id);
+      console.log('Customer Data:', data);
+      console.log('Customer Fetch Error JSON:', JSON.stringify(error, null, 2));
+        
+      if (data && data.length > 0) setCustomerId(data[0].id);
     };
     fetchCustomerId();
   }, []);
