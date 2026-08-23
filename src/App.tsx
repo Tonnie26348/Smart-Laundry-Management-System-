@@ -53,10 +53,45 @@ function App() {
               </CustomerLayout>
             </ProtectedRoute>
           } />
+          <Route path="/orders" element={
+            <ProtectedRoute>
+              <CustomerLayout>
+                <OrdersPage />
+              </CustomerLayout>
+            </ProtectedRoute>
+          } />
           <Route path="/orders/new" element={
             <ProtectedRoute>
               <CustomerLayout>
                 <OrderWizard />
+              </CustomerLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/payments" element={
+            <ProtectedRoute>
+              <CustomerLayout>
+                <PaymentsPage />
+              </CustomerLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/notifications" element={
+            <ProtectedRoute>
+              <CustomerLayout>
+                <NotificationsPage />
+              </CustomerLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/loyalty" element={
+            <ProtectedRoute>
+              <CustomerLayout>
+                <LoyaltyPage />
+              </CustomerLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/reviews" element={
+            <ProtectedRoute>
+              <CustomerLayout>
+                <ReviewsPage />
               </CustomerLayout>
             </ProtectedRoute>
           } />

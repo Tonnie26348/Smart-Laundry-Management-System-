@@ -17,9 +17,13 @@ export const CustomerLayout = ({ children }: { children: ReactNode }) => {
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="text-xl font-bold text-primary-600">Smart Laundry</div>
           <div className="flex items-center gap-4">
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+            <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-gray-600 flex-wrap">
               <a href="/dashboard" className="hover:text-primary-600">Dashboard</a>
-              <a href="/orders/new" className="hover:text-primary-600">New Order</a>
+              <a href="/orders" className="hover:text-primary-600">Orders</a>
+              <a href="/payments" className="hover:text-primary-600">Payments</a>
+              <a href="/notifications" className="hover:text-primary-600">Notifications</a>
+              <a href="/loyalty" className="hover:text-primary-600">Loyalty</a>
+              <a href="/reviews" className="hover:text-primary-600">Reviews</a>
               <a href="/profile" className="hover:text-primary-600">Profile</a>
             </nav>
             <Button variant="ghost" size="sm" onClick={handleLogout}>Logout</Button>
