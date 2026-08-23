@@ -4,12 +4,10 @@ import { Database } from './database.types';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-console.log("Supabase Initialization:", {
-  urlPresent: !!supabaseUrl,
-  keyPresent: !!supabaseAnonKey,
-  urlLength: supabaseUrl?.length,
-  keyLength: supabaseAnonKey?.length
-});
+console.log("Supabase Initialization - URL Present:", !!supabaseUrl);
+console.log("Supabase Initialization - Key Present:", !!supabaseAnonKey);
+console.log("Supabase Initialization - URL Length:", supabaseUrl?.length);
+console.log("Supabase Initialization - Key Length:", supabaseAnonKey?.length);
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables');
