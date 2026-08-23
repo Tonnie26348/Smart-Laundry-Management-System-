@@ -78,10 +78,10 @@ export const DeliveryStaffDashboard = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-700">Assigned Deliveries</h3>
+            <h3 className="text-lg font-semibold text-gray-700">Assigned Deliveries ({deliveries.length})</h3>
             {deliveries.length === 0 ? (
               <Card className="p-8 text-center text-gray-500">
-                No deliveries assigned to you yet.
+                No deliveries found. Please ensure you are logged in as delivery staff and have assigned deliveries.
               </Card>
             ) : (
               deliveries.map(delivery => (
