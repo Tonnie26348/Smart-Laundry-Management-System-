@@ -8,25 +8,34 @@ import { Button } from '@/components/ui/Button';
 export const DeliveryStaffDashboard = () => {
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [debugLog, setDebugLog] = useState<string>('');
+
+  const appendDebug = (msg: string) => {
+    setDebugLog(prev => prev + `\n[${new Date().toLocaleTimeString()}] ${msg}`);
+  };
 
   const fetchAssignedDeliveries = async () => {
-    if (loading) return; // Prevent multiple simultaneous fetches
     setLoading(true);
-    console.log('Fetching assigned deliveries...');
+    appendDebug('Initiating fetchAssignedDeliveries...');
     
     try {
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         if (userError) {
-            console.error('Error getting user:', userError);
+            appendDebug(`Error getting user: ${userError.message}`);
             throw userError;
         }
         if (!user) {
-            console.warn('No user logged in');
+            appendDebug('No user logged in according to supabase.auth.getUser()');
+            setUserId(null);
             setLoading(false);
             return;
         }
 
-        console.log('Fetching deliveries for user ID:', user.id);
+        setUserId(user.id);
+        appendDebug(`Logged in user ID: ${user.id}`);
+
+        appendDebug('Querying "deliveries" table...');
         const { data, error } = await supabase
           .from('deliveries')
           .select('*, orders(order_number)')
@@ -34,15 +43,16 @@ export const DeliveryStaffDashboard = () => {
           .order('created_at', { ascending: false });
           
         if (error) {
-            console.error('Error fetching deliveries:', error);
+            appendDebug(`Database Query Error: ${error.message}`);
             throw error;
         } else {
-            console.log('Fetched deliveries successfully:', data);
+            appendDebug(`Query successful. Found ${data?.length || 0} matching rows.`);
             setDeliveries(data || []);
         }
     } catch (err) {
-        console.error('Caught error in fetchAssignedDeliveries:', err);
-        alert('Failed to refresh deliveries: ' + (err instanceof Error ? err.message : 'Unknown error'));
+        const errMsg = err instanceof Error ? err.message : 'Unknown error';
+        appendDebug(`Caught exception: ${errMsg}`);
+        alert('Failed to refresh deliveries: ' + errMsg);
     } finally {
         setLoading(false);
     }
@@ -82,6 +92,33 @@ export const DeliveryStaffDashboard = () => {
           <h2 className="text-2xl font-bold text-gray-900">Delivery Staff</h2>
           <Button onClick={fetchAssignedDeliveries} variant="outline" size="sm">Refresh</Button>
         </div>
+
+        {/* Visual Debug Panel */}
+        <Card className="p-4 bg-gray-900 text-gray-100 font-mono text-xs space-y-2">
+          <div className="flex justify-between items-center border-b border-gray-700 pb-2">
+            <span className="font-bold text-yellow-400">🔍 Visual Debug Panel</span>
+            <Button 
+              size="xs" 
+              variant="outline" 
+              className="text-white border-gray-600 hover:bg-gray-800"
+              onClick={() => setDebugLog(`[${new Date().toLocaleTimeString()}] Log cleared.`)}
+            >
+              Clear Logs
+            </Button>
+          </div>
+          <div>
+            <span className="text-gray-400">User ID:</span> {userId || 'No user logged in'}
+          </div>
+          <div>
+            <span className="text-gray-400">Supabase Endpoint:</span> {import.meta.env.VITE_SUPABASE_URL || 'Not specified'}
+          </div>
+          <div className="space-y-1">
+            <span className="text-gray-400">Execution Logs:</span>
+            <pre className="p-2 bg-black rounded overflow-x-auto max-h-40 overflow-y-auto whitespace-pre-wrap">
+              {debugLog || 'No logs generated yet. Click Refresh to test.'}
+            </pre>
+          </div>
+        </Card>
         
         {loading ? (
           <div className="flex justify-center p-12">
