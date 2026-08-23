@@ -15,37 +15,40 @@ export const OrderWizard = () => {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
+useEffect(() => {
+  const fetchCustomerId = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
-  useEffect(() => {
-    const fetchCustomerId = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      
-      const { data, error } = await (supabase
-        .from('customers')
-        .select('*')
-        .limit(1) as any);
-        
-      if (error) {
-        console.error('Error fetching customers:', JSON.stringify(error, null, 2));
-        return;
-      }
-        
-      if (data && data.length > 0) {
-        console.log('Customer record columns:', Object.keys(data[0]));
-        const customer = data.find((c: any) => 
-            Object.values(c).includes(user.id)
-        );
-        if (customer) {
-            setCustomerId(customer.id);
-        }
-      } else {
-        setCustomerId(null);
-      }
-    };
-    fetchCustomerId();
-  }, []);
+    // Try profile_id first (based on previous observations)
+    const { data, error } = await (supabase
+      .from('customers')
+      .select('id')
+      .eq('profile_id', user.id) as any);
 
+    if (error) {
+      setErrorMsg(`Debug: profile_id failed: ${error.message}`);
+      console.error('Debug: profile_id failed:', error);
+    } else if (data && data.length > 0) {
+      setCustomerId(data[0].id);
+      return;
+    }
+
+    // Try user_id if profile_id failed
+    const { data: data2, error: error2 } = await (supabase
+      .from('customers')
+      .select('id')
+      .eq('user_id', user.id) as any);
+
+    if (error2) {
+      setErrorMsg(prev => prev + ` | Debug: user_id failed: ${error2.message}`);
+      console.error('Debug: user_id failed:', error2);
+    } else if (data2 && data2.length > 0) {
+      setCustomerId(data2[0].id);
+    }
+  };
+  fetchCustomerId();
+}, []);
   const handleSubmit = async () => {
     if (!customerId) return;
     setSubmitting(true);
