@@ -44,7 +44,7 @@ export const DeliveryStaffDashboard = () => {
   const updateDeliveryStatus = async (id: string, status: string) => {
     const { error } = await supabase
       .from('deliveries')
-      .update({ status } as any)
+      .update({ status })
       .eq('id', id);
 
     if (error) {
