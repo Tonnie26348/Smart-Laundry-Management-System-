@@ -36,7 +36,7 @@ const ServiceList = lazy(() => import('./components/ServiceList').then(m => ({ d
 const CustomerProfile = lazy(() => import('./components/CustomerProfile').then(m => ({ default: m.CustomerProfile })));
 const CustomerOrdersPage = lazy(() => import('./pages/CustomerOrdersPage').then(m => ({ default: m.CustomerOrdersPage })));
 const CustomerPaymentsPage = lazy(() => import('./pages/CustomerPaymentsPage').then(m => ({ default: m.CustomerPaymentsPage })));
-// ...
+const CustomerNotificationsPage = lazy(() => import('./pages/CustomerNotificationsPage').then(m => ({ default: m.CustomerNotificationsPage })));
 const OfflinePage = lazy(() => import('./pages/Offline').then(m => ({ default: m.OfflinePage })));
 
 function App() {
