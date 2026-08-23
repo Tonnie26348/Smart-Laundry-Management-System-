@@ -5,11 +5,12 @@ import { authService } from '@/services/authService';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
-
 export const RegisterForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export const RegisterForm = () => {
     setLoading(true);
     setError(null);
     try {
-      await authService.register(email, password, fullName);
+      await authService.register(email, password, fullName, phone, address);
       alert('Registration successful! Please check your email for verification.');
       navigate('/login');
     } catch (err: any) {
@@ -43,6 +44,22 @@ export const RegisterForm = () => {
             placeholder="John Doe"
           />
           <Input
+            label="Phone Number"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+            placeholder="0712345678"
+          />
+          <Input
+            label="Address"
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            required
+            placeholder="123 Main St"
+          />
+          <Input
             label="Email Address"
             type="email"
             value={email}
@@ -63,10 +80,11 @@ export const RegisterForm = () => {
             {loading ? 'Creating account...' : 'Sign Up'}
           </Button>
         </form>
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Already have an account?{' '}
-          <a href="/login" className="text-primary-600 font-medium hover:underline">
-            Login
+        {/* ... */}
+      </Card>
+    </div>
+  );
+};
           </a>
         </p>
       </Card>

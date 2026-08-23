@@ -1,13 +1,15 @@
 import { supabase } from '../lib/supabase';
 
 export const authService = {
-  async register(email: string, password: string, fullName: string, role: string = 'customer') {
+  async register(email: string, password: string, fullName: string, phone: string, address: string, role: string = 'customer') {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: fullName,
+          phone: phone,
+          address: address,
           role: role
         }
       }
