@@ -20,31 +20,21 @@ useEffect(() => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // Try profile_id first (based on previous observations)
+    // Query information_schema to find columns for 'customers'
     const { data, error } = await (supabase
-      .from('customers')
-      .select('id')
-      .eq('profile_id', user.id) as any);
+      .from('information_schema.columns' as any)
+      .select('column_name')
+      .eq('table_name', 'customers') as any);
 
     if (error) {
-      setErrorMsg(`Debug: profile_id failed: ${error.message}`);
-      console.error('Debug: profile_id failed:', error);
-    } else if (data && data.length > 0) {
-      setCustomerId(data[0].id);
+      setErrorMsg(`Schema Query Error: ${error.message}`);
       return;
     }
 
-    // Try user_id if profile_id failed
-    const { data: data2, error: error2 } = await (supabase
-      .from('customers')
-      .select('id')
-      .eq('user_id', user.id) as any);
-
-    if (error2) {
-      setErrorMsg(prev => prev + ` | Debug: user_id failed: ${error2.message}`);
-      console.error('Debug: user_id failed:', error2);
-    } else if (data2 && data2.length > 0) {
-      setCustomerId(data2[0].id);
+    if (data) {
+      const columns = data.map((c: any) => c.column_name);
+      setErrorMsg(`Columns found: ${columns.join(', ')}`);
+      console.log('Customers table columns:', columns);
     }
   };
   fetchCustomerId();
