@@ -19,13 +19,17 @@ export const OrderWizard = () => {
     const fetchCustomerId = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      
-      const { data: customer } = await (supabase
+
+      // Select * to see what columns exist
+      const { data: customer, error } = await (supabase
         .from('customers')
-        .select('id')
-        .eq('user_id', user.id)
+        .select('*')
+        .limit(1)
         .single() as any);
-        
+
+      console.log('Customer Data structure:', customer);
+      console.error('Customer Fetch Error:', error);
+
       if (customer) setCustomerId(customer.id);
     };
     fetchCustomerId();
