@@ -35,19 +35,46 @@ export const OrderWizard = () => {
     if (!customerId) return;
     setSubmitting(true);
     
-    const { error } = await (supabase.from('orders') as any).insert({
-      customer_id: customerId,
-      status: 'pending',
-      total_amount: 1200,
-      order_number: `ORD-${Date.now().toString().slice(-4)}`
-    });
+    // 1. Insert order
+    const { data: order, error: orderError } = await (supabase.from('orders') as any)
+      .insert({
+        customer_id: customerId,
+        status: 'pending',
+        total_amount: 1200,
+        order_number: `ORD-${Date.now().toString().slice(-4)}`
+      })
+      .select('id')
+      .single();
 
-    if (error) {
-      console.error('Error creating order:', error);
+    if (orderError) {
+      console.error('Error creating order:', orderError);
       alert('Failed to submit order.');
+      setSubmitting(false);
+      return;
+    }
+
+    // 2. Insert delivery records
+    const { error: deliveryError } = await (supabase.from('deliveries') as any).insert([
+        {
+            order_id: order.id,
+            delivery_type: 'pickup',
+            address: formData.pickup_address,
+            status: 'pending'
+        },
+        {
+            order_id: order.id,
+            delivery_type: 'delivery',
+            address: formData.delivery_address,
+            status: 'pending'
+        }
+    ]);
+
+    if (deliveryError) {
+        console.error('Error creating delivery records:', deliveryError);
+        alert('Order created, but failed to schedule pickup/delivery.');
     } else {
-      alert('Order submitted successfully!');
-      navigate('/dashboard');
+        alert('Order submitted successfully!');
+        navigate('/dashboard');
     }
     setSubmitting(false);
   };
