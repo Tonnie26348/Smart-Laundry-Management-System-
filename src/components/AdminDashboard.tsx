@@ -15,7 +15,7 @@ export const AdminDashboard = () => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle();
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle() as any;
         setRole(profile?.role || null);
         
         if (profile?.role === 'administrator') {
