@@ -20,16 +20,28 @@ export const OrderWizard = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       
+      // Fetch a sample record to inspect column names
       const { data, error } = await (supabase
         .from('customers')
-        .select('id')
-        .eq('user_id', user.id)
-        .single() as any);
+        .select('*')
+        .limit(1) as any);
         
-      if (data) {
-        setCustomerId(data.id);
+      if (error) {
+        console.error('Error fetching customers:', error);
+        return;
+      }
+        
+      if (data && data.length > 0) {
+        console.log('Customer record keys:', Object.keys(data[0]));
+        // Try to find the user ID based on the logged in user ID
+        const customer = data.find((c: any) => 
+            Object.values(c).includes(user.id)
+        );
+        if (customer) {
+            setCustomerId(customer.id);
+        }
       } else {
-        console.error('Error fetching customer ID:', error);
+        setCustomerId(null);
       }
     };
     fetchCustomerId();
