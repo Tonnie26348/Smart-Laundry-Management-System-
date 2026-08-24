@@ -16,8 +16,11 @@ export const CustomerProfile = () => {
       
       // Fetch profile (for name) and customer (for phone/address)
       const { data: profileData } = await (supabase.from('profiles').select('full_name').eq('id', user.id).single() as any);
-      const { data: customerData } = await (supabase.from('customers').select('*').eq('profile_id', user.id).single() as any);
+      const { data: customerData, error: customerError } = await (supabase.from('customers').select('*').eq('profile_id', user.id).single() as any);
       
+      console.log('Customer Data:', customerData);
+      console.log('Customer Error:', customerError);
+
       setProfile({
           name: profileData?.full_name,
           phone: customerData?.phone,
