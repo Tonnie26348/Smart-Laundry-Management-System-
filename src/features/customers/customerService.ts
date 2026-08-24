@@ -21,7 +21,7 @@ export const customerService = {
     console.log('Updating customer profile:', { id, data });
     const { error } = await (supabase.from('customers') as any).update(data).eq('id', id);
     if (error) {
-        console.error('Supabase update error:', error);
+        console.error('Supabase update error (full):', JSON.stringify(error, null, 2));
         throw error;
     }
   }
