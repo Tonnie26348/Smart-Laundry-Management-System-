@@ -21,11 +21,10 @@ export const LoginForm = () => {
     try {
       const authResponse = await authService.login(email, password);
       
-      const { data: profile, error: profileError } = await supabase
+      const { data: profiles, error: profileError } = await (supabase
         .from('profiles')
         .select('role')
-        .eq('id', authResponse.user.id)
-        .single<{ role: string }>();
+        .eq('id', authResponse.user.id) as any);
 
       if (profileError) {
         setError('Error fetching profile: ' + profileError.message);
@@ -33,8 +32,10 @@ export const LoginForm = () => {
         return;
       }
 
+      const profile = profiles && profiles.length > 0 ? profiles[0] : null;
+
       if (!profile) {
-        setError('Profile not found.');
+        setError('Profile not found. Please contact support.');
         setLoading(false);
         return;
       }
