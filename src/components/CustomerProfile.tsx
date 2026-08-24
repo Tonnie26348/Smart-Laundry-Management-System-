@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 
 export const CustomerProfile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -35,7 +38,10 @@ export const CustomerProfile = () => {
 
   return (
     <Card className="p-6">
-      <h2 className="text-xl font-bold mb-4">My Profile</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">My Profile</h2>
+        <Button onClick={() => navigate('/profile/edit')}>Edit Profile</Button>
+      </div>
       <p className="mb-2"><strong>Name:</strong> {profile.name}</p>
       <p className="mb-2"><strong>Phone:</strong> {profile.phone}</p>
       <p className="mb-2"><strong>Address:</strong> {profile.address}</p>

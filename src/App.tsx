@@ -9,6 +9,7 @@ import { LoginForm } from './features/auth/components/LoginForm';
 import { RegisterForm } from './features/auth/components/RegisterForm';
 import { CustomerLayout } from './layouts/CustomerLayout';
 
+const EditProfilePage = lazy(() => import('./pages/EditProfilePage').then(m => ({ default: m.EditProfilePage })));
 const AdminDashboard = lazy(() => import('./components/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const CustomersPage = lazy(() => import('./pages/admin/CustomersPage').then(m => ({ default: m.CustomersPage })));
 const OrdersPage = lazy(() => import('./pages/admin/OrdersPage').then(m => ({ default: m.OrdersPage })));
@@ -105,6 +106,13 @@ function App() {
             <ProtectedRoute>
               <CustomerLayout>
                 <CustomerProfile />
+              </CustomerLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/profile/edit" element={
+            <ProtectedRoute>
+              <CustomerLayout>
+                <EditProfilePage />
               </CustomerLayout>
             </ProtectedRoute>
           } />
