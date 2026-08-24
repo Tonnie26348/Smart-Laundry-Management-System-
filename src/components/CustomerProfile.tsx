@@ -19,6 +19,7 @@ export const CustomerProfile = () => {
       const { data: customerData, error: customerError } = await (supabase.from('customers').select('*').eq('profile_id', user.id).single() as any);
       
       console.log('Customer Data:', customerData);
+      console.log('Customer Data Keys:', customerData ? Object.keys(customerData) : 'null');
       console.log('Customer Error:', customerError);
 
       setProfile({
