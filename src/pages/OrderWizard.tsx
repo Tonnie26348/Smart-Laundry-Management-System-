@@ -16,26 +16,39 @@ export const OrderWizard = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
 useEffect(() => {
-  const fetchCustomerId = async () => {
+  const ensureCustomerRecord = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const { data, error } = await (supabase
-      .from('customers')
-      .select('id')
-      .eq('profile_id', user.id)
-      .single() as any);
-
-    if (error) {
-      console.error('Error fetching customer ID:', error);
-      return;
+    // 1. Try to fetch existing customer record using various column names
+    let customer = null;
+    for (const col of ['user_id', 'profile_id', 'id']) {
+        const { data } = await (supabase
+          .from('customers')
+          .select('id')
+          .eq(col, user.id) as any);
+        if (data && data.length > 0) {
+            customer = data[0];
+            break;
+        }
     }
 
-    if (data) {
-      setCustomerId(data.id);
+    // 2. If no record found, create it on the fly
+    if (!customer) {
+        const { data: newCustomer, error } = await (supabase.from('customers').insert({ 
+            user_id: user.id, // Falling back to user_id for creation
+            phone: '0000000000',
+            address: 'Not set'
+        }).select('id').single() as any);
+
+        if (!error) customer = newCustomer;
+    }
+
+    if (customer) {
+      setCustomerId(customer.id);
     }
   };
-  fetchCustomerId();
+  ensureCustomerRecord();
 }, []);
   const handleSubmit = async () => {
     if (!customerId) return;
