@@ -1,9 +1,31 @@
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 export const CustomerDashboard = () => {
   const navigate = useNavigate();
+  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLoyalty = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await (supabase
+          .from('customers')
+          .select('loyalty_points')
+          .eq('profile_id', user.id)
+          .single() as any);
+        if (data) {
+          setLoyaltyPoints(data.loyalty_points || 0);
+        }
+      }
+      setLoading(false);
+    };
+    fetchLoyalty();
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -25,9 +47,15 @@ export const CustomerDashboard = () => {
 
         <Card className="bg-primary-600 text-white">
           <h3 className="text-xl font-bold mb-2">Loyalty Points</h3>
-          <p className="text-3xl font-black">240</p>
-          <p className="text-sm text-primary-100 mt-2">KSh 60 discount available</p>
-          <Button variant="ghost" className="mt-4 text-white hover:bg-primary-700 p-0 h-auto">View History →</Button>
+          {loading ? (
+            <p className="text-3xl font-black">Loading...</p>
+          ) : (
+            <>
+              <p className="text-3xl font-black">{loyaltyPoints}</p>
+              <p className="text-sm text-primary-100 mt-2">KSh {Math.floor(loyaltyPoints / 10) * 10} discount available</p>
+            </>
+          )}
+          <Button variant="ghost" className="mt-4 text-white hover:bg-primary-700 p-0 h-auto" onClick={() => navigate('/loyalty')}>View History →</Button>
         </Card>
 
         <Card>
