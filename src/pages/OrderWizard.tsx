@@ -60,7 +60,7 @@ export const OrderWizard = () => {
     // Call atomic RPC
     const { data: result, error: rpcError } = await (supabase.rpc as any)('submit_order_atomic', {
         p_customer_id: customerId,
-        p_items: JSON.stringify(cart.map(i => ({ laundry_item_id: i.laundry_item_id, service_id: i.service_id, quantity: i.quantity }))),
+        p_items: cart.map(i => ({ laundry_item_id: i.laundry_item_id, service_id: i.service_id, quantity: i.quantity })),
         p_pickup_address_data: { 
             address_line1: formData.pickup_address, 
             city: formData.pickup_city 
