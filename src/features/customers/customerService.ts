@@ -18,7 +18,11 @@ export const customerService = {
     return data;
   },
   async updateProfile(id: string, data: Partial<Customer>) {
+    console.log('Updating customer profile:', { id, data });
     const { error } = await (supabase.from('customers') as any).update(data).eq('id', id);
-    if (error) throw error;
+    if (error) {
+        console.error('Supabase update error:', error);
+        throw error;
+    }
   }
 };
