@@ -1,22 +1,24 @@
 import { useState, useEffect } from 'react';
 import { AdminLayout } from '@/layouts/AdminLayout';
-import { catalogService, Service, ServiceCategory } from '@/features/catalog/catalogService';
+import { catalogService, LaundryItem, ItemCategory } from '@/features/catalog/catalogService';
 import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
-export const ServicesPage = () => {
-  const [services, setServices] = useState<Service[]>([]);
-  const [categories, setCategories] = useState<ServiceCategory[]>([]);
+export const ItemsPage = () => {
+  const [items, setItems] = useState<LaundryItem[]>([]);
+  const [categories, setCategories] = useState<ItemCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [servicesData, categoriesData] = await Promise.all([
-          catalogService.getServices(false),
-          catalogService.getServiceCategories()
+        const [itemsData, categoriesData] = await Promise.all([
+          catalogService.getLaundryItems(false), // Fetch all
+          catalogService.getItemCategories()
         ]);
-        setServices(servicesData);
+        setItems(itemsData);
         setCategories(categoriesData);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -30,7 +32,7 @@ export const ServicesPage = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Services</h1>
+        <h1 className="text-2xl font-bold">Laundry Items</h1>
         {loading ? <div>Loading...</div> : (
           <Card className="p-6">
             <table className="min-w-full">
@@ -38,17 +40,15 @@ export const ServicesPage = () => {
                 <tr className="border-b">
                   <th className="text-left p-2">Name</th>
                   <th className="text-left p-2">Category</th>
-                  <th className="text-left p-2">Base Price</th>
                   <th className="text-left p-2">Active</th>
                 </tr>
               </thead>
               <tbody>
-                {services.map(service => (
-                  <tr key={service.id} className="border-b">
-                    <td className="p-2">{service.name}</td>
-                    <td className="p-2">{categories.find(c => c.id === service.category_id)?.name}</td>
-                    <td className="p-2">KSh {service.base_price.toFixed(2)}</td>
-                    <td className="p-2">{service.is_active ? 'Yes' : 'No'}</td>
+                {items.map(item => (
+                  <tr key={item.id} className="border-b">
+                    <td className="p-2">{item.name}</td>
+                    <td className="p-2">{categories.find(c => c.id === item.category_id)?.name}</td>
+                    <td className="p-2">{item.is_active ? 'Yes' : 'No'}</td>
                   </tr>
                 ))}
               </tbody>
