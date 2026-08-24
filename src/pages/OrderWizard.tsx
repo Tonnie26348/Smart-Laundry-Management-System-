@@ -56,7 +56,7 @@ export const OrderWizard = () => {
     setErrorMsg(null);
     
     // Call atomic RPC
-    const { data: orderId, error: rpcError } = await (supabase.rpc('submit_order', {
+    const { data: orderId, error: rpcError } = await (supabase.rpc as any)('submit_order', {
         p_customer_id: customerId,
         p_items: JSON.stringify([{item_id: '00000000-0000-0000-0000-000000000000', quantity: 1, price: 1200}]), // Simplified for now
         p_pickup_address_line1: formData.pickup_address,
@@ -64,7 +64,7 @@ export const OrderWizard = () => {
         p_delivery_address_line1: formData.delivery_address,
         p_delivery_city: formData.delivery_city,
         p_total_amount: 1200
-    }) as any);
+    });
 
     if (rpcError) {
       console.error('SERVER ERROR (RPC SUBMISSION):', rpcError);
