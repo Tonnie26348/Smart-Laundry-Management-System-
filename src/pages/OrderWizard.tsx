@@ -3,14 +3,14 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import { catalogService, LaundryItem, Service } from '@/features/catalog/catalogService';
+import { catalogService, LaundryItem, LaundryItemServiceWithDetails } from '@/features/catalog/catalogService';
 
 export const OrderWizard = () => {
   const [step, setStep] = useState(1);
   const [customerId, setCustomerId] = useState<string | null>(null);
   const [laundryItems, setLaundryItems] = useState<LaundryItem[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
-  const [cart, setCart] = useState<{ laundry_item_id: string; service_id: string; quantity: number }[]>([]);
+  const [mappings, setMappings] = useState<LaundryItemServiceWithDetails[]>([]);
+  const [cart, setCart] = useState<{ laundry_item_id: string; service_id: string; quantity: number; finalPrice: number }[]>([]);
   
   const [formData, setFormData] = useState({
     pickup_address: '',
@@ -27,10 +27,10 @@ export const OrderWizard = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { setErrorMsg('Authentication required'); return; }
 
-      const [customerRes, itemsData, servicesData] = await Promise.all([
+      const [customerRes, itemsData, mappingsData] = await Promise.all([
         (supabase.from('customers').select('id').eq('profile_id', user.id).single() as any),
         catalogService.getLaundryItems(),
-        catalogService.getServices()
+        catalogService.getLaundryItemServices()
       ]);
 
       if (customerRes.error) {
@@ -41,7 +41,7 @@ export const OrderWizard = () => {
 
       setCustomerId(customerRes.data.id);
       setLaundryItems(itemsData);
-      setServices(servicesData);
+      setMappings(mappingsData.filter(m => m.is_active));
     };
     fetchData();
   }, []);
@@ -60,7 +60,7 @@ export const OrderWizard = () => {
     // Call atomic RPC
     const { data: result, error: rpcError } = await (supabase.rpc as any)('submit_order_atomic', {
         p_customer_id: customerId,
-        p_items: JSON.stringify(cart),
+        p_items: JSON.stringify(cart.map(i => ({ laundry_item_id: i.laundry_item_id, service_id: i.service_id, quantity: i.quantity }))),
         p_pickup_address_data: { 
             address_line1: formData.pickup_address, 
             city: formData.pickup_city 
@@ -101,15 +101,29 @@ export const OrderWizard = () => {
         
         {step === 1 && (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold">What are we cleaning?</h2>
-            {/* Simple selection UI for items */}
+            <h2 className="text-xl font-bold">Select Items & Services</h2>
             <select className="w-full p-2 border rounded" onChange={(e) => {
-                const item = JSON.parse(e.target.value);
-                setCart([...cart, { laundry_item_id: item.id, service_id: services[0]?.id || '', quantity: 1 }]);
+                const mapping = JSON.parse(e.target.value);
+                setCart([...cart, { 
+                    laundry_item_id: mapping.laundry_item_id, 
+                    service_id: mapping.service_id, 
+                    quantity: 1, 
+                    finalPrice: catalogService.calculateFinalPrice(mapping.services.base_price, mapping.price_adjustment) 
+                }]);
             }}>
-                <option value="">Select an Item</option>
-                {laundryItems.map(i => <option key={i.id} value={JSON.stringify(i)}>{i.name}</option>)}
+                <option value="">Select Item & Service</option>
+                {mappings.map(m => <option key={m.id} value={JSON.stringify(m)}>{m.laundry_items.name} - {m.services.name} (KSh {catalogService.calculateFinalPrice(m.services.base_price, m.price_adjustment).toFixed(2)})</option>)}
             </select>
+            
+            <div className="space-y-2">
+                {cart.map((c, idx) => (
+                    <div key={idx} className="flex justify-between p-2 bg-gray-50 rounded">
+                        <span>{laundryItems.find(i => i.id === c.laundry_item_id)?.name} - Service ID: {c.service_id}</span>
+                        <span>KSh {c.finalPrice.toFixed(2)}</span>
+                    </div>
+                ))}
+            </div>
+
             <Button className="w-full" onClick={() => setStep(2)}>Next: Delivery Details</Button>
           </div>
         )}
@@ -131,7 +145,12 @@ export const OrderWizard = () => {
         {step === 3 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold">Review Your Order</h2>
-            {/* Order Summary display */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+                <p>Items: {cart.length}</p>
+                <p>Total: KSh {cart.reduce((sum, item) => sum + item.finalPrice, 0).toFixed(2)}</p>
+                <p>Pickup: {formData.pickup_address}, {formData.pickup_city}</p>
+                <p>Delivery: {formData.delivery_address}, {formData.delivery_city}</p>
+            </div>
             <div className="flex gap-4">
               <Button variant="outline" className="flex-1" onClick={() => setStep(2)}>Back</Button>
               <Button className="flex-1" onClick={handleSubmit} disabled={submitting}>
