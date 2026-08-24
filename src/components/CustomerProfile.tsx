@@ -18,15 +18,12 @@ export const CustomerProfile = () => {
       const { data: profileData } = await (supabase.from('profiles').select('*').eq('id', user.id).single() as any);
       const { data: customerData } = await (supabase.from('customers').select('*').eq('profile_id', user.id).single() as any);
       
-      console.log('Profile Data:', profileData);
-      console.log('Customer Data:', customerData);
-
       setProfile({
           name: profileData?.full_name,
-          // Try checking phone in both places
-          phone: profileData?.phone || customerData?.phone || customerData?.contact_phone || 'N/A',
-          address: customerData?.address,
-          loyalty_points: customerData?.loyalty_points
+          // Phone is in profiles, fallback to customer if needed, then default to 'Not Set'
+          phone: profileData?.phone || customerData?.phone || 'Not Set',
+          address: customerData?.address || 'Not Set',
+          loyalty_points: customerData?.loyalty_points ?? 0
       });
       setLoading(false);
     };
