@@ -24,9 +24,15 @@ export const OrdersPage = () => {
   }, []);
 
   const updateStatus = async (id: string, newStatus: string) => {
+    console.log('Updating status for order:', id, 'to:', newStatus);
     const { error } = await (supabase.from('orders') as any).update({ status: newStatus }).eq('id', id);
-    if (error) alert('Failed to update status');
-    else fetchOrders();
+    if (error) {
+      console.error('Failed to update status:', error);
+      alert('Failed to update status: ' + error.message);
+    } else {
+      console.log('Status updated successfully');
+      fetchOrders();
+    }
   };
 
   return (
