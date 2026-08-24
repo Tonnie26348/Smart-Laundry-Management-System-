@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { CustomerLayout } from '@/layouts/CustomerLayout';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Card } from '@/components/ui/Card';
@@ -36,16 +35,14 @@ export const CustomerLoyaltyPage = () => {
   }, []);
 
   return (
-    <CustomerLayout>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">My Loyalty Points</h1>
-        {loading ? <LoadingSpinner /> : (
-          <Card className="p-8 text-center">
-            <p className="text-gray-500 mb-2">Total Points</p>
-            <p className="text-5xl font-extrabold text-primary-600">{loyalty?.loyalty_points || 0}</p>
-          </Card>
-        )}
-      </div>
-    </CustomerLayout>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">My Loyalty Points</h1>
+      {loading ? <LoadingSpinner /> : (
+        <Card className="p-8 text-center">
+          <p className="text-gray-500 mb-2">Total Points</p>
+          <p className="text-5xl font-extrabold text-primary-600">{loyalty?.loyalty_points || 0}</p>
+        </Card>
+      )}
+    </div>
   );
 };

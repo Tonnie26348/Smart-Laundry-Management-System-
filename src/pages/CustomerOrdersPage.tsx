@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { CustomerLayout } from '@/layouts/CustomerLayout';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Card } from '@/components/ui/Card';
@@ -45,27 +44,25 @@ export const CustomerOrdersPage = () => {
   }, []);
 
   return (
-    <CustomerLayout>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">My Orders</h1>
-        {loading ? <LoadingSpinner /> : (
-          <div className="space-y-4">
-            {orders.length === 0 ? (
-                <Card className="p-8 text-center text-gray-500">No orders found.</Card>
-            ) : (
-                orders.map(o => (
-                    <Card key={o.id} className="p-4 flex justify-between items-center">
-                        <div>
-                            <p className="font-bold">Order #{o.order_number}</p>
-                            <p className="text-sm text-gray-500">Status: <span className="capitalize">{o.status}</span></p>
-                        </div>
-                        <p className="font-bold">KSh {o.total_amount}</p>
-                    </Card>
-                ))
-            )}
-          </div>
-        )}
-      </div>
-    </CustomerLayout>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">My Orders</h1>
+      {loading ? <LoadingSpinner /> : (
+        <div className="space-y-4">
+          {orders.length === 0 ? (
+              <Card className="p-8 text-center text-gray-500">No orders found.</Card>
+          ) : (
+              orders.map(o => (
+                  <Card key={o.id} className="p-4 flex justify-between items-center">
+                      <div>
+                          <p className="font-bold">Order #{o.order_number}</p>
+                          <p className="text-sm text-gray-500">Status: <span className="capitalize">{o.status}</span></p>
+                      </div>
+                      <p className="font-bold">KSh {o.total_amount}</p>
+                  </Card>
+              ))
+          )}
+        </div>
+      )}
+    </div>
   );
 };
