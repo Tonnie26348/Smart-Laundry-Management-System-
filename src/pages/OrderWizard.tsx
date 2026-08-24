@@ -66,16 +66,41 @@ export const OrderWizard = () => {
     }
 
     // 2. Insert delivery records
+    // Create address records first
+    const { data: pickupAddr, error: pickupAddrError } = await (supabase.from('delivery_addresses').insert([
+        {
+            customer_id: customerId,
+            address_line1: formData.pickup_address,
+            label: 'Pickup'
+        }
+    ]).select('id').single() as any);
+
+    const { data: deliveryAddr, error: deliveryAddrError } = await (supabase.from('delivery_addresses').insert([
+        {
+            customer_id: customerId,
+            address_line1: formData.delivery_address,
+            label: 'Delivery'
+        }
+    ]).select('id').single() as any);
+
+    if (pickupAddrError || deliveryAddrError) {
+        setErrorMsg('Failed to create delivery addresses.');
+        setSubmitting(false);
+        return;
+    }
+
     const { error: deliveryError } = await (supabase.from('deliveries') as any).insert([
         {
             order_id: order.id,
             delivery_type: 'pickup',
+            pickup_address_id: pickupAddr.id,
             pickup_address: formData.pickup_address,
             status: 'pending'
         },
         {
             order_id: order.id,
             delivery_type: 'delivery',
+            delivery_address_id: deliveryAddr.id,
             delivery_address: formData.delivery_address,
             status: 'pending'
         }
