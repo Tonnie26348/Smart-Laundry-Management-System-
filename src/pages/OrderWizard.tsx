@@ -16,39 +16,47 @@ export const OrderWizard = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
 useEffect(() => {
-  const ensureCustomerRecord = async () => {
+  const fetchCustomerId = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // 1. Try to fetch existing customer record using various column names
-    let customer = null;
-    for (const col of ['user_id', 'profile_id', 'id']) {
-        const { data } = await (supabase
-          .from('customers')
-          .select('id')
-          .eq(col, user.id) as any);
-        if (data && data.length > 0) {
-            customer = data[0];
-            break;
-        }
+    console.log('Fetching customers table structure...');
+
+    // Select * without filter to see what the columns are actually called
+    const { data, error } = await (supabase
+      .from('customers')
+      .select('*')
+      .limit(1) as any);
+
+    if (error) {
+      console.error('CRITICAL: Error fetching customers schema:', error);
+      setErrorMsg(`Schema Audit Error: ${error.message}`);
+      return;
     }
 
-    // 2. If no record found, create it on the fly
-    if (!customer) {
-        const { data: newCustomer, error } = await (supabase.from('customers') as any).insert({ 
-            user_id: user.id, // Falling back to user_id for creation
-            phone: '0000000000',
-            address: 'Not set'
-        }).select('id').single();
+    if (data && data.length > 0) {
+      const customerRecord = data[0];
+      const keys = Object.keys(customerRecord);
+      console.log('CRITICAL: Found customer record keys:', keys);
+      console.log('CRITICAL: Found customer record object:', customerRecord);
+      setErrorMsg(`Audit Success. Columns: ${keys.join(', ')}`);
 
-        if (!error) customer = newCustomer;
-    }
+      // Find the column that holds the user ID
+      const userColumn = keys.find(k => k.toLowerCase().includes('user') || k.toLowerCase().includes('profile') || k.toLowerCase().includes('auth'));
 
-    if (customer) {
-      setCustomerId(customer.id);
+      if (userColumn && customerRecord[userColumn] === user.id) {
+          setCustomerId(customerRecord.id);
+          console.log('Successfully matched customer with column:', userColumn);
+      } else {
+          console.error('CRITICAL: Could not match user ID', user.id, 'with any column:', userColumn, 'value:', customerRecord[userColumn]);
+          setErrorMsg(`Could not match user ID in column ${userColumn || 'none found'}`);
+      }
+    } else {
+      console.warn('CRITICAL: Customers table is empty or query returned no rows.');
+      setErrorMsg(`No customer records found to inspect.`);
     }
   };
-  ensureCustomerRecord();
+  fetchCustomerId();
 }, []);
   const handleSubmit = async () => {
     if (!customerId) return;
