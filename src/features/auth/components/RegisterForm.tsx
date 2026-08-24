@@ -17,6 +17,14 @@ export const RegisterForm = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!fullName.trim()) {
+        setError('Full name is required.');
+        return;
+    }
+    if (!phone.trim()) {
+        setError('Phone number is required.');
+        return;
+    }
     setLoading(true);
     setError(null);
     try {

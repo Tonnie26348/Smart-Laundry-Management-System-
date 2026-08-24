@@ -1,16 +1,16 @@
 import { supabase } from '../lib/supabase';
 
 export const authService = {
-  async register(email: string, password: string, fullName: string, phone: string, address: string, role: string = 'customer') {
+  async register(email: string, password: string, fullName: string, phone: string, address: string) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          full_name: fullName,
-          phone: phone,
-          address: address,
-          role: role
+          full_name: fullName.trim(),
+          phone: phone.trim(),
+          address: address.trim(),
+          role: 'customer' // Enforce customer role
         }
       }
     });
