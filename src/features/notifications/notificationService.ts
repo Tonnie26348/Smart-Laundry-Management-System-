@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 
 export interface Notification {
   id: string;
-  user_id: string;
+  profile_id: string;
   title: string;
   message: string;
   is_read: boolean;
@@ -11,11 +11,11 @@ export interface Notification {
 }
 
 export const notificationService = {
-  async getNotifications(userId: string) {
+  async getNotifications(profileId: string) {
     const { data, error } = await supabase
       .from('notifications')
       .select('*')
-      .eq('user_id', userId)
+      .eq('profile_id', profileId)
       .order('created_at', { ascending: false });
     if (error) throw error;
     return data as Notification[];

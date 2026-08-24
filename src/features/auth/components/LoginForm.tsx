@@ -42,10 +42,10 @@ export const LoginForm = () => {
 
       // Ensure customer record exists for customers
       if (profile.role === 'customer') {
-          const { data: existingCustomer } = await (supabase.from('customers').select('id').eq('user_id', authResponse.user.id) as any);
+          const { data: existingCustomer } = await (supabase.from('customers').select('id').eq('profile_id', authResponse.user.id) as any);
           if (!existingCustomer || existingCustomer.length === 0) {
               await (supabase.from('customers') as any).insert({ 
-                  user_id: authResponse.user.id, 
+                  profile_id: authResponse.user.id, 
                   phone: authResponse.user.user_metadata.phone || '0000000000',
                   address: authResponse.user.user_metadata.address || 'Not set'
               });

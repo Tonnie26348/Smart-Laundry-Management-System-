@@ -15,52 +15,32 @@ export const OrderWizard = () => {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
-useEffect(() => {
-  const fetchCustomerId = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
 
-    console.log('Fetching customers table structure...');
-
-    // Select * without filter to see what the columns are actually called
-    const { data, error } = await (supabase
-      .from('customers')
-      .select('*')
-      .limit(1) as any);
-
-    if (error) {
-      console.error('CRITICAL: Error fetching customers schema:', error);
-      setErrorMsg(`Schema Audit Error: ${error.message}`);
-      return;
-    }
-
-    if (data && data.length > 0) {
-      const customerRecord = data[0];
-      const keys = Object.keys(customerRecord);
-      console.log('CRITICAL: Found customer record keys:', keys);
-      console.log('CRITICAL: Found customer record object:', customerRecord);
-      setErrorMsg(`Audit Success. Columns: ${keys.join(', ')}`);
-
-      // Find the column that holds the user ID
-      const userColumn = keys.find(k => k.toLowerCase().includes('user') || k.toLowerCase().includes('profile') || k.toLowerCase().includes('auth'));
-
-      if (userColumn && typeof userColumn === 'string') {
-          const customer = data.find((c: any) => c[userColumn] === user.id);
-          if (customer) {
-              setCustomerId(customer.id);
-          } else {
-              setErrorMsg(`Columns found but no match for user ID ${user.id} in column ${userColumn}`);
-          }
-      } else {
-          setErrorMsg(`Could not find a user reference column in: ${keys.join(', ')}`);
+  useEffect(() => {
+    const fetchCustomerId = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setErrorMsg('Authentication required');
+        return;
       }
-    } else {
-      console.warn('CRITICAL: Customers table is empty or query returned no rows.');
-      setErrorMsg(`No customer records found to inspect.`);
-    }
-  };
-  fetchCustomerId();
-}, []);
+
+      const { data, error } = await (supabase
+        .from('customers')
+        .select('id')
+        .eq('profile_id', user.id)
+        .single() as any);
+
+      if (error) {
+        console.error('Error fetching customer record:', error);
+        setErrorMsg('Could not find customer record. Please contact support.');
+        return;
+      }
+
+      setCustomerId(data.id);
+    };
+    fetchCustomerId();
+  }, []);
+
   const handleSubmit = async () => {
     if (!customerId) return;
     setSubmitting(true);

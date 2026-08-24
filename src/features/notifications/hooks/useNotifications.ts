@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Notification, notificationService } from '../notificationService';
 
-export const useNotifications = (userId: string) => {
+export const useNotifications = (profileId: string) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      const data = await notificationService.getNotifications(userId);
+      const data = await notificationService.getNotifications(profileId);
       setNotifications(data);
     };
     fetchNotifications();
@@ -16,7 +16,7 @@ export const useNotifications = (userId: string) => {
       .channel('notification-updates')
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` },
+        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `profile_id=eq.${profileId}` },
         (payload) => {
           setNotifications((prev) => [payload.new as Notification, ...prev]);
         }
@@ -24,7 +24,7 @@ export const useNotifications = (userId: string) => {
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [userId]);
+  }, [profileId]);
 
   return notifications;
 };
