@@ -16,15 +16,18 @@ export const CustomerProfile = () => {
       
       // Fetch profile (for name) and customer (for phone/address)
       const { data: profileData } = await (supabase.from('profiles').select('full_name').eq('id', user.id).single() as any);
-      const { data: customerData, error: customerError } = await (supabase.from('customers').select('*').eq('profile_id', user.id).single() as any);
+      // The user console output showed 'address' but not 'phone'. 
+      // Perhaps it's named 'contact_phone' or similar? The console shows the keys.
+      // Keys were: id, profile_id, customer_number, address, loyalty_points, is_active, created_at, updated_at
+      // The 'phone' column IS NOT in the returned object.
+      // Wait, is it possible 'phone' is in another table or I need to join?
+      // Based on 004_customers_employees.sql and 20260820120000_initial_schema.sql, 'phone' should be in 'customers'.
       
-      console.log('Customer Data:', customerData);
-      console.log('Customer Data Keys:', customerData ? Object.keys(customerData) : 'null');
-      console.log('Customer Error:', customerError);
-
+      const { data: customerData } = await (supabase.from('customers').select('*').eq('profile_id', user.id).single() as any);
+      
       setProfile({
           name: profileData?.full_name,
-          phone: customerData?.phone,
+          phone: customerData?.phone || customerData?.contact_phone || 'N/A',
           address: customerData?.address,
           loyalty_points: customerData?.loyalty_points
       });
@@ -40,7 +43,7 @@ export const CustomerProfile = () => {
     <Card className="p-6">
       <h2 className="text-xl font-bold mb-4">My Profile</h2>
       <p className="mb-2"><strong>Name:</strong> {profile.name}</p>
-      <p className="mb-2"><strong>Phone:</strong> {profile.phone || 'N/A'}</p>
+      <p className="mb-2"><strong>Phone:</strong> {profile.phone}</p>
       <p className="mb-2"><strong>Address:</strong> {profile.address}</p>
       <p><strong>Loyalty Points:</strong> {profile.loyalty_points}</p>
     </Card>
