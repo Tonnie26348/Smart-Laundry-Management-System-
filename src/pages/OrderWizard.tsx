@@ -35,11 +35,11 @@ useEffect(() => {
 
     // 2. If no record found, create it on the fly
     if (!customer) {
-        const { data: newCustomer, error } = await (supabase.from('customers').insert({ 
+        const { data: newCustomer, error } = await (supabase.from('customers') as any).insert({ 
             user_id: user.id, // Falling back to user_id for creation
             phone: '0000000000',
             address: 'Not set'
-        }).select('id').single() as any);
+        }).select('id').single();
 
         if (!error) customer = newCustomer;
     }
