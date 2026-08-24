@@ -70,13 +70,13 @@ export const OrderWizard = () => {
         {
             order_id: order.id,
             delivery_type: 'pickup',
-            address: formData.pickup_address,
+            pickup_address: formData.pickup_address,
             status: 'pending'
         },
         {
             order_id: order.id,
             delivery_type: 'delivery',
-            address: formData.delivery_address,
+            delivery_address: formData.delivery_address,
             status: 'pending'
         }
     ]);
