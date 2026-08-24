@@ -8,7 +8,6 @@ export const CustomerDashboard = () => {
   const navigate = useNavigate();
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
   const [activeOrder, setActiveOrder] = useState<any>(null);
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,13 +17,12 @@ export const CustomerDashboard = () => {
         // Fetch customer record
         const { data: customer } = await (supabase
           .from('customers')
-          .select('id, loyalty_points, phone')
+          .select('id, loyalty_points')
           .eq('profile_id', user.id)
           .single() as any);
         
         if (customer) {
           setLoyaltyPoints(customer.loyalty_points || 0);
-          setPhoneNumber(customer.phone || '');
 
           // Fetch latest active order
           const { data: orders } = await supabase
@@ -50,10 +48,7 @@ export const CustomerDashboard = () => {
       {/* Welcome Header */}
       <div>
         <h1 className="text-3xl font-extrabold text-gray-900">Hello!</h1>
-        <p className="text-gray-500 mt-1">
-            Ready for fresh laundry today? 
-            {phoneNumber && <span className="ml-2 font-medium text-gray-700">| Contact: {phoneNumber}</span>}
-        </p>
+        <p className="text-gray-500 mt-1">Ready for fresh laundry today?</p>
       </div>
 
       {/* Quick Actions */}

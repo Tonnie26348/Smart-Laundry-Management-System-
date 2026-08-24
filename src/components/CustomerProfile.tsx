@@ -36,7 +36,7 @@ export const CustomerProfile = () => {
     <Card className="p-6">
       <h2 className="text-xl font-bold mb-4">My Profile</h2>
       <p className="mb-2"><strong>Name:</strong> {profile.name}</p>
-      <p className="mb-2"><strong>Phone:</strong> {profile.phone}</p>
+      <p className="mb-2"><strong>Phone:</strong> {profile.phone || 'N/A'}</p>
       <p className="mb-2"><strong>Address:</strong> {profile.address}</p>
       <p><strong>Loyalty Points:</strong> {profile.loyalty_points}</p>
     </Card>
