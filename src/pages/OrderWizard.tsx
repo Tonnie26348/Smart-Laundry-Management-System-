@@ -44,12 +44,15 @@ useEffect(() => {
       // Find the column that holds the user ID
       const userColumn = keys.find(k => k.toLowerCase().includes('user') || k.toLowerCase().includes('profile') || k.toLowerCase().includes('auth'));
 
-      if (userColumn && customerRecord[userColumn] === user.id) {
-          setCustomerId(customerRecord.id);
-          console.log('Successfully matched customer with column:', userColumn);
+      if (userColumn && typeof userColumn === 'string') {
+          const customer = data.find((c: any) => c[userColumn] === user.id);
+          if (customer) {
+              setCustomerId(customer.id);
+          } else {
+              setErrorMsg(`Columns found but no match for user ID ${user.id} in column ${userColumn}`);
+          }
       } else {
-          console.error('CRITICAL: Could not match user ID', user.id, 'with any column:', userColumn, 'value:', customerRecord[userColumn]);
-          setErrorMsg(`Could not match user ID in column ${userColumn || 'none found'}`);
+          setErrorMsg(`Could not find a user reference column in: ${keys.join(', ')}`);
       }
     } else {
       console.warn('CRITICAL: Customers table is empty or query returned no rows.');
