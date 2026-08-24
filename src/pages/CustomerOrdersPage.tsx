@@ -18,11 +18,11 @@ export const CustomerOrdersPage = () => {
     }
 
     // Fetch customer ID first
-    const { data: customer } = await supabase
+    const { data: customer } = await (supabase
       .from('customers')
       .select('id')
       .eq('profile_id', user.id)
-      .single();
+      .single() as PromiseLike<{ data: { id: string } | null, error: any }> | any);
 
     if (customer) {
         const { data, error } = await supabase
