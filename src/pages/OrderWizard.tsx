@@ -73,7 +73,7 @@ export const OrderWizard = () => {
             address_line1: formData.pickup_address,
             label: 'Pickup'
         }
-    ]).select('id').single() as any);
+    ] as any).select('id').single() as any);
 
     const { data: deliveryAddr, error: deliveryAddrError } = await (supabase.from('delivery_addresses').insert([
         {
@@ -81,7 +81,7 @@ export const OrderWizard = () => {
             address_line1: formData.delivery_address,
             label: 'Delivery'
         }
-    ]).select('id').single() as any);
+    ] as any).select('id').single() as any);
 
     if (pickupAddrError || deliveryAddrError) {
         setErrorMsg('Failed to create delivery addresses.');
