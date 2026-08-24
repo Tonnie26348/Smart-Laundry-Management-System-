@@ -18,7 +18,7 @@ export const CustomerPaymentsPage = () => {
     }
 
     // Fetch customer ID
-    const { data: customer } = await (supabase
+    const { data: customer } = await supabase
       .from('customers')
       .select('id')
       .eq('profile_id', user.id)
