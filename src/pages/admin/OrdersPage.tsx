@@ -29,7 +29,8 @@ export const OrdersPage = () => {
       console.error('Failed to update status:', error);
       alert('Failed to update status: ' + error.message);
     } else {
-      await fetchOrders();
+      // Update local state immediately to reflect change
+      setOrders(prev => prev.map(o => o.id === id ? { ...o, status: newStatus } : o));
     }
   };
 
