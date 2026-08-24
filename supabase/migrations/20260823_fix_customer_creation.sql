@@ -27,7 +27,7 @@ BEGIN
     VALUES (
       NEW.id, 
       NEW.raw_user_meta_data->>'full_name',
-      new_role::app_role
+      new_role::public.app_role
     );
 
     -- 3. Create customer record if role is customer
@@ -49,3 +49,9 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 3. Re-enable the trigger
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE handle_new_user();
