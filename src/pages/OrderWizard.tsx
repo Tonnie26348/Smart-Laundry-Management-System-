@@ -3,12 +3,16 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { catalogService, LaundryItem, Service } from '@/features/catalog/catalogService';
 
 export const OrderWizard = () => {
   const [step, setStep] = useState(1);
   const [customerId, setCustomerId] = useState<string | null>(null);
+  const [laundryItems, setLaundryItems] = useState<LaundryItem[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [cart, setCart] = useState<{ laundry_item_id: string; service_id: string; quantity: number }[]>([]);
+  
   const [formData, setFormData] = useState({
-    items: 'Wash & Fold',
     pickup_address: '',
     pickup_city: '',
     delivery_address: '',
@@ -19,51 +23,52 @@ export const OrderWizard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCustomerId = async () => {
+    const fetchData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setErrorMsg('Authentication required');
+      if (!user) { setErrorMsg('Authentication required'); return; }
+
+      const [customerRes, itemsData, servicesData] = await Promise.all([
+        (supabase.from('customers').select('id').eq('profile_id', user.id).single() as any),
+        catalogService.getLaundryItems(),
+        catalogService.getServices()
+      ]);
+
+      if (customerRes.error) {
+        console.error('Error fetching customer record:', customerRes.error);
+        setErrorMsg('Could not find customer record.');
         return;
       }
 
-      const { data, error } = await (supabase
-        .from('customers')
-        .select('id')
-        .eq('profile_id', user.id)
-        .single() as any);
-
-      if (error) {
-        console.error('Error fetching customer record:', error);
-        setErrorMsg('Could not find customer record. Please contact support.');
-        return;
-      }
-
-      setCustomerId(data.id);
+      setCustomerId(customerRes.data.id);
+      setLaundryItems(itemsData);
+      setServices(servicesData);
     };
-    fetchCustomerId();
+    fetchData();
   }, []);
 
   const handleSubmit = async () => {
     if (!customerId) return;
     
     // Validation
-    if (!formData.pickup_address.trim()) { setErrorMsg('Please enter pickup address.'); return; }
-    if (!formData.pickup_city.trim()) { setErrorMsg('Please enter pickup city.'); return; }
-    if (!formData.delivery_address.trim()) { setErrorMsg('Please enter delivery address.'); return; }
-    if (!formData.delivery_city.trim()) { setErrorMsg('Please enter delivery city.'); return; }
+    if (!formData.pickup_address.trim() || !formData.pickup_city.trim()) { setErrorMsg('Pickup address and city required.'); return; }
+    if (!formData.delivery_address.trim() || !formData.delivery_city.trim()) { setErrorMsg('Delivery address and city required.'); return; }
+    if (cart.length === 0) { setErrorMsg('Add at least one item to cart.'); return; }
 
     setSubmitting(true);
     setErrorMsg(null);
     
     // Call atomic RPC
-    const { data: orderId, error: rpcError } = await (supabase.rpc as any)('submit_order', {
+    const { data: result, error: rpcError } = await (supabase.rpc as any)('submit_order_atomic', {
         p_customer_id: customerId,
-        p_items: JSON.stringify([{item_id: '00000000-0000-0000-0000-000000000000', quantity: 1, price: 1200}]), // Simplified for now
-        p_pickup_address_line1: formData.pickup_address,
-        p_pickup_city: formData.pickup_city,
-        p_delivery_address_line1: formData.delivery_address,
-        p_delivery_city: formData.delivery_city,
-        p_total_amount: 1200
+        p_items: JSON.stringify(cart),
+        p_pickup_address_data: { 
+            address_line1: formData.pickup_address, 
+            city: formData.pickup_city 
+        },
+        p_delivery_address_data: { 
+            address_line1: formData.delivery_address, 
+            city: formData.delivery_city 
+        }
     });
 
     if (rpcError) {
@@ -73,7 +78,7 @@ export const OrderWizard = () => {
       return;
     }
 
-    alert('Order submitted successfully! Order ID: ' + orderId);
+    alert('Order submitted successfully! Order ID: ' + result.order_id);
     navigate('/dashboard');
     setSubmitting(false);
   };
@@ -91,19 +96,19 @@ export const OrderWizard = () => {
         ))}
       </div>
 
-      <Card>
-        {errorMsg && (
-          <div className="p-4 mb-4 bg-red-100 text-red-700 text-sm rounded">
-            <strong>Submission Failed:</strong> {errorMsg}
-          </div>
-        )}
+      <Card className="p-6">
+        {errorMsg && <div className="p-4 mb-4 bg-red-100 text-red-700 text-sm rounded">{errorMsg}</div>}
+        
         {step === 1 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold">What are we cleaning?</h2>
-            <select className="w-full p-2 border rounded" onChange={(e) => setFormData({...formData, items: e.target.value})}>
-                <option>Wash & Fold</option>
-                <option>Dry Clean</option>
-                <option>Ironing Only</option>
+            {/* Simple selection UI for items */}
+            <select className="w-full p-2 border rounded" onChange={(e) => {
+                const item = JSON.parse(e.target.value);
+                setCart([...cart, { laundry_item_id: item.id, service_id: services[0]?.id || '', quantity: 1 }]);
+            }}>
+                <option value="">Select an Item</option>
+                {laundryItems.map(i => <option key={i.id} value={JSON.stringify(i)}>{i.name}</option>)}
             </select>
             <Button className="w-full" onClick={() => setStep(2)}>Next: Delivery Details</Button>
           </div>
@@ -126,11 +131,7 @@ export const OrderWizard = () => {
         {step === 3 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold">Review Your Order</h2>
-            <div className="bg-gray-50 p-4 rounded-lg">
-                <p>Items: {formData.items}</p>
-                <p>Pickup: {formData.pickup_address}, {formData.pickup_city}</p>
-                <p>Delivery: {formData.delivery_address}, {formData.delivery_city}</p>
-            </div>
+            {/* Order Summary display */}
             <div className="flex gap-4">
               <Button variant="outline" className="flex-1" onClick={() => setStep(2)}>Back</Button>
               <Button className="flex-1" onClick={handleSubmit} disabled={submitting}>
