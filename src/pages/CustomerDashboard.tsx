@@ -7,24 +7,40 @@ import { supabase } from '@/lib/supabase';
 export const CustomerDashboard = () => {
   const navigate = useNavigate();
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+  const [activeOrder, setActiveOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLoyalty = async () => {
+    const fetchData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data } = await (supabase
+        // Fetch customer record
+        const { data: customer } = await (supabase
           .from('customers')
-          .select('loyalty_points')
+          .select('id, loyalty_points')
           .eq('profile_id', user.id)
           .single() as any);
-        if (data) {
-          setLoyaltyPoints(data.loyalty_points || 0);
+        
+        if (customer) {
+          setLoyaltyPoints(customer.loyalty_points || 0);
+
+          // Fetch latest active order
+          const { data: orders } = await supabase
+            .from('orders')
+            .select('*')
+            .eq('customer_id', customer.id)
+            .in('status', ['pending', 'pickup', 'washing', 'delivery'])
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+          if (orders && orders.length > 0) {
+            setActiveOrder(orders[0]);
+          }
         }
       }
       setLoading(false);
     };
-    fetchLoyalty();
+    fetchData();
   }, []);
 
   return (
@@ -60,15 +76,23 @@ export const CustomerDashboard = () => {
 
         <Card>
           <h3 className="text-xl font-bold mb-2">Active Order</h3>
-          <div className="flex items-center gap-3 text-primary-600">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-primary-600"></span>
-            </span>
-            <span className="font-bold">Washing</span>
-          </div>
-          <p className="text-sm text-gray-500 mt-2">Estimated delivery: Tomorrow, 10 AM</p>
-          <Button variant="outline" size="sm" className="mt-4 w-full" onClick={() => navigate('/orders/123')}>Track Order</Button>
+          {loading ? (
+            <p>Loading...</p>
+          ) : activeOrder ? (
+            <>
+              <div className="flex items-center gap-3 text-primary-600">
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-primary-600"></span>
+                </span>
+                <span className="font-bold capitalize">{activeOrder.status}</span>
+              </div>
+              <p className="text-sm text-gray-500 mt-2">Order #{activeOrder.order_number}</p>
+              <Button variant="outline" size="sm" className="mt-4 w-full" onClick={() => navigate(`/orders/${activeOrder.id}`)}>Track Order</Button>
+            </>
+          ) : (
+            <p className="text-sm text-gray-500">No active orders.</p>
+          )}
         </Card>
       </div>
 
