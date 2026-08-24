@@ -10,7 +10,9 @@ export const OrderWizard = () => {
   const [formData, setFormData] = useState({
     items: 'Wash & Fold',
     pickup_address: '',
+    pickup_city: '',
     delivery_address: '',
+    delivery_city: '',
   });
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -43,6 +45,13 @@ export const OrderWizard = () => {
 
   const handleSubmit = async () => {
     if (!customerId) return;
+    
+    // Validation
+    if (!formData.pickup_address.trim()) { setErrorMsg('Please enter pickup address.'); return; }
+    if (!formData.pickup_city.trim()) { setErrorMsg('Please enter pickup city.'); return; }
+    if (!formData.delivery_address.trim()) { setErrorMsg('Please enter delivery address.'); return; }
+    if (!formData.delivery_city.trim()) { setErrorMsg('Please enter delivery city.'); return; }
+
     setSubmitting(true);
     setErrorMsg(null);
     
@@ -71,6 +80,7 @@ export const OrderWizard = () => {
         {
             customer_id: customerId,
             address_line1: formData.pickup_address,
+            city: formData.pickup_city,
             label: 'Pickup'
         }
     ] as any).select('id').single() as any);
@@ -79,11 +89,13 @@ export const OrderWizard = () => {
         {
             customer_id: customerId,
             address_line1: formData.delivery_address,
+            city: formData.delivery_city,
             label: 'Delivery'
         }
     ] as any).select('id').single() as any);
 
     if (pickupAddrError || deliveryAddrError) {
+        console.error('PickupAddrError:', pickupAddrError, 'DeliveryAddrError:', deliveryAddrError);
         setErrorMsg('Failed to create delivery addresses.');
         setSubmitting(false);
         return;
@@ -151,7 +163,9 @@ export const OrderWizard = () => {
           <div className="space-y-4">
             <h2 className="text-xl font-bold">Where?</h2>
             <input placeholder="Pickup Address" className="w-full p-2 border rounded" onChange={(e) => setFormData({...formData, pickup_address: e.target.value})} />
+            <input placeholder="Pickup City" className="w-full p-2 border rounded" onChange={(e) => setFormData({...formData, pickup_city: e.target.value})} />
             <input placeholder="Delivery Address" className="w-full p-2 border rounded" onChange={(e) => setFormData({...formData, delivery_address: e.target.value})} />
+            <input placeholder="Delivery City" className="w-full p-2 border rounded" onChange={(e) => setFormData({...formData, delivery_city: e.target.value})} />
             <div className="flex gap-4">
               <Button variant="outline" className="flex-1" onClick={() => setStep(1)}>Back</Button>
               <Button className="flex-1" onClick={() => setStep(3)}>Next: Review</Button>
@@ -164,7 +178,8 @@ export const OrderWizard = () => {
             <h2 className="text-xl font-bold">Review Your Order</h2>
             <div className="bg-gray-50 p-4 rounded-lg">
                 <p>Items: {formData.items}</p>
-                <p>Pickup: {formData.pickup_address}</p>
+                <p>Pickup: {formData.pickup_address}, {formData.pickup_city}</p>
+                <p>Delivery: {formData.delivery_address}, {formData.delivery_city}</p>
             </div>
             <div className="flex gap-4">
               <Button variant="outline" className="flex-1" onClick={() => setStep(2)}>Back</Button>
