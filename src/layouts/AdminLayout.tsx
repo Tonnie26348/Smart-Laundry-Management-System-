@@ -47,6 +47,7 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
                 <a href="/admin/orders" className="hover:text-primary-600">Orders</a>
                 <a href="/admin/customers" className="hover:text-primary-600">Customers</a>
                 <a href="/admin/services" className="hover:text-primary-600">Services</a>
+                <a href="/admin/items" className="hover:text-primary-600">Items</a>
                 <a href="/admin/pricing" className="hover:text-primary-600">Pricing</a>
                 <a href="/admin/inventory" className="hover:text-primary-600">Inventory</a>
                 <a href="/admin/payments" className="hover:text-primary-600">Payments</a>
