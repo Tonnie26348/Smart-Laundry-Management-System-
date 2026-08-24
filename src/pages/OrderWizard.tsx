@@ -55,76 +55,26 @@ export const OrderWizard = () => {
     setSubmitting(true);
     setErrorMsg(null);
     
-    // 1. Insert order
-    const payload = {
-        customer_id: customerId,
-        status: 'pending',
-        total_amount: 1200
-    };
+    // Call atomic RPC
+    const { data: orderId, error: rpcError } = await (supabase.rpc('submit_order', {
+        p_customer_id: customerId,
+        p_items: JSON.stringify([{item_id: '00000000-0000-0000-0000-000000000000', quantity: 1, price: 1200}]), // Simplified for now
+        p_pickup_address_line1: formData.pickup_address,
+        p_pickup_city: formData.pickup_city,
+        p_delivery_address_line1: formData.delivery_address,
+        p_delivery_city: formData.delivery_city,
+        p_total_amount: 1200
+    }) as any);
 
-    const { data: order, error: orderError } = await (supabase.from('orders') as any)
-      .insert(payload)
-      .select('id')
-      .single();
-
-    if (orderError) {
-      console.error('SERVER ERROR (ORDER INSERT):', orderError);
-      setErrorMsg(`Order submission failed: ${orderError.message}`);
+    if (rpcError) {
+      console.error('SERVER ERROR (RPC SUBMISSION):', rpcError);
+      setErrorMsg(`Order submission failed: ${rpcError.message}`);
       setSubmitting(false);
       return;
     }
 
-    // 2. Insert delivery records
-    // Create address records first
-    const { data: pickupAddr, error: pickupAddrError } = await (supabase.from('delivery_addresses').insert([
-        {
-            customer_id: customerId,
-            address_line1: formData.pickup_address,
-            city: formData.pickup_city,
-            label: 'Pickup'
-        }
-    ] as any).select('id').single() as any);
-
-    const { data: deliveryAddr, error: deliveryAddrError } = await (supabase.from('delivery_addresses').insert([
-        {
-            customer_id: customerId,
-            address_line1: formData.delivery_address,
-            city: formData.delivery_city,
-            label: 'Delivery'
-        }
-    ] as any).select('id').single() as any);
-
-    if (pickupAddrError || deliveryAddrError) {
-        console.error('PickupAddrError:', pickupAddrError, 'DeliveryAddrError:', deliveryAddrError);
-        setErrorMsg('Failed to create delivery addresses.');
-        setSubmitting(false);
-        return;
-    }
-
-    const { error: deliveryError } = await (supabase.from('deliveries') as any).insert([
-        {
-            order_id: order.id,
-            delivery_type: 'pickup',
-            pickup_address_id: pickupAddr.id,
-            pickup_address: formData.pickup_address,
-            status: 'pending'
-        },
-        {
-            order_id: order.id,
-            delivery_type: 'delivery',
-            delivery_address_id: deliveryAddr.id,
-            delivery_address: formData.delivery_address,
-            status: 'pending'
-        }
-    ]);
-
-    if (deliveryError) {
-        console.error('SERVER ERROR (DELIVERY INSERT):', deliveryError);
-        setErrorMsg(`Delivery record creation failed: ${deliveryError.message}`);
-    } else {
-        alert('Order submitted successfully!');
-        navigate('/dashboard');
-    }
+    alert('Order submitted successfully! Order ID: ' + orderId);
+    navigate('/dashboard');
     setSubmitting(false);
   };
 
