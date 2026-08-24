@@ -14,20 +14,17 @@ export const CustomerProfile = () => {
           return;
       }
       
-      // Fetch profile (for name) and customer (for phone/address)
-      const { data: profileData } = await (supabase.from('profiles').select('full_name').eq('id', user.id).single() as any);
-      // The user console output showed 'address' but not 'phone'. 
-      // Perhaps it's named 'contact_phone' or similar? The console shows the keys.
-      // Keys were: id, profile_id, customer_number, address, loyalty_points, is_active, created_at, updated_at
-      // The 'phone' column IS NOT in the returned object.
-      // Wait, is it possible 'phone' is in another table or I need to join?
-      // Based on 004_customers_employees.sql and 20260820120000_initial_schema.sql, 'phone' should be in 'customers'.
-      
+      // Fetch profile and customer
+      const { data: profileData } = await (supabase.from('profiles').select('*').eq('id', user.id).single() as any);
       const { data: customerData } = await (supabase.from('customers').select('*').eq('profile_id', user.id).single() as any);
       
+      console.log('Profile Data:', profileData);
+      console.log('Customer Data:', customerData);
+
       setProfile({
           name: profileData?.full_name,
-          phone: customerData?.phone || customerData?.contact_phone || 'N/A',
+          // Try checking phone in both places
+          phone: profileData?.phone || customerData?.phone || customerData?.contact_phone || 'N/A',
           address: customerData?.address,
           loyalty_points: customerData?.loyalty_points
       });
