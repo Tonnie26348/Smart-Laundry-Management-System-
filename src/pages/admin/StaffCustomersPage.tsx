@@ -10,6 +10,8 @@ export const StaffCustomersPage = () => {
   const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchCustomers = async () => {
       setLoading(true);
