@@ -57,6 +57,10 @@ export const InventoryPage = () => {
     <AdminLayout>
       <div className="space-y-6">
         <h1 className="text-2xl font-bold">Inventory</h1>
+        {/* DEBUG BUTTON */}
+        <button className="bg-purple-600 text-white p-4 font-bold border-4 border-black" onClick={() => alert('Button works!')}>
+          TEST BUTTON
+        </button>
         {loading ? <LoadingSpinner /> : (
           <div className="bg-white shadow rounded-lg overflow-hidden">
             <table className="w-full table-fixed">
