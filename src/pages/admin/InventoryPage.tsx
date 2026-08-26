@@ -9,13 +9,12 @@ export const InventoryPage = () => {
   const [loading, setLoading] = useState(true);
 const fetchInventory = async () => {
   setLoading(true);
-  // Removed the supplier join to test if that is the cause of the empty result
-  const { data, error } = await supabase.from('inventory_items').select('*');
+  // Re-added supplier join
+  const { data, error } = await supabase.from('inventory_items').select('*, suppliers(name)');
   if (error) {
       console.error('Error fetching inventory:', error);
       alert('Supabase Fetch Error: ' + error.message);
   } else {
-      console.log('Fetched inventory data:', data);
       setInventory(data || []);
   }
   setLoading(false);
