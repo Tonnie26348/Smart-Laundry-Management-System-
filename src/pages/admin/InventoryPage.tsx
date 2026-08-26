@@ -77,6 +77,7 @@ export const InventoryPage = () => {
               </thead>
               <tbody>
                 {inventory.map(i => {
+                  console.log('Rendering item:', i.name, 'with buttons');
                   const isLowStock = Number(i.current_stock) <= Number(i.min_stock_level);
                   return (
                     <tr key={i.id} className={`border-t ${isLowStock ? 'bg-red-50' : ''}`}>
@@ -88,8 +89,8 @@ export const InventoryPage = () => {
                       <td className="p-4">{i.min_stock_level}</td>
                       <td className="p-4 truncate">{i.unit}</td>
                       <td className="p-4 truncate">{i.suppliers?.name || 'N/A'}</td>
-                      <td className="p-4">
-                        <div className="flex gap-2 border-2 border-blue-600 p-2 bg-yellow-100 rounded">
+                      <td className="p-4 border-2 border-green-500">
+                        <div className="flex gap-2 p-2 bg-yellow-100 rounded">
                             <button className="bg-blue-500 text-white p-2" onClick={() => handleStockChange(i.id, i.current_stock, true)}>Add</button>
                             <button className="bg-red-500 text-white p-2" onClick={() => handleStockChange(i.id, i.current_stock, false)}>Deduct</button>
                         </div>
