@@ -23,13 +23,16 @@ export const CustomersPage = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       setLoading(true);
+      console.log('Fetching customers...');
       const { data, error } = await supabase
         .from('customers')
         .select('*, profiles(full_name, email)');
 
       if (error) {
         console.error('Error fetching customers:', error);
+        alert('Fetch Error: ' + error.message);
       } else {
+        console.log('Fetched customers:', data);
         setCustomers(data as unknown as CustomerWithProfile[]);
       }
       setLoading(false);
