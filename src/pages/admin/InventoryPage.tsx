@@ -7,18 +7,20 @@ import { Button } from '@/components/ui/Button';
 export const InventoryPage = () => {
   const [inventory, setInventory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-const fetchInventory = async () => {
-  setLoading(true);
-  // Re-added supplier join
-  const { data, error } = await supabase.from('inventory_items').select('*, suppliers(name)');
-  if (error) {
-      console.error('Error fetching inventory:', error);
-      alert('Supabase Fetch Error: ' + error.message);
-  } else {
-      setInventory(data || []);
-  }
-  setLoading(false);
-};
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchInventory = async () => {
+    setLoading(true);
+    setError(null);
+    const { data, error } = await supabase.from('inventory_items').select('*, suppliers(name)');
+    if (error) {
+        console.error('Error fetching inventory:', error);
+        setError('Failed to load inventory: ' + error.message);
+    } else {
+        setInventory(data || []);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     fetchInventory();
@@ -43,7 +45,7 @@ const fetchInventory = async () => {
 
     const { error } = await (supabase.from('inventory_items') as any).update({ current_stock: newStock }).eq('id', id);
     if (error) {
-        alert('Failed to update stock');
+        setError('Failed to update stock: ' + error.message);
         return;
     }
 
@@ -77,7 +79,7 @@ const fetchInventory = async () => {
     });
 
     if (error) {
-        alert('Failed to add new item: ' + error.message);
+        setError('Failed to add new item: ' + error.message);
     } else {
         fetchInventory();
     }
@@ -90,6 +92,13 @@ const fetchInventory = async () => {
             <h1 className="text-2xl font-bold">Inventory Dashboard</h1>
             <Button onClick={handleAddNewItem}>Add New Item</Button>
         </div>
+        
+        {error && (
+            <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                <strong>Error:</strong> {error}
+            </div>
+        )}
+
         {loading ? <LoadingSpinner /> : (
           <div className="bg-white shadow rounded-lg overflow-hidden border border-gray-200">
             <table className="w-full table-fixed">
