@@ -11,8 +11,13 @@ export const InventoryPage = () => {
   const fetchInventory = async () => {
     setLoading(true);
     const { data, error } = await supabase.from('inventory_items').select('*, suppliers(name)');
-    if (error) console.error('Error fetching inventory:', error);
-    else setInventory(data || []);
+    if (error) {
+        console.error('Error fetching inventory:', error);
+        alert('Supabase Fetch Error: ' + error.message);
+    } else {
+        console.log('Fetched inventory data:', data);
+        setInventory(data || []);
+    }
     setLoading(false);
   };
 
