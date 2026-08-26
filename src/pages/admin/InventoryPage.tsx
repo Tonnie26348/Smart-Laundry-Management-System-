@@ -96,7 +96,7 @@ const fetchInventory = async () => {
                         <td className="p-4 text-gray-500 truncate">{i.unit}</td>
                         <td className="p-4 text-gray-600 truncate">{i.suppliers?.name || 'N/A'}</td>
                         <td className="p-4">
-                          <div className="flex gap-2">
+                          <div className="flex items-center gap-2">
                               <Button size="sm" variant="outline" onClick={() => handleStockChange(i.id, i.current_stock, true)}>Add</Button>
                               <Button size="sm" variant="danger" onClick={() => handleStockChange(i.id, i.current_stock, false)}>Deduct</Button>
                           </div>
