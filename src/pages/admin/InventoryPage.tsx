@@ -45,7 +45,7 @@ export const InventoryPage = () => {
     }
 
     // Add transaction record
-    await supabase.from('inventory_transactions').insert({
+    await (supabase.from('inventory_transactions') as any).insert({
         item_id: id,
         type: isAddition ? 'addition' : 'deduction',
         quantity: Number(quantity),
