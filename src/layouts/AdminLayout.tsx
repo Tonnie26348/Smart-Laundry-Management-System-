@@ -28,8 +28,8 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
 
   const isAdmin = role === 'administrator';
   const isManager = role === 'manager';
-  const isStaff = role === 'laundry_staff';
-  const isAuthorized = isAdmin || isManager;
+  const isStaff = role === 'laundry_staff' || role === 'delivery_staff';
+  const isAuthorized = isAdmin || isManager || isStaff;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -40,21 +40,24 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
             <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-gray-600 flex-wrap">
               {/* Common Links */}
               <a href={isStaff ? "/laundrystaff" : isManager ? "/manager" : "/admin"} className="hover:text-primary-600">Dashboard</a>
+              
+              <a href="/admin/chat" className="hover:text-primary-600">Messages</a>
+              <a href="/admin/staff-customers" className="hover:text-primary-600">Customers</a>
 
               {/* Operational Links */}
               {isAuthorized && (
                 <>
                 <a href="/admin/orders" className="hover:text-primary-600">Orders</a>
-                <a href="/admin/customers" className="hover:text-primary-600">Customers</a>
-                <a href="/admin/services" className="hover:text-primary-600">Services</a>
-                <a href="/admin/items" className="hover:text-primary-600">Items</a>
-                <a href="/admin/pricing" className="hover:text-primary-600">Pricing</a>
-                <a href="/admin/inventory" className="hover:text-primary-600">Inventory</a>
-                <a href="/admin/payments" className="hover:text-primary-600">Payments</a>
-                <a href="/admin/employees" className="hover:text-primary-600">Employees</a>
-                <a href="/admin/deliveries" className="hover:text-primary-600">Deliveries</a>
-                <a href="/admin/analytics" className="hover:text-primary-600">Analytics</a>
-                <a href="/admin/reports" className="hover:text-primary-600">Reports</a>
+                {isAdmin && <a href="/admin/customers" className="hover:text-primary-600">Customers</a>}
+                {isAdmin && <a href="/admin/services" className="hover:text-primary-600">Services</a>}
+                {isAdmin && <a href="/admin/items" className="hover:text-primary-600">Items</a>}
+                {isAdmin && <a href="/admin/pricing" className="hover:text-primary-600">Pricing</a>}
+                {(isAdmin || isManager) && <a href="/admin/inventory" className="hover:text-primary-600">Inventory</a>}
+                {(isAdmin || isManager) && <a href="/admin/payments" className="hover:text-primary-600">Payments</a>}
+                {(isAdmin || isManager) && <a href="/admin/employees" className="hover:text-primary-600">Employees</a>}
+                {(isAdmin || isManager) && <a href="/admin/deliveries" className="hover:text-primary-600">Deliveries</a>}
+                {(isAdmin || isManager) && <a href="/admin/analytics" className="hover:text-primary-600">Analytics</a>}
+                {(isAdmin || isManager) && <a href="/admin/reports" className="hover:text-primary-600">Reports</a>}
               </>
             )}
 

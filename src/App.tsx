@@ -12,6 +12,7 @@ import { CustomerLayout } from './layouts/CustomerLayout';
 const EditProfilePage = lazy(() => import('./pages/EditProfilePage').then(m => ({ default: m.EditProfilePage })));
 const ChatListPage = lazy(() => import('./pages/admin/ChatListPage').then(m => ({ default: m.ChatListPage })));
 const ChatPage = lazy(() => import('./pages/admin/ChatPage').then(m => ({ default: m.ChatPage })));
+const StaffCustomersPage = lazy(() => import('./pages/admin/StaffCustomersPage').then(m => ({ default: m.StaffCustomersPage })));
 const AdminDashboard = lazy(() => import('./components/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const CustomersPage = lazy(() => import('./pages/admin/CustomersPage').then(m => ({ default: m.CustomersPage })));
 const OrdersPage = lazy(() => import('./pages/admin/OrdersPage').then(m => ({ default: m.OrdersPage })));
