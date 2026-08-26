@@ -21,11 +21,38 @@ export const InventoryPage = () => {
     fetchInventory();
   }, []);
 
-  const updateStock = async (id: string, currentStock: number, change: number) => {
-    const newStock = Number(currentStock) + Number(change);
+  const handleStockChange = async (id: string, currentStock: number, isAddition: boolean) => {
+    const quantity = prompt(`Enter quantity to ${isAddition ? 'add' : 'deduct'}:`);
+    const reason = prompt('Enter reason for this change:');
+    
+    if (!quantity || isNaN(Number(quantity))) {
+        alert('Please enter a valid quantity.');
+        return;
+    }
+
+    const change = isAddition ? Number(quantity) : -Number(quantity);
+    const newStock = Number(currentStock) + change;
+
+    if (newStock < 0) {
+        alert('Insufficient stock for this deduction.');
+        return;
+    }
+
     const { error } = await (supabase.from('inventory_items') as any).update({ current_stock: newStock }).eq('id', id);
-    if (error) alert('Failed to update stock');
-    else fetchInventory();
+    if (error) {
+        alert('Failed to update stock');
+        return;
+    }
+
+    // Add transaction record
+    await supabase.from('inventory_transactions').insert({
+        item_id: id,
+        type: isAddition ? 'addition' : 'deduction',
+        quantity: Number(quantity),
+        reason: reason || 'No reason provided'
+    });
+
+    fetchInventory();
   };
 
   return (
@@ -60,8 +87,8 @@ export const InventoryPage = () => {
                       <td className="p-4">{i.unit}</td>
                       <td className="p-4">{i.suppliers?.name || 'N/A'}</td>
                       <td className="p-4 flex gap-2">
-                        <Button size="sm" variant="outline" onClick={() => updateStock(i.id, i.current_stock, 1)}>+</Button>
-                        <Button size="sm" variant="outline" onClick={() => updateStock(i.id, i.current_stock, -1)}>-</Button>
+                        <Button size="sm" variant="outline" onClick={() => handleStockChange(i.id, i.current_stock, true)}>Add</Button>
+                        <Button size="sm" variant="danger" onClick={() => handleStockChange(i.id, i.current_stock, false)}>Deduct</Button>
                       </td>
                     </tr>
                   );
