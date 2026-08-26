@@ -10,23 +10,26 @@ export const StaffCustomersPage = () => {
   const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const navigate = useNavigate();
-
   useEffect(() => {
     const fetchCustomers = async () => {
       setLoading(true);
+      console.log('Fetching customers...');
       const { data, error } = await supabase
         .from('customers')
         .select('*, profiles(full_name, email)');
 
-      if (error) console.error('Error fetching customers:', error);
-      else setCustomers(data || []);
+      if (error) {
+        console.error('Error fetching customers:', error);
+        alert('Fetch Error: ' + error.message);
+      } else {
+        console.log('Fetched customers:', data);
+        setCustomers(data || []);
+      }
       setLoading(false);
     };
 
     fetchCustomers();
   }, []);
-
   const filteredCustomers = customers.filter(c =>
     c.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.profiles?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
