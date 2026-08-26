@@ -39,25 +39,27 @@ export const EmployeesPage = () => {
         <h1 className="text-2xl font-bold">Employees</h1>
         {loading ? <LoadingSpinner /> : (
           <div className="bg-white shadow rounded-lg overflow-hidden">
-            <table className="min-w-full">
+            <table className="w-full table-fixed">
               <thead>
-                <tr className="bg-gray-100">
-                  <th className="p-4">Name</th>
-                  <th className="p-4">Email</th>
-                  <th className="p-4">Employee #</th>
-                  <th className="p-4">Status</th>
-                  <th className="p-4">Action</th>
+                <tr className="bg-gray-100 text-left">
+                  <th className="p-4 w-1/4">Name</th>
+                  <th className="p-4 w-1/4">Email</th>
+                  <th className="p-4 w-1/6">Employee #</th>
+                  <th className="p-4 w-1/6">Status</th>
+                  <th className="p-4 w-1/6">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {employees.map(e => (
                   <tr key={e.id} className="border-t">
-                    <td className="p-4">{e.profiles?.full_name || 'N/A'}</td>
-                    <td className="p-4">{e.profiles?.email || 'N/A'}</td>
+                    <td className="p-4 truncate">{e.profiles?.full_name || 'N/A'}</td>
+                    <td className="p-4 truncate">{e.profiles?.email || 'N/A'}</td>
                     <td className="p-4">{e.employee_number}</td>
                     <td className="p-4 capitalize">{e.employment_status}</td>
                     <td className="p-4">
-                      <Button size="sm" onClick={() => navigate(`/admin/chat/${e.profiles?.id}`)}>Chat</Button>
+                      <div className="border-2 border-blue-600 p-1 bg-yellow-100 rounded">
+                        <Button size="sm" onClick={() => navigate(`/admin/chat/${e.profiles?.id}`)}>Chat</Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
