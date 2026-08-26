@@ -10,6 +10,7 @@ import { RegisterForm } from './features/auth/components/RegisterForm';
 import { CustomerLayout } from './layouts/CustomerLayout';
 
 const EditProfilePage = lazy(() => import('./pages/EditProfilePage').then(m => ({ default: m.EditProfilePage })));
+const ChatListPage = lazy(() => import('./pages/admin/ChatListPage').then(m => ({ default: m.ChatListPage })));
 const ChatPage = lazy(() => import('./pages/admin/ChatPage').then(m => ({ default: m.ChatPage })));
 const AdminDashboard = lazy(() => import('./components/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const CustomersPage = lazy(() => import('./pages/admin/CustomersPage').then(m => ({ default: m.CustomersPage })));
@@ -140,6 +141,11 @@ function App() {
           <Route path="/admin/chat/:receiverId" element={
             <ProtectedRoute>
               <ChatPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/chat" element={
+            <ProtectedRoute>
+              <ChatListPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/customers" element={
