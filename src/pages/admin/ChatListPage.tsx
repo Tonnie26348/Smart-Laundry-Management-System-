@@ -18,14 +18,14 @@ export const ChatListPage = () => {
       }
 
       // Fetch distinct users messaged by or messaging the current user
-      const { data } = await supabase
+      const { data } = await (supabase
         .from('messages')
         .select('sender_id, receiver_id, sender:profiles!messages_sender_id_fkey(full_name), receiver:profiles!messages_receiver_id_fkey(full_name)')
-        .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`);
+        .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`) as any);
 
       // Simple way to get unique users
       const users: Record<string, any> = {};
-      data?.forEach(msg => {
+      (data as any[])?.forEach(msg => {
         const otherId = msg.sender_id === user.id ? msg.receiver_id : msg.sender_id;
         const otherName = msg.sender_id === user.id ? msg.receiver?.full_name : msg.sender?.full_name;
         users[otherId] = otherName;
