@@ -85,9 +85,9 @@ export const InventoryPage = () => {
                       <td className="p-4 truncate">{i.unit}</td>
                       <td className="p-4 truncate">{i.suppliers?.name || 'N/A'}</td>
                       <td className="p-4">
-                        <div className="flex gap-2 border border-blue-500 p-1 bg-blue-50 rounded">
-                            <Button size="sm" variant="outline" onClick={() => handleStockChange(i.id, i.current_stock, true)}>Add</Button>
-                            <Button size="sm" variant="danger" onClick={() => handleStockChange(i.id, i.current_stock, false)}>Deduct</Button>
+                        <div className="flex gap-2 border-2 border-blue-600 p-2 bg-yellow-100 rounded">
+                            <button className="bg-blue-500 text-white p-2" onClick={() => handleStockChange(i.id, i.current_stock, true)}>Add</button>
+                            <button className="bg-red-500 text-white p-2" onClick={() => handleStockChange(i.id, i.current_stock, false)}>Deduct</button>
                         </div>
                       </td>
                     </tr>
