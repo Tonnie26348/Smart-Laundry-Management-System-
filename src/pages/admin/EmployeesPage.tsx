@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '@/layouts/AdminLayout';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { Button } from '@/components/ui/Button';
 import { useRole } from '@/hooks/useRole';
 
 export const EmployeesPage = () => {
   const [employees, setEmployees] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { role, loading: roleLoading } = useRole();
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (roleLoading) return;
     const isAuthorized = role === 'administrator' || role === 'manager';
@@ -44,6 +46,7 @@ export const EmployeesPage = () => {
                   <th className="p-4">Email</th>
                   <th className="p-4">Employee #</th>
                   <th className="p-4">Status</th>
+                  <th className="p-4">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -53,6 +56,9 @@ export const EmployeesPage = () => {
                     <td className="p-4">{e.profiles?.email || 'N/A'}</td>
                     <td className="p-4">{e.employee_number}</td>
                     <td className="p-4 capitalize">{e.employment_status}</td>
+                    <td className="p-4">
+                      <Button size="sm" onClick={() => navigate(`/admin/chat/${e.profiles?.id}`)}>Chat</Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
