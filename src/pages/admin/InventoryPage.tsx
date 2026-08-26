@@ -57,10 +57,39 @@ const fetchInventory = async () => {
     fetchInventory();
   };
 
+  const handleAddNewItem = async () => {
+    const name = prompt('Enter item name:');
+    const sku = prompt('Enter SKU:');
+    const unit = prompt('Enter unit (e.g., kg, L, pcs):');
+    const minStock = prompt('Enter minimum stock level:');
+
+    if (!name || !sku || !unit || !minStock) {
+        alert('All fields are required.');
+        return;
+    }
+
+    const { error } = await (supabase.from('inventory_items') as any).insert({
+        name,
+        sku,
+        unit,
+        min_stock_level: Number(minStock),
+        current_stock: 0
+    });
+
+    if (error) {
+        alert('Failed to add new item: ' + error.message);
+    } else {
+        fetchInventory();
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Inventory Dashboard</h1>
+        <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Inventory Dashboard</h1>
+            <Button onClick={handleAddNewItem}>Add New Item</Button>
+        </div>
         {loading ? <LoadingSpinner /> : (
           <div className="bg-white shadow rounded-lg overflow-hidden border border-gray-200">
             <table className="w-full table-fixed">
