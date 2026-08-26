@@ -34,7 +34,7 @@ export const ChatPage = () => {
   const sendMessage = async () => {
     if (!newMessage.trim() || !currentUser || !receiverId) return;
 
-    await supabase.from('messages').insert({
+    await (supabase.from('messages') as any).insert({
       sender_id: currentUser.id,
       receiver_id: receiverId,
       message_text: newMessage
