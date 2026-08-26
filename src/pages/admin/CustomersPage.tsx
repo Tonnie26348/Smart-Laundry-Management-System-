@@ -40,6 +40,7 @@ export const CustomersPage = () => {
 
   const filteredCustomers = customers.filter(c =>
     c.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.profiles?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.phone?.includes(searchTerm)
   );
 
@@ -47,7 +48,7 @@ export const CustomersPage = () => {
     <AdminLayout>
       <div className="space-y-6">
         <h1 className="text-2xl font-bold">Customers</h1>
-        <Input placeholder="Search by name or phone..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        <Input placeholder="Search by name, email, or phone..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
         {loading ? <LoadingSpinner /> : (
             <div className="bg-white shadow rounded-lg overflow-hidden">
                 <table className="min-w-full">
