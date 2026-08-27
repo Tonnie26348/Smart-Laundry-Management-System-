@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AdminLayout } from '@/layouts/AdminLayout';
 import { ChatLayout } from '@/features/messaging/components/ChatLayout';
@@ -10,6 +10,7 @@ import { useMessages } from '@/features/messaging/hooks/useMessages';
 import { useConversation } from '@/features/messaging/hooks/useConversation';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { ConversationWithParticipants } from '@/features/messaging/types/messaging';
 
 export const MessagingPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -33,7 +34,7 @@ export const MessagingPage = () => {
         <h1 className="text-2xl font-bold">Messages</h1>
         {convLoading ? <LoadingSpinner /> : (
             <ChatLayout 
-                sidebar={<ConversationList conversations={conversations} activeConversationId={activeConvId || undefined} onSelect={setActiveConvId} />}
+                sidebar={<ConversationList conversations={conversations as unknown as ConversationWithParticipants[]} activeConversationId={activeConvId || undefined} onSelect={setActiveConvId} />}
                 content={activeConvId ? (
                     <>
                         <div className="p-4 border-b font-bold">{conversation?.title || 'Chat'}</div>
