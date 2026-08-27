@@ -3,50 +3,46 @@ import { useParams } from 'react-router-dom';
 import { AdminLayout } from '@/layouts/AdminLayout';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { ChatBox } from '@/components/chat/ChatBox';
 
 export const ChatPage = () => {
   const { receiverId } = useParams<{ receiverId: string }>();
   const [messages, setMessages] = useState<any[]>([]);
-  const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
+  const fetchMessages = async () => {
+    if (!currentUser || !receiverId) return;
+    const { data } = await supabase
+      .from('messages')
+      .select('*, profiles!messages_sender_id_fkey(full_name)')
+      .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${currentUser.id})`)
+      .order('created_at', { ascending: true });
+    setMessages(data || []);
+  };
+
   useEffect(() => {
-    const fetchUserAndMessages = async () => {
+    const initChat = async () => {
+      setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       setCurrentUser(user);
       if (user && receiverId) {
-        // Fetch initial messages
-        const { data } = await supabase
-          .from('messages')
-          .select('*')
-          .or(`and(sender_id.eq.${user.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${user.id})`)
-          .order('created_at', { ascending: true });
-        setMessages(data || []);
+        await fetchMessages();
       }
       setLoading(false);
     };
-    fetchUserAndMessages();
+    initChat();
   }, [receiverId]);
 
-  const sendMessage = async () => {
-    if (!newMessage.trim() || !currentUser || !receiverId) return;
+  const sendMessage = async (text: string) => {
+    if (!currentUser || !receiverId) return;
 
     await (supabase.from('messages') as any).insert({
       sender_id: currentUser.id,
       receiver_id: receiverId,
-      message_text: newMessage
+      message_text: text
     });
-    setNewMessage('');
-    // Refresh messages (simple approach)
-    const { data } = await supabase
-      .from('messages')
-      .select('*')
-      .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${currentUser.id})`)
-      .order('created_at', { ascending: true });
-    setMessages(data || []);
+    await fetchMessages();
   };
 
   if (loading) return <AdminLayout><LoadingSpinner /></AdminLayout>;
@@ -55,17 +51,11 @@ export const ChatPage = () => {
     <AdminLayout>
       <div className="max-w-2xl mx-auto space-y-4">
         <h2 className="text-xl font-bold">Chat</h2>
-        <div className="h-96 overflow-y-auto border p-4 space-y-2 bg-white rounded">
-          {messages.map(m => (
-            <div key={m.id} className={`p-2 rounded ${m.sender_id === currentUser?.id ? 'bg-blue-100 ml-auto' : 'bg-gray-100'}`}>
-              {m.message_text}
-            </div>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type a message..." />
-          <Button onClick={sendMessage}>Send</Button>
-        </div>
+        <ChatBox 
+          messages={messages} 
+          currentUserId={currentUser?.id} 
+          onSendMessage={sendMessage}
+        />
       </div>
     </AdminLayout>
   );
