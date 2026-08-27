@@ -25,7 +25,9 @@ export const CustomerMessagesPage = () => {
       setCurrentUser(user);
       
       // Find administrator
-      const { data: admin } = await (supabase.from('profiles').select('id').eq('role', 'administrator').single() as any);
+      const { data: admins } = await (supabase.from('profiles').select('id').eq('role', 'administrator') as any);
+      const admin = admins && admins.length > 0 ? admins[0] : null;
+      
       if (admin && user) {
         setAdminId(admin.id);
         await fetchMessages(user.id, admin.id);
