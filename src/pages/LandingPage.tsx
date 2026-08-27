@@ -19,16 +19,19 @@ export const LandingPage = () => {
       {/* Hero Section */}
       <section className="px-6 py-16">
         <ThematicHero 
-            title="Laundry Day, Simplified."
-            subtitle="Professional laundry service at your fingertips. From washing to delivery, we handle it all so you can focus on what matters."
+            title="Laundry Redefined. Effortless Care."
+            subtitle="Experience the future of laundry with on-demand pickup, professional-grade cleaning, and seamless delivery. Focus on your day while we handle the rest."
             imageUrl="/images/laundry/landing/laundry-hero-washing-machine.jpg"
             imageAlt="Professional handling modern laundry"
             variant="split"
         >
-            <div className="flex gap-4">
-              <Button size="lg" onClick={() => navigate('/register')}>Order Now</Button>
-              <Button size="lg" variant="outline" onClick={() => navigate('/services')}>View Services</Button>
+            <div className="flex gap-4 pt-4">
+              <Button size="lg" className="px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all" onClick={() => navigate('/register')}>Get Started</Button>
+              <Button size="lg" variant="outline" className="px-8 py-6 text-lg font-semibold border-2" onClick={() => navigate('/services')}>Explore Services</Button>
             </div>
+            <p className="text-sm text-gray-500 pt-4">
+              Trusted by 5,000+ satisfied customers.
+            </p>
         </ThematicHero>
       </section>
 
