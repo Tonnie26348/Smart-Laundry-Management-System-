@@ -67,10 +67,14 @@ export const StaffCustomersPage = () => {
       // 3. Merge data
       const typedProfiles = (profilesData as Profile[]) || [];
 
-      const mergedData: Customer[] = (typedCustomers as any[]).map(c => ({
-        ...c,
-        profiles: typedProfiles.find(p => p.id === c.profile_id)
-      }));
+      const mergedData: Customer[] = (typedCustomers as any[]).map(c => {
+        const profile = typedProfiles.find(p => p.id === c.profile_id);
+        console.log(`Customer ${c.id} has profile_id ${c.profile_id}. Found profile:`, profile);
+        return {
+            ...c,
+            profiles: profile
+        };
+      });
 
       setCustomers(mergedData);
       setLoading(false);
