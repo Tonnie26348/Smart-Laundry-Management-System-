@@ -27,7 +27,7 @@ export const LandingPage = () => {
             className="items-start"
         >
             {/* Wrapper to control internal spacing and override ThematicHero's space-y-4 */}
-            <div className="flex flex-col gap-12 pt-4">
+            <div className="flex flex-col gap-24 pt-4">
               <div className="flex gap-4">
                 <Button size="lg" className="px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all" onClick={() => navigate('/register')}>Get Started</Button>
                 <Button size="lg" variant="outline" className="px-8 py-6 text-lg font-semibold border-2" onClick={() => navigate('/services')}>Explore Services</Button>
