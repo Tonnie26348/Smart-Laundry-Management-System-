@@ -29,6 +29,7 @@ const ManagerDashboard = lazy(() => import('./pages/admin/ManagerDashboard').the
 const LaundryStaffDashboard = lazy(() => import('./pages/admin/LaundryStaffDashboard').then(m => ({ default: m.LaundryStaffDashboard })));
 const DeliveryStaffDashboard = lazy(() => import('./pages/admin/DeliveryStaffDashboard').then(m => ({ default: m.DeliveryStaffDashboard })));
 const InspectionsPage = lazy(() => import('./pages/admin/InspectionsPage').then(m => ({ default: m.InspectionsPage })));
+const PublicServicesPage = lazy(() => import('./pages/ServicesPage').then(m => ({ default: m.ServicesPage })));
 const ServicesPage = lazy(() => import('./pages/admin/ServicesPage').then(m => ({ default: m.ServicesPage })));
 const ItemsPage = lazy(() => import('./pages/admin/ItemsPage').then(m => ({ default: m.ItemsPage })));
 const PricingPage = lazy(() => import('./pages/admin/PricingPage').then(m => ({ default: m.PricingPage })));
@@ -57,7 +58,7 @@ function App() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/offline" element={<OfflinePage />} />
-          <Route path="/services" element={<div className="p-8"><ServiceList /></div>} />
+          <Route path="/services" element={<PublicServicesPage />} />
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <CustomerLayout>

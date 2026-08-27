@@ -49,12 +49,8 @@ export const LandingPage = () => {
                 <Button 
                 size="lg" 
                 variant="outline" 
-                type="button"
                 className="px-8 py-6 text-lg font-semibold border-2" 
-                onClick={() => {
-                  console.log('Navigating to /services');
-                  navigate('/services');
-                }}
+                onClick={() => navigate('/services')}
               >
                 Explore Services
               </Button>
