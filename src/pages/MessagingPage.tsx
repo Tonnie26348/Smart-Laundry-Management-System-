@@ -31,7 +31,13 @@ export const MessagingPage = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Messages</h1>
+        <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Messages</h1>
+            <Button onClick={async () => {
+                const convId = await messagingService.createSupportConversation();
+                setActiveConvId(convId);
+            }}>New Support Request</Button>
+        </div>
         {convLoading ? <LoadingSpinner /> : (
             <ChatLayout 
                 sidebar={<ConversationList conversations={conversations as unknown as ConversationWithParticipants[]} activeConversationId={activeConvId || undefined} onSelect={setActiveConvId} />}

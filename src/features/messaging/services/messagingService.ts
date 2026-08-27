@@ -94,6 +94,37 @@ export const messagingService = {
     return conv.id;
   },
 
+  async createSupportConversation(): Promise<string> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    // Find admin ID
+    const { data: admins } = await (supabase
+        .from('profiles')
+        .select('id')
+        .eq('role', 'administrator') as any);
+    
+    if (!admins || admins.length === 0) throw new Error('No administrator found');
+    const adminId = admins[0].id;
+
+    // Create support conversation
+    const { data: conv, error: convError } = await (supabase
+      .from('conversations')
+      .insert({ conversation_type: 'support', title: 'Support Request', created_by: user.id })
+      .select()
+      .single() as any);
+    
+    if (convError) throw convError;
+
+    // Add participants (Customer + Admin)
+    await (supabase.from('conversation_participants').insert([
+      { conversation_id: conv.id, user_id: user.id },
+      { conversation_id: conv.id, user_id: adminId }
+    ]) as any);
+
+    return conv.id;
+  },
+
   subscribeToConversation(conversationId: string, onMessage: (message: Message) => void) {
     return supabase
       .channel(`conversation:${conversationId}`)
