@@ -33,12 +33,12 @@ export const messagingService = {
     if (!user) throw new Error('Not authenticated');
 
     const { error } = await (supabase
-      .from('messages_v2')
+      .from('messages_v2') as any)
       .insert({
         conversation_id: conversationId,
         sender_id: user.id,
         message_text: text
-      }) as any);
+      });
 
     if (error) throw error;
   },
@@ -48,10 +48,10 @@ export const messagingService = {
     if (!user) return;
 
     await (supabase
-      .from('conversation_participants')
+      .from('conversation_participants') as any)
       .update({ last_read_at: new Date().toISOString() })
       .eq('conversation_id', conversationId)
-      .eq('user_id', user.id) as any);
+      .eq('user_id', user.id);
   },
 
   async getOrCreateDirectConversation(participantId: string): Promise<string> {
@@ -60,15 +60,15 @@ export const messagingService = {
 
     // 1. Get user's conversation IDs
     const { data: userConversations } = await (supabase
-      .from('conversation_participants')
+      .from('conversation_participants') as any)
       .select('conversation_id')
-      .eq('user_id', user.id) as any);
+      .eq('user_id', user.id);
 
     // 2. Get participant's conversation IDs
     const { data: participantConversations } = await (supabase
-      .from('conversation_participants')
+      .from('conversation_participants') as any)
       .select('conversation_id')
-      .eq('user_id', participantId) as any);
+      .eq('user_id', participantId);
 
     if (userConversations && participantConversations) {
         const userConvIds = (userConversations as any[]).map((c: any) => c.conversation_id);
@@ -78,18 +78,18 @@ export const messagingService = {
 
     // Create new conversation
     const { data: conv, error: convError } = await (supabase
-      .from('conversations')
+      .from('conversations') as any)
       .insert({ conversation_type: 'direct', created_by: user.id })
       .select()
-      .single() as any);
+      .single();
     
     if (convError) throw convError;
 
     // Add participants
-    await (supabase.from('conversation_participants').insert([
+    await (supabase.from('conversation_participants') as any).insert([
       { conversation_id: conv.id, user_id: user.id },
       { conversation_id: conv.id, user_id: participantId }
-    ]) as any);
+    ]);
 
     return conv.id;
   },
