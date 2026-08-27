@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { messagingService } from '@/features/messaging/services/messagingService';
 
 interface Profile {
   id: string;
@@ -121,7 +122,10 @@ export const StaffCustomersPage = () => {
                                 <td className="p-4">{c.profiles?.email || 'N/A'}</td>
                                 <td className="p-4">{c.phone || 'N/A'}</td>
                                 <td className="p-4">
-                                  <Button size="sm" onClick={() => navigate(`/admin/chat/${c.profiles?.id || ''}`)}>Chat</Button>
+                                  <Button size="sm" onClick={async () => {
+                                      const convId = await messagingService.getOrCreateDirectConversation(c.profile_id);
+                                      navigate(`/admin/messaging?conversationId=${convId}`);
+                                  }}>Chat</Button>
                                 </td>
                             </tr>
                         ))}

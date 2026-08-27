@@ -54,13 +54,44 @@ export const messagingService = {
       .eq('user_id', user.id);
   },
 
-  async getUnreadCount(): Promise<number> {
+  async getOrCreateDirectConversation(participantId: string): Promise<string> {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return 0;
+    if (!user) throw new Error('Not authenticated');
 
-    // This is a complex query, might be better as an RPC function later.
-    // For now, fetch conversations and participants, then count on client or simple query
-    return 0; 
+    // 1. Get user's conversation IDs
+    const { data: userConversations } = await supabase
+      .from('conversation_participants')
+      .select('conversation_id')
+      .eq('user_id', user.id);
+
+    // 2. Get participant's conversation IDs
+    const { data: participantConversations } = await supabase
+      .from('conversation_participants')
+      .select('conversation_id')
+      .eq('user_id', participantId);
+
+    if (userConversations && participantConversations) {
+        const userConvIds = userConversations.map(c => c.conversation_id);
+        const commonConv = participantConversations.find(c => userConvIds.includes(c.conversation_id));
+        if (commonConv) return commonConv.conversation_id;
+    }
+
+    // Create new conversation
+    const { data: conv, error: convError } = await supabase
+      .from('conversations')
+      .insert({ conversation_type: 'direct', created_by: user.id })
+      .select()
+      .single();
+    
+    if (convError) throw convError;
+
+    // Add participants
+    await supabase.from('conversation_participants').insert([
+      { conversation_id: conv.id, user_id: user.id },
+      { conversation_id: conv.id, user_id: participantId }
+    ]);
+
+    return conv.id;
   },
 
   subscribeToConversation(conversationId: string, onMessage: (message: Message) => void) {

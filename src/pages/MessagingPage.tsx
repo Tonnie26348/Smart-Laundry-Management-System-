@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { AdminLayout } from '@/layouts/AdminLayout';
 import { ChatLayout } from '@/features/messaging/components/ChatLayout';
 import { ConversationList } from '@/features/messaging/components/ConversationList';
@@ -11,8 +12,9 @@ import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 export const MessagingPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeConvId = searchParams.get('conversationId');
   const { conversations, loading: convLoading } = useConversations();
-  const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const { conversation } = useConversation(activeConvId || '');
   const { messages, sendMessage, loading: msgLoading } = useMessages(activeConvId || '');
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -20,6 +22,10 @@ export const MessagingPage = () => {
   useState(() => {
     supabase.auth.getUser().then(res => setCurrentUser(res.data.user));
   });
+
+  const setActiveConvId = (id: string) => {
+      setSearchParams({ conversationId: id });
+  }
 
   return (
     <AdminLayout>
