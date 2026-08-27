@@ -40,10 +40,18 @@ export const CustomerMessagesPage = () => {
   const sendMessage = async (text: string) => {
     if (!currentUser || !adminId) return;
 
+    // Send message
     await (supabase.from('messages') as any).insert({
       sender_id: currentUser.id,
       receiver_id: adminId,
       message_text: text
+    });
+
+    // Send notification
+    await (supabase.from('notifications') as any).insert({
+      user_id: adminId,
+      title: 'New Message',
+      message: `New message from customer: ${text.substring(0, 50)}...`
     });
     
     await fetchMessages(currentUser.id, adminId);
