@@ -5,6 +5,7 @@ import { Card } from './ui/Card';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from './ui/LoadingSpinner';
+import { ThematicHero } from '@/components/layout/ThematicHero';
 
 export const AdminDashboard = () => {
   const [metrics, setMetrics] = useState<any>(null);
@@ -40,7 +41,14 @@ export const AdminDashboard = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">Admin Dashboard</h2>
+        <ThematicHero 
+            title="Administrator Dashboard"
+            subtitle="Command center for the entire laundry operation."
+            imageUrl="/images/laundry/admin/commercial-laundry-admin.webp"
+            imageAlt="Professional commercial laundry facility"
+            variant="overlay"
+            className="text-white"
+        />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>
             <h3 className="text-sm text-gray-500">Today's Orders</h3>

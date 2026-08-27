@@ -1,3 +1,4 @@
+import { ThematicHero } from '@/components/layout/ThematicHero';
 import { Button } from '@/components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,22 +17,19 @@ export const LandingPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="px-6 py-16 md:py-32 text-center max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 tracking-tight">
-          Laundry Day, <span className="text-primary-600">Simplified.</span>
-        </h1>
-        <p className="mt-6 text-lg text-gray-600">
-          Professional laundry service at your fingertips. From washing to delivery, 
-          we handle it all so you can focus on what matters.
-        </p>
-        <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-          <Button size="lg" className="w-full sm:w-auto" onClick={() => navigate('/register')}>
-            Order Now
-          </Button>
-          <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={() => navigate('/services')}>
-            View Services
-          </Button>
-        </div>
+      <section className="px-6 py-16">
+        <ThematicHero 
+            title="Laundry Day, Simplified."
+            subtitle="Professional laundry service at your fingertips. From washing to delivery, we handle it all so you can focus on what matters."
+            imageUrl="/images/laundry/landing/laundry-hero-washing-machine.webp"
+            imageAlt="Professional handling modern laundry"
+            variant="split"
+        >
+            <div className="flex gap-4">
+              <Button size="lg" onClick={() => navigate('/register')}>Order Now</Button>
+              <Button size="lg" variant="outline" onClick={() => navigate('/services')}>View Services</Button>
+            </div>
+        </ThematicHero>
       </section>
 
       {/* Features */}
