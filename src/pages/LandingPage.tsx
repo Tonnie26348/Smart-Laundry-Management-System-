@@ -33,11 +33,15 @@ export const LandingPage = () => {
               Trusted by 5,000+ satisfied customers.
             </p>
         </ThematicHero>
-      </section>
 
-      {/* Logo */}
-      <section className="px-6 pb-12 flex justify-center">
-          <img src="/images/laundry/landing/smart-laundry-logo.jpg" alt="Smart Laundry Logo" className="max-h-20" />
+        {/* Logo Section */}
+        <div className="flex justify-center mt-12">
+          <img 
+            src="/images/laundry/landing/smart-laundry-logo.jpg" 
+            alt="Smart Laundry Logo" 
+            className="w-full max-w-2xl h-auto object-contain" 
+          />
+        </div>
       </section>
 
       {/* Features */}
