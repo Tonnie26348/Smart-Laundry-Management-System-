@@ -45,17 +45,24 @@ export const StaffCustomersPage = () => {
       const typedCustomers = customersData as Customer[];
 
       // 2. Fetch profiles for all customer user_ids
-      const userIds = typedCustomers?.map(c => c.user_id) || [];
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, full_name, email')
-        .in('id', userIds);
+      const userIds = typedCustomers
+        ?.map(c => c.user_id)
+        .filter((id): id is string => id !== null && id !== undefined) || [];
+      
+      let profilesData: Profile[] = [];
+      if (userIds.length > 0) {
+        const { data, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, full_name, email')
+          .in('id', userIds);
 
-      if (profilesError) {
-        console.error('Error fetching profiles:', profilesError);
-        alert('Fetch Profiles Error: ' + profilesError.message);
-        setLoading(false);
-        return;
+        if (profilesError) {
+          console.error('Error fetching profiles:', profilesError);
+          alert('Fetch Profiles Error: ' + profilesError.message);
+          setLoading(false);
+          return;
+        }
+        profilesData = data as Profile[];
       }
 
       // 3. Merge data
