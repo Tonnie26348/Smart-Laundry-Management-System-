@@ -73,7 +73,7 @@ export const AnalyticsPage = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <Tooltip formatter={(value: number | string | (number | string)[]) => [
+                <Tooltip formatter={(value: any) => [
                   typeof value === 'number' ? `KSh ${value.toLocaleString()}` : value, 
                   'Revenue'
                 ]} />
