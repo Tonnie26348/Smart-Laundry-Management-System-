@@ -1,9 +1,16 @@
 import { Card } from '@/components/ui/Card';
+import { ThematicHero } from '@/components/layout/ThematicHero';
 
 export const ManagerDashboard = () => {
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">Manager Dashboard</h1>
+      <ThematicHero 
+        title="Manager Dashboard"
+        subtitle="Your operational control center."
+        imageUrl="/images/laundry/manager/laundry-manager-operations.webp"
+        imageAlt="Manager reviewing operations"
+        variant="overlay"
+      />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <h3 className="text-sm font-medium text-gray-500">Active Operations</h3>

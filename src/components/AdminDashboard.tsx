@@ -44,7 +44,7 @@ export const AdminDashboard = () => {
         <ThematicHero 
             title="Administrator Dashboard"
             subtitle="Command center for the entire laundry operation."
-            imageUrl="/images/laundry/admin/commercial-laundry-admin.webp"
+            imageUrl="/images/laundry/admin/commercial-laundry-admin.png"
             imageAlt="Professional commercial laundry facility"
             variant="overlay"
             className="text-white"

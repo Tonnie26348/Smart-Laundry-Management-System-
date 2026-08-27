@@ -1,11 +1,18 @@
 import { AdminLayout } from '@/layouts/AdminLayout';
 import { Card } from '@/components/ui/Card';
+import { ThematicHero } from '@/components/layout/ThematicHero';
 
 export const ManagerDashboard = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold">Manager Dashboard</h2>
+        <ThematicHero 
+          title="Manager Dashboard"
+          subtitle="Your operational control center."
+          imageUrl="/images/laundry/manager/laundry-manager-operations.jpg"
+          imageAlt="Manager reviewing operations"
+          variant="overlay"
+        />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
             <h3 className="text-sm text-gray-500">Orders Management</h3>

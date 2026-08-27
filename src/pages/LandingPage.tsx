@@ -21,7 +21,7 @@ export const LandingPage = () => {
         <ThematicHero 
             title="Laundry Day, Simplified."
             subtitle="Professional laundry service at your fingertips. From washing to delivery, we handle it all so you can focus on what matters."
-            imageUrl="/images/laundry/landing/laundry-hero-washing-machine.webp"
+            imageUrl="/images/laundry/landing/laundry-hero-washing-machine.jpg"
             imageAlt="Professional handling modern laundry"
             variant="split"
         >

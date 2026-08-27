@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AdminLayout } from '@/layouts/AdminLayout';
 import { Card } from '@/components/ui/Card';
+import { ThematicHero } from '@/components/layout/ThematicHero';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
@@ -65,8 +66,15 @@ export const DeliveryStaffDashboard = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
+        <ThematicHero 
+          title="Delivery Staff Dashboard"
+          subtitle="Fresh laundry, delivered on time."
+          imageUrl="/images/laundry/delivery/laundry-delivery-worker.jpg"
+          imageAlt="Delivery worker"
+          variant="overlay"
+        />
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-gray-900">Delivery Staff</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Delivery Tasks</h2>
           <Button onClick={fetchAssignedDeliveries} variant="outline" size="sm">Refresh</Button>
         </div>
         

@@ -1,9 +1,16 @@
 import { Card } from '@/components/ui/Card';
+import { ThematicHero } from '@/components/layout/ThematicHero';
 
 export const LaundryStaffDashboard = () => {
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">Laundry Staff Dashboard</h1>
+      <ThematicHero 
+        title="Laundry Staff Dashboard"
+        subtitle="Where laundry becomes clean, fresh and ready."
+        imageUrl="/images/laundry/laundry-staff/laundry-staff-washing.webp"
+        imageAlt="Laundry staff processing items"
+        variant="overlay"
+      />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <h3 className="text-sm font-medium text-gray-500">Incoming Orders</h3>
