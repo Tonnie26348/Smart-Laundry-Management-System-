@@ -59,7 +59,7 @@ export const StaffCustomersPage = () => {
       }
 
       // 3. Merge data
-      const mergedData: Customer[] = typedCustomers.map(c => ({
+      const mergedData: Customer[] = (typedCustomers as any[]).map(c => ({
         ...c,
         profiles: profilesData?.find(p => p.id === c.user_id)
       }));
