@@ -48,6 +48,8 @@ export const StaffCustomersPage = () => {
         ?.map(c => c.profile_id)
         .filter((id): id is string => id !== null && id !== undefined) || [];
       
+      console.log('Profile IDs to fetch:', JSON.stringify(profileIds));
+
       let profilesData: Profile[] = [];
       if (profileIds.length > 0) {
         const { data, error: profilesError } = await supabase
@@ -62,6 +64,7 @@ export const StaffCustomersPage = () => {
           return;
         }
         profilesData = data as Profile[];
+        console.log('Profiles data fetched:', JSON.stringify(profilesData, null, 2));
       }
 
       // 3. Merge data
