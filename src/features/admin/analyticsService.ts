@@ -10,9 +10,23 @@ export interface DashboardMetrics {
   pending_deliveries: number;
 }
 
+export interface RevenueData {
+  date: string;
+  revenue: number;
+}
+
+export interface AdminAnalytics extends DashboardMetrics {
+  revenue_data: RevenueData[];
+}
+
 export const analyticsService = {
   async getDashboardMetrics(): Promise<DashboardMetrics> {
     const { data, error } = await supabase.rpc('get_admin_dashboard_metrics');
+    if (error) throw error;
+    return data[0];
+  },
+  async getAdminAnalytics(): Promise<AdminAnalytics> {
+    const { data, error } = await supabase.rpc('get_admin_analytics');
     if (error) throw error;
     return data[0];
   }
