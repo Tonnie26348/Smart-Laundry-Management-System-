@@ -36,7 +36,7 @@ export const LandingPage = () => {
               <img 
                 src="/images/laundry/landing/smart-laundry-logo.jpg" 
                 alt="Smart Laundry Logo" 
-                className="w-full max-w-sm h-auto object-contain" 
+                className="w-full max-w-lg h-auto object-contain" 
               />
             </div>
             
