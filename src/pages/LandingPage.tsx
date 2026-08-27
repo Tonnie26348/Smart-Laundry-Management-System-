@@ -24,6 +24,7 @@ export const LandingPage = () => {
             imageUrl="/images/laundry/landing/laundry-hero-washing-machine.jpg"
             imageAlt="Professional handling modern laundry"
             variant="split"
+            className="items-start"
         >
             <div className="-mt-8 flex gap-4 pt-4">
               <Button size="lg" className="px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all" onClick={() => navigate('/register')}>Get Started</Button>
