@@ -32,7 +32,7 @@ export const LandingPage = () => {
             </div>
             
             {/* Logo Section */}
-            <div className="mt-12">
+            <div className="mt-20">
               <img 
                 src="/images/laundry/landing/smart-laundry-logo.jpg" 
                 alt="Smart Laundry Logo" 
