@@ -25,7 +25,7 @@ export const LandingPage = () => {
             imageAlt="Professional handling modern laundry"
             variant="split"
         >
-            <div className="flex gap-4 pt-4">
+            <div className="-mt-8 flex gap-4 pt-4">
               <Button size="lg" className="px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all" onClick={() => navigate('/register')}>Get Started</Button>
               <Button size="lg" variant="outline" className="px-8 py-6 text-lg font-semibold border-2" onClick={() => navigate('/services')}>Explore Services</Button>
             </div>
