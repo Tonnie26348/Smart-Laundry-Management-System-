@@ -14,12 +14,19 @@ interface ChatBoxProps {
   messages: Message[];
   currentUserId: string;
   onSendMessage: (text: string) => Promise<void>;
+  onRefresh: () => Promise<void>; // Added refresh callback
   isLoading?: boolean;
 }
 
-export const ChatBox = ({ messages, currentUserId, onSendMessage, isLoading }: ChatBoxProps) => {
+export const ChatBox = ({ messages, currentUserId, onSendMessage, onRefresh, isLoading }: ChatBoxProps) => {
   const [newMessage, setNewMessage] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Polling mechanism
+  useEffect(() => {
+    const interval = setInterval(onRefresh, 3000); // Poll every 3 seconds
+    return () => clearInterval(interval);
+  }, [onRefresh]);
 
   useEffect(() => {
     if (scrollRef.current) {
