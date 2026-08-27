@@ -14,7 +14,7 @@ interface Profile {
 
 interface Customer {
   id: string;
-  user_id: string;
+  profile_id: string;
   phone: string | null;
   profiles?: Profile;
 }
@@ -28,7 +28,6 @@ export const StaffCustomersPage = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       setLoading(true);
-      console.log('Fetching customers...');
 
       // 1. Fetch customers
       const { data: customersData, error: customersError } = await supabase
@@ -44,17 +43,17 @@ export const StaffCustomersPage = () => {
 
       const typedCustomers = customersData as Customer[];
 
-      // 2. Fetch profiles for all customer user_ids
-      const userIds = typedCustomers
-        ?.map(c => c.user_id)
+      // 2. Fetch profiles for all customer profile_ids
+      const profileIds = typedCustomers
+        ?.map(c => c.profile_id)
         .filter((id): id is string => id !== null && id !== undefined) || [];
       
       let profilesData: Profile[] = [];
-      if (userIds.length > 0) {
+      if (profileIds.length > 0) {
         const { data, error: profilesError } = await supabase
           .from('profiles')
           .select('id, full_name, email')
-          .in('id', userIds);
+          .in('id', profileIds);
 
         if (profilesError) {
           console.error('Error fetching profiles:', profilesError);
@@ -67,15 +66,12 @@ export const StaffCustomersPage = () => {
 
       // 3. Merge data
       const typedProfiles = (profilesData as Profile[]) || [];
-      console.log('Customers raw:', JSON.stringify(typedCustomers, null, 2));
-      console.log('Profiles raw:', JSON.stringify(typedProfiles, null, 2));
 
       const mergedData: Customer[] = (typedCustomers as any[]).map(c => ({
         ...c,
-        profiles: typedProfiles.find(p => p.id === c.user_id)
+        profiles: typedProfiles.find(p => p.id === c.profile_id)
       }));
 
-      console.log('Merged customers data:', JSON.stringify(mergedData, null, 2));
       setCustomers(mergedData);
       setLoading(false);
     };
