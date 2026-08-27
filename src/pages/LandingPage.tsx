@@ -46,7 +46,18 @@ export const LandingPage = () => {
             <div className="flex flex-col gap-24 pt-4">
               <div className="flex gap-4">
                 <Button size="lg" className="px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all" onClick={() => navigate('/register')}>Get Started</Button>
-                <Button size="lg" variant="outline" className="px-8 py-6 text-lg font-semibold border-2" onClick={() => navigate('/services')}>Explore Services</Button>
+                <Button 
+                size="lg" 
+                variant="outline" 
+                type="button"
+                className="px-8 py-6 text-lg font-semibold border-2" 
+                onClick={() => {
+                  console.log('Navigating to /services');
+                  navigate('/services');
+                }}
+              >
+                Explore Services
+              </Button>
               </div>
               
               {/* Logo Section */}
