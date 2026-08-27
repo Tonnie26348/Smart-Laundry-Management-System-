@@ -59,13 +59,13 @@ export const StaffCustomersPage = () => {
       }
 
       // 3. Merge data
-      const mergedData = typedCustomers.map(c => ({
+      const mergedData: Customer[] = typedCustomers.map(c => ({
         ...c,
         profiles: profilesData?.find(p => p.id === c.user_id)
       }));
 
       console.log('Merged customers data:', JSON.stringify(mergedData, null, 2));
-      setCustomers(mergedData || []);
+      setCustomers(mergedData);
       setLoading(false);
     };
 
@@ -73,9 +73,9 @@ export const StaffCustomersPage = () => {
   }, []);
 
   const filteredCustomers = customers.filter(c =>
-    c.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.profiles?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.phone?.includes(searchTerm)
+    (c.profiles?.full_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (c.profiles?.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (c.phone || '').includes(searchTerm)
   );
 
   return (
@@ -95,19 +95,16 @@ export const StaffCustomersPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredCustomers.map(c => {
-                          const profile = c.profiles;
-                          return (
+                        {filteredCustomers.map(c => (
                             <tr key={c.id} className="border-t">
-                                <td className="p-4">{profile?.full_name || 'N/A'}</td>
-                                <td className="p-4">{profile?.email || 'N/A'}</td>
+                                <td className="p-4">{c.profiles?.full_name || 'N/A'}</td>
+                                <td className="p-4">{c.profiles?.email || 'N/A'}</td>
                                 <td className="p-4">{c.phone || 'N/A'}</td>
                                 <td className="p-4">
-                                  <Button size="sm" onClick={() => navigate(`/admin/chat/${profile?.id || ''}`)}>Chat</Button>
+                                  <Button size="sm" onClick={() => navigate(`/admin/chat/${c.profiles?.id || ''}`)}>Chat</Button>
                                 </td>
                             </tr>
-                          );
-                        })}
+                        ))}
                     </tbody>
                 </table>
             </div>
