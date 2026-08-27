@@ -45,6 +45,7 @@ const CustomerPaymentsPage = lazy(() => import('./pages/CustomerPaymentsPage').t
 const CustomerNotificationsPage = lazy(() => import('./pages/CustomerNotificationsPage').then(m => ({ default: m.CustomerNotificationsPage })));
 const CustomerLoyaltyPage = lazy(() => import('./pages/CustomerLoyaltyPage').then(m => ({ default: m.CustomerLoyaltyPage })));
 const CustomerReviewsPage = lazy(() => import('./pages/CustomerReviewsPage').then(m => ({ default: m.CustomerReviewsPage })));
+const MessagingPage = lazy(() => import('./pages/MessagingPage').then(m => ({ default: m.MessagingPage })));
 const OfflinePage = lazy(() => import('./pages/Offline').then(m => ({ default: m.OfflinePage })));
 
 function App() {
@@ -145,6 +146,11 @@ function App() {
           <Route path="/deliverystaff" element={
             <ProtectedRoute>
               <DeliveryStaffDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/messaging" element={
+            <ProtectedRoute>
+              <MessagingPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/chat/:receiverId" element={
