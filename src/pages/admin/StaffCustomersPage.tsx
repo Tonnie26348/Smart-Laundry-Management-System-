@@ -95,16 +95,19 @@ export const StaffCustomersPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredCustomers.map(c => (
+                        {filteredCustomers.map(c => {
+                          const profile = c.profiles;
+                          return (
                             <tr key={c.id} className="border-t">
-                                <td className="p-4">{c.profiles?.full_name || 'N/A'}</td>
-                                <td className="p-4">{c.profiles?.email || 'N/A'}</td>
+                                <td className="p-4">{profile?.full_name || 'N/A'}</td>
+                                <td className="p-4">{profile?.email || 'N/A'}</td>
                                 <td className="p-4">{c.phone || 'N/A'}</td>
                                 <td className="p-4">
-                                  <Button size="sm" onClick={() => navigate(`/admin/chat/${c.profiles?.id}`)}>Chat</Button>
+                                  <Button size="sm" onClick={() => navigate(`/admin/chat/${profile?.id || ''}`)}>Chat</Button>
                                 </td>
                             </tr>
-                        ))}
+                          );
+                        })}
                     </tbody>
                 </table>
             </div>
