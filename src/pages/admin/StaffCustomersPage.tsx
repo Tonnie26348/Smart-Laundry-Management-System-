@@ -95,7 +95,7 @@ export const StaffCustomersPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredCustomers.map((c: Customer) => (
+                        {filteredCustomers.map(((c: any) => (
                             <tr key={c.id} className="border-t">
                                 <td className="p-4">{c.profiles?.full_name || 'N/A'}</td>
                                 <td className="p-4">{c.profiles?.email || 'N/A'}</td>
@@ -104,7 +104,7 @@ export const StaffCustomersPage = () => {
                                   <Button size="sm" onClick={() => navigate(`/admin/chat/${c.profiles?.id || ''}`)}>Chat</Button>
                                 </td>
                             </tr>
-                        ))}
+                        )) as any)}
                     </tbody>
                 </table>
             </div>
