@@ -24,7 +24,7 @@ export const StaffCustomersPage = () => {
         console.error('Error fetching customers:', error);
         alert('Fetch Error: ' + error.message);
       } else {
-        console.log('Fetched customers:', data);
+        console.log('Fetched customers raw data:', JSON.stringify(data, null, 2));
         setCustomers(data || []);
       }
       setLoading(false);
@@ -55,16 +55,19 @@ export const StaffCustomersPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredCustomers.map(c => (
+                        {filteredCustomers.map(c => {
+                          const profile = Array.isArray(c.profiles) ? c.profiles[0] : c.profiles;
+                          return (
                             <tr key={c.id} className="border-t">
-                                <td className="p-4">{c.profiles?.full_name || 'N/A'}</td>
-                                <td className="p-4">{c.profiles?.email || 'N/A'}</td>
+                                <td className="p-4">{profile?.full_name || 'N/A'}</td>
+                                <td className="p-4">{profile?.email || 'N/A'}</td>
                                 <td className="p-4">{c.phone || 'N/A'}</td>
                                 <td className="p-4">
-                                  <Button size="sm" onClick={() => navigate(`/admin/chat/${c.profiles?.id}`)}>Chat</Button>
+                                  <Button size="sm" onClick={() => navigate(`/admin/chat/${profile?.id}`)}>Chat</Button>
                                 </td>
                             </tr>
-                        ))}
+                          );
+                        })}
                     </tbody>
                 </table>
             </div>
