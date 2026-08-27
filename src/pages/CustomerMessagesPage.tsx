@@ -19,6 +19,7 @@ export const CustomerMessagesPage = () => {
   };
 
   useEffect(() => {
+    let channel: any;
     const initChat = async () => {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
@@ -29,10 +30,28 @@ export const CustomerMessagesPage = () => {
       if (admin && user) {
         setAdminId(admin.id);
         await fetchMessages(user.id, admin.id);
+
+        // Subscribe to real-time changes
+        channel = supabase
+          .channel('messages-channel')
+          .on('postgres_changes', { 
+            event: 'INSERT', 
+            schema: 'public', 
+            table: 'messages' 
+          }, () => {
+            fetchMessages(user.id, admin.id);
+          })
+          .subscribe();
       }
       setLoading(false);
     };
     initChat();
+
+    return () => { 
+        if (channel) {
+            supabase.removeChannel(channel); 
+        }
+    };
   }, []);
 
   const sendMessage = async (text: string) => {

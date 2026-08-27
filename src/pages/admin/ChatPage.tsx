@@ -22,16 +22,35 @@ export const ChatPage = () => {
   };
 
   useEffect(() => {
+    let channel: any;
     const initChat = async () => {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       setCurrentUser(user);
       if (user && receiverId) {
         await fetchMessages();
+        
+        // Subscribe to real-time changes
+        channel = supabase
+          .channel('messages-channel')
+          .on('postgres_changes', { 
+            event: 'INSERT', 
+            schema: 'public', 
+            table: 'messages' 
+          }, () => {
+            fetchMessages(); // Refresh messages on new insert
+          })
+          .subscribe();
       }
       setLoading(false);
     };
     initChat();
+    
+    return () => { 
+        if (channel) {
+            supabase.removeChannel(channel); 
+        }
+    };
   }, [receiverId]);
 
   const sendMessage = async (text: string) => {
