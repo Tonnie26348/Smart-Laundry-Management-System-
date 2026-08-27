@@ -73,7 +73,10 @@ export const AnalyticsPage = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <Tooltip formatter={(value: number) => [`KSh ${value.toLocaleString()}`, 'Revenue']} />
+                <Tooltip formatter={(value: number | string | (number | string)[]) => [
+                  typeof value === 'number' ? `KSh ${value.toLocaleString()}` : value, 
+                  'Revenue'
+                ]} />
                 <Area type="monotone" dataKey="revenue" stroke="#059669" fill="#10b981" />
               </AreaChart>
             </ResponsiveContainer>
