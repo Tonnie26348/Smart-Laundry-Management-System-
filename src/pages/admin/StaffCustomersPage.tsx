@@ -67,6 +67,9 @@ export const StaffCustomersPage = () => {
 
       // 3. Merge data
       const typedProfiles = (profilesData as Profile[]) || [];
+      console.log('Customers raw:', JSON.stringify(typedCustomers, null, 2));
+      console.log('Profiles raw:', JSON.stringify(typedProfiles, null, 2));
+
       const mergedData: Customer[] = (typedCustomers as any[]).map(c => ({
         ...c,
         profiles: typedProfiles.find(p => p.id === c.user_id)
