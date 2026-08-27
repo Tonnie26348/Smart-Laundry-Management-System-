@@ -16,26 +16,50 @@ export const StaffCustomersPage = () => {
     const fetchCustomers = async () => {
       setLoading(true);
       console.log('Fetching customers...');
-      // Join on user_id as per schema
-      const { data, error } = await supabase
-        .from('customers')
-        .select('*, profiles!customers_user_id_fkey(id, full_name, email)');
 
-      if (error) {
-        console.error('Error fetching customers:', error);
-        alert('Fetch Error: ' + error.message);
-      } else {
-        console.log('Fetched customers raw data:', JSON.stringify(data, null, 2));
-        setCustomers(data || []);
+      // 1. Fetch customers
+      const { data: customersData, error: customersError } = await supabase
+        .from('customers')
+        .select('*');
+
+      if (customersError) {
+        console.error('Error fetching customers:', customersError);
+        alert('Fetch Error: ' + customersError.message);
+        setLoading(false);
+        return;
       }
+
+      // 2. Fetch profiles for all customer user_ids
+      const userIds = customersData?.map(c => c.user_id) || [];
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', userIds);
+
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+        alert('Fetch Profiles Error: ' + profilesError.message);
+        setLoading(false);
+        return;
+      }
+
+      // 3. Merge data
+      const mergedData = customersData.map(c => ({
+        ...c,
+        profiles: profilesData?.find(p => p.id === c.user_id)
+      }));
+
+      console.log('Merged customers data:', JSON.stringify(mergedData, null, 2));
+      setCustomers(mergedData || []);
       setLoading(false);
     };
 
     fetchCustomers();
   }, []);
+
   const filteredCustomers = customers.filter(c =>
-    (Array.isArray(c.profiles) ? c.profiles[0] : c.profiles)?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (Array.isArray(c.profiles) ? c.profiles[0] : c.profiles)?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.profiles?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.phone?.includes(searchTerm)
   );
 
@@ -56,19 +80,16 @@ export const StaffCustomersPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredCustomers.map(c => {
-                          const profile = Array.isArray(c.profiles) ? c.profiles[0] : c.profiles;
-                          return (
+                        {filteredCustomers.map(c => (
                             <tr key={c.id} className="border-t">
-                                <td className="p-4">{profile?.full_name || 'N/A'}</td>
-                                <td className="p-4">{profile?.email || 'N/A'}</td>
+                                <td className="p-4">{c.profiles?.full_name || 'N/A'}</td>
+                                <td className="p-4">{c.profiles?.email || 'N/A'}</td>
                                 <td className="p-4">{c.phone || 'N/A'}</td>
                                 <td className="p-4">
-                                  <Button size="sm" onClick={() => navigate(`/admin/chat/${profile?.id}`)}>Chat</Button>
+                                  <Button size="sm" onClick={() => navigate(`/admin/chat/${c.profiles?.id}`)}>Chat</Button>
                                 </td>
                             </tr>
-                          );
-                        })}
+                        ))}
                     </tbody>
                 </table>
             </div>
