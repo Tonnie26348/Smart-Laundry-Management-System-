@@ -39,6 +39,7 @@ export const CustomerLayout = ({ children }: { children: ReactNode }) => {
               <a href="/dashboard" className="hover:text-primary-600">Dashboard</a>
               <a href="/orders" className="hover:text-primary-600">Orders</a>
               <a href="/payments" className="hover:text-primary-600">Payments</a>
+              <a href="/messages" className="hover:text-primary-600">Messages</a>
               <a href="/notifications" className="hover:text-primary-600">Notifications</a>
               <a href="/loyalty" className="hover:text-primary-600">Loyalty</a>
               <a href="/reviews" className="hover:text-primary-600">Reviews</a>
