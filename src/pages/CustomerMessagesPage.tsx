@@ -55,10 +55,9 @@ export const CustomerMessagesPage = () => {
     setMessages(data || []);
   };
 
-  if (loading) return <CustomerLayout><LoadingSpinner /></CustomerLayout>;
+  if (loading) return <LoadingSpinner />;
 
   return (
-    <CustomerLayout>
       <div className="max-w-2xl mx-auto space-y-4">
         <h2 className="text-xl font-bold">Messages</h2>
         <div className="h-96 overflow-y-auto border p-4 space-y-2 bg-white rounded">
@@ -73,6 +72,5 @@ export const CustomerMessagesPage = () => {
           <Button onClick={sendMessage}>Send</Button>
         </div>
       </div>
-    </CustomerLayout>
   );
 };
