@@ -6,8 +6,21 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
+interface Profile {
+  id: string;
+  full_name: string;
+  email: string;
+}
+
+interface Customer {
+  id: string;
+  user_id: string;
+  phone: string | null;
+  profiles?: Profile;
+}
+
 export const StaffCustomersPage = () => {
-  const [customers, setCustomers] = useState<any[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
@@ -29,8 +42,10 @@ export const StaffCustomersPage = () => {
         return;
       }
 
+      const typedCustomers = customersData as Customer[];
+
       // 2. Fetch profiles for all customer user_ids
-      const userIds = customersData?.map(c => c.user_id) || [];
+      const userIds = typedCustomers?.map(c => c.user_id) || [];
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('id, full_name, email')
@@ -44,7 +59,7 @@ export const StaffCustomersPage = () => {
       }
 
       // 3. Merge data
-      const mergedData = customersData.map(c => ({
+      const mergedData = typedCustomers.map(c => ({
         ...c,
         profiles: profilesData?.find(p => p.id === c.user_id)
       }));
