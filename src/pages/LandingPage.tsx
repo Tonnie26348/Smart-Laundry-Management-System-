@@ -35,6 +35,11 @@ export const LandingPage = () => {
         </ThematicHero>
       </section>
 
+      {/* Logo */}
+      <section className="px-6 pb-12 flex justify-center">
+          <img src="/images/laundry/landing/smart-laundry-logo.jpg" alt="Smart Laundry Logo" className="max-h-20" />
+      </section>
+
       {/* Features */}
       <section className="bg-gray-50 py-16 px-6">
         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
