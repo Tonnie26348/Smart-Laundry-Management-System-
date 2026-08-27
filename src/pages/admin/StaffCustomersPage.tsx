@@ -18,7 +18,7 @@ export const StaffCustomersPage = () => {
       console.log('Fetching customers...');
       const { data, error } = await supabase
         .from('customers')
-        .select('*, profiles(full_name, email)');
+        .select('*, profiles(id, full_name, email)');
 
       if (error) {
         console.error('Error fetching customers:', error);
@@ -61,7 +61,7 @@ export const StaffCustomersPage = () => {
                                 <td className="p-4">{c.profiles?.email || 'N/A'}</td>
                                 <td className="p-4">{c.phone || 'N/A'}</td>
                                 <td className="p-4">
-                                  <Button size="sm" onClick={() => navigate(`/admin/chat/${c.profile_id}`)}>Chat</Button>
+                                  <Button size="sm" onClick={() => navigate(`/admin/chat/${c.profiles?.id}`)}>Chat</Button>
                                 </td>
                             </tr>
                         ))}

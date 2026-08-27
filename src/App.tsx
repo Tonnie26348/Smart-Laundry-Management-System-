@@ -154,6 +154,11 @@ function App() {
               <CustomersPage />
             </ProtectedRoute>
           } />
+          <Route path="/admin/staff-customers" element={
+            <ProtectedRoute>
+              <StaffCustomersPage />
+            </ProtectedRoute>
+          } />
           <Route path="/admin/inspections" element={
             <ProtectedRoute>
               <InspectionsPage />

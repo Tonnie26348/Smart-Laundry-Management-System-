@@ -42,13 +42,12 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
               <a href={isStaff ? "/laundrystaff" : isManager ? "/manager" : "/admin"} className="hover:text-primary-600">Dashboard</a>
               
               <a href="/admin/chat" className="hover:text-primary-600">Messages</a>
-              <a href="/admin/staff-customers" className="hover:text-primary-600">Customers</a>
+              <a href={isAdmin ? "/admin/customers" : "/admin/staff-customers"} className="hover:text-primary-600">Customers</a>
 
               {/* Operational Links */}
               {isAuthorized && (
                 <>
                 <a href="/admin/orders" className="hover:text-primary-600">Orders</a>
-                {isAdmin && <a href="/admin/customers" className="hover:text-primary-600">Customers</a>}
                 {isAdmin && <a href="/admin/services" className="hover:text-primary-600">Services</a>}
                 {isAdmin && <a href="/admin/items" className="hover:text-primary-600">Items</a>}
                 {isAdmin && <a href="/admin/pricing" className="hover:text-primary-600">Pricing</a>}
