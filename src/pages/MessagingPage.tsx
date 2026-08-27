@@ -10,6 +10,8 @@ import { useMessages } from '@/features/messaging/hooks/useMessages';
 import { useConversation } from '@/features/messaging/hooks/useConversation';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { Button } from '@/components/ui/Button';
+import { messagingService } from '@/features/messaging/services/messagingService';
 import { ConversationWithParticipants } from '@/features/messaging/types/messaging';
 
 export const MessagingPage = () => {

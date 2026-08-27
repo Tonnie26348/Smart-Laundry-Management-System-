@@ -109,18 +109,18 @@ export const messagingService = {
 
     // Create support conversation
     const { data: conv, error: convError } = await (supabase
-      .from('conversations')
+      .from('conversations') as any)
       .insert({ conversation_type: 'support', title: 'Support Request', created_by: user.id })
       .select()
-      .single() as any);
+      .single();
     
     if (convError) throw convError;
 
     // Add participants (Customer + Admin)
-    await (supabase.from('conversation_participants').insert([
+    await (supabase.from('conversation_participants') as any).insert([
       { conversation_id: conv.id, user_id: user.id },
       { conversation_id: conv.id, user_id: adminId }
-    ]) as any);
+    ]);
 
     return conv.id;
   },
