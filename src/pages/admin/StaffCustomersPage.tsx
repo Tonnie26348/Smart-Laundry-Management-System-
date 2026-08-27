@@ -16,9 +16,10 @@ export const StaffCustomersPage = () => {
     const fetchCustomers = async () => {
       setLoading(true);
       console.log('Fetching customers...');
+      // Join on user_id as per schema
       const { data, error } = await supabase
         .from('customers')
-        .select('*, profiles(id, full_name, email)');
+        .select('*, profiles!customers_user_id_fkey(id, full_name, email)');
 
       if (error) {
         console.error('Error fetching customers:', error);
@@ -33,8 +34,8 @@ export const StaffCustomersPage = () => {
     fetchCustomers();
   }, []);
   const filteredCustomers = customers.filter(c =>
-    c.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.profiles?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (Array.isArray(c.profiles) ? c.profiles[0] : c.profiles)?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (Array.isArray(c.profiles) ? c.profiles[0] : c.profiles)?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.phone?.includes(searchTerm)
   );
 
