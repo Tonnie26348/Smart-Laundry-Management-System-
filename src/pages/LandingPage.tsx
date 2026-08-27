@@ -1,9 +1,25 @@
 import { ThematicHero } from '@/components/layout/ThematicHero';
 import { Button } from '@/components/ui/Button';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 export const LandingPage = () => {
   const navigate = useNavigate();
+  const [customerCount, setCustomerCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchCustomerCount = async () => {
+      const { count, error } = await supabase
+        .from('customers')
+        .select('*', { count: 'exact', head: true });
+        
+      if (!error && count !== null) {
+        setCustomerCount(count);
+      }
+    };
+    fetchCustomerCount();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -44,7 +60,7 @@ export const LandingPage = () => {
             </div>
             
             <p className="text-sm text-gray-500 pt-4">
-              Trusted by 5,000+ satisfied customers.
+              Trusted by {customerCount !== null ? `${customerCount}+` : '...'} satisfied customers.
             </p>
         </ThematicHero>
       </section>
