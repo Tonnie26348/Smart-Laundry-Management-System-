@@ -3,8 +3,8 @@
 
 BEGIN;
 
--- 1. Disable triggers on messages_v2 to prevent conversation/notification side effects
-ALTER TABLE public.messages_v2 DISABLE TRIGGER ALL;
+-- 1. Disable custom trigger on messages_v2 to prevent conversation/notification side effects
+ALTER TABLE public.messages_v2 DISABLE TRIGGER trg_messages_v2_last_message_at;
 
 -- 2. Identify unique canonical direct-chat pairs
 CREATE TEMP TABLE legacy_pairs AS
@@ -39,13 +39,13 @@ JOIN legacy_pairs lp ON c.created_at = lp.first_message_at AND c.conversation_ty
 
 -- Add Sender (A)
 INSERT INTO public.conversation_participants (conversation_id, user_id, joined_at)
-SELECT conversation_id, participant_a, first_message_at FROM conversation_map cm
+SELECT cm.conversation_id, cm.participant_a, lp.first_message_at FROM conversation_map cm
 JOIN legacy_pairs lp ON cm.participant_a = lp.participant_a AND cm.participant_b = lp.participant_b
 ON CONFLICT DO NOTHING;
 
 -- Add Receiver (B)
 INSERT INTO public.conversation_participants (conversation_id, user_id, joined_at)
-SELECT conversation_id, participant_b, first_message_at FROM conversation_map cm
+SELECT cm.conversation_id, cm.participant_b, lp.first_message_at FROM conversation_map cm
 JOIN legacy_pairs lp ON cm.participant_a = lp.participant_a AND cm.participant_b = lp.participant_b
 ON CONFLICT DO NOTHING;
 
@@ -84,8 +84,8 @@ FROM (
 ) sub
 WHERE cp.conversation_id = sub.conversation_id AND cp.user_id = sub.user_id;
 
--- 7. Re-enable triggers
-ALTER TABLE public.messages_v2 ENABLE TRIGGER ALL;
+-- 7. Re-enable custom trigger
+ALTER TABLE public.messages_v2 ENABLE TRIGGER trg_messages_v2_last_message_at;
 
 -- 8. Clean up
 DROP TABLE legacy_pairs;
