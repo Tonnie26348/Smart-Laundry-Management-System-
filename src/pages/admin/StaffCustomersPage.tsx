@@ -95,7 +95,7 @@ export const StaffCustomersPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredCustomers.map(c => (
+                        {filteredCustomers.map((c: Customer) => (
                             <tr key={c.id} className="border-t">
                                 <td className="p-4">{c.profiles?.full_name || 'N/A'}</td>
                                 <td className="p-4">{c.profiles?.email || 'N/A'}</td>
