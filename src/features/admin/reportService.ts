@@ -27,9 +27,15 @@ export const reportService = {
   },
 
   async exportToCSV(data: Record<string, unknown>[], fileName: string) {
-    if (data.length === 0) return;
+    console.log('Exporting data:', data, 'Filename:', fileName);
+    if (data.length === 0) {
+      console.log('No data to export.');
+      return;
+    }
     
     const headers = Object.keys(data[0]);
+    console.log('Headers:', headers);
+    
     const csvRows = [
       headers.join(','),
       ...data.map(row => 
@@ -41,6 +47,7 @@ export const reportService = {
     ];
     
     const csvContent = csvRows.join('\n');
+    console.log('CSV Content:', csvContent);
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -48,7 +55,9 @@ export const reportService = {
     link.setAttribute('download', `${fileName}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
+    console.log('Triggering click...');
     link.click();
     document.body.removeChild(link);
+    console.log('Export complete.');
   }
 };
