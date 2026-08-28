@@ -4,12 +4,17 @@ import { supabase } from '@/lib/supabase';
 export interface Discount {
   id: string;
   code: string;
-  type: 'percentage' | 'fixed';
-  value: number;
+  name: string;
+  description: string;
+  discount_type: 'percentage' | 'fixed';
+  discount_value: number;
+  min_order_amount: number;
+  max_discount: number;
   is_active: boolean;
   start_date: string | null;
   end_date: string | null;
   usage_limit: number | null;
+  per_customer_usage_limit: number | null;
 }
 
 export const discountService = {
@@ -18,7 +23,7 @@ export const discountService = {
     if (error) throw error;
     return data || [];
   },
-  async createDiscount(discount: Omit<Discount, 'id'>) {
+  async createDiscount(discount: Omit<Discount, 'id' | 'created_at' | 'updated_at'>) {
     const { data, error } = await (supabase.from('discounts') as any).insert(discount).select().single();
     if (error) throw error;
     return data;
