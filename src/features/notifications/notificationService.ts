@@ -11,6 +11,14 @@ export interface Notification {
 }
 
 export const notificationService = {
+  async getAllNotifications(): Promise<Notification[]> {
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('*, profiles(full_name)')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
   async getNotifications(profileId: string) {
     const { data, error } = await supabase
       .from('notifications')
