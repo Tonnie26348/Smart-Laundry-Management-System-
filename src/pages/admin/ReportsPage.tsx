@@ -56,19 +56,30 @@ export const ReportsPage = () => {
     fetchReport();
   }, [fetchReport]);
 
-  const handleExport = () => {
+  const handleExport = useCallback(() => {
     console.log('handleExport called. Data state:', data);
-    if (!data) return;
+    if (!data) {
+      console.log('No data available to export.');
+      return;
+    }
     
     console.log('Exporting daily_revenue:', data.daily_revenue);
     console.log('Exporting service_distribution:', data.service_distribution);
 
     // Export Daily Revenue
-    reportService.exportToCSV(data.daily_revenue as unknown as Record<string, unknown>[], `revenue_report_${startDate}_to_${endDate}`);
+    if (data.daily_revenue && data.daily_revenue.length > 0) {
+      reportService.exportToCSV(data.daily_revenue as unknown as Record<string, unknown>[], `revenue_report_${startDate}_to_${endDate}`);
+    } else {
+      console.log('daily_revenue is empty');
+    }
     
     // Export Service Distribution
-    reportService.exportToCSV(data.service_distribution as unknown as Record<string, unknown>[], `service_report_${startDate}_to_${endDate}`);
-  };
+    if (data.service_distribution && data.service_distribution.length > 0) {
+      reportService.exportToCSV(data.service_distribution as unknown as Record<string, unknown>[], `service_report_${startDate}_to_${endDate}`);
+    } else {
+      console.log('service_distribution is empty');
+    }
+  }, [data, startDate, endDate]);
 
   const statusData = data ? Object.entries(data.status_distribution).map(([name, value]) => ({ name, value })) : [];
 
