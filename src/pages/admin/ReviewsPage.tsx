@@ -38,8 +38,8 @@ export const ReviewsPage = () => {
       <div className="p-6 space-y-6">
         <h1 className="text-2xl font-bold">Customer Reviews</h1>
         {loading ? <LoadingSpinner /> : (
-          <div className="bg-white shadow rounded-lg overflow-hidden border border-gray-200">
-            <table className="w-full">
+          <div className="bg-white shadow rounded-lg overflow-hidden border border-gray-200 overflow-x-auto">
+            <table className="w-full min-w-[600px]">
               <thead>
                 <tr className="bg-gray-100 text-left border-b border-gray-200">
                   <th className="p-4 font-semibold text-gray-700">Order #</th>
