@@ -57,8 +57,12 @@ export const ReportsPage = () => {
   }, [fetchReport]);
 
   const handleExport = () => {
+    console.log('handleExport called. Data state:', data);
     if (!data) return;
     
+    console.log('Exporting daily_revenue:', data.daily_revenue);
+    console.log('Exporting service_distribution:', data.service_distribution);
+
     // Export Daily Revenue
     reportService.exportToCSV(data.daily_revenue as unknown as Record<string, unknown>[], `revenue_report_${startDate}_to_${endDate}`);
     
