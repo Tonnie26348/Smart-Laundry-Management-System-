@@ -27,6 +27,7 @@ export const DiscountsPage = () => {
   }, []);
 
   const handleCreate = async () => {
+    console.log('Creating discount with payload:', newDiscount);
     try {
       await discountService.createDiscount(newDiscount as Omit<Discount, 'id'>);
       setNewDiscount({ code: '', type: 'percentage', value: 0, is_active: true });
