@@ -8,6 +8,14 @@ export interface LoyaltyTransaction {
 }
 
 export const loyaltyService = {
+  async getAllLoyaltyTransactions() {
+    const { data, error } = await supabase
+      .from('loyalty_transactions')
+      .select('*, customers(full_name)')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data;
+  },
   async getLoyaltyHistory(customerId: string) {
     const { data, error } = await supabase
       .from('loyalty_transactions')
