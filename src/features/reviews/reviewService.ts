@@ -10,6 +10,11 @@ export interface Review {
 }
 
 export const reviewService = {
+  async getAllReviews(): Promise<Review[]> {
+    const { data, error } = await (supabase.from('reviews') as any).select('*, orders(order_number), customers(full_name)');
+    if (error) throw error;
+    return data || [];
+  },
   async submitReview(review: Omit<Review, 'id' | 'status'>) {
     const { data, error } = await (supabase.from('reviews') as any).insert(review).select().single();
     if (error) throw error;
