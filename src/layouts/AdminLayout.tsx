@@ -68,7 +68,7 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
       {/* Sidebar for Desktop */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out`}>
         <div className="h-16 flex items-center px-6 border-b font-bold text-primary-600 text-xl">Laundry Portal</div>
-        <nav className="p-4 space-y-1">
+        <nav className="p-4 space-y-1 overflow-y-auto flex-1">
           {filteredLinks.map(link => (
             <a 
               key={link.path} 
@@ -80,7 +80,7 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
             </a>
           ))}
         </nav>
-        <div className="absolute bottom-0 w-full p-4 border-t">
+        <div className="p-4 border-t">
           <Button variant="ghost" size="sm" onClick={handleLogout} className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50">
             <LogOut size={20} className="mr-2" /> Logout
           </Button>
