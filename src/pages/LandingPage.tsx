@@ -68,8 +68,8 @@ export const LandingPage = () => {
             
             <p className="text-sm text-gray-500 pt-4">
               {customerCount && customerCount > 0 
-                ? `Trusted by ${customerCount}+ satisfied customers.` 
-                : 'Join our growing family of satisfied customers.'}
+                ? `Trusted by ${customerCount}+ satisfied customers across Nairobi.` 
+                : 'Experience premium laundry, delivered with care. Join our community today.'}
             </p>
         </ThematicHero>
       </section>
