@@ -7,13 +7,19 @@ export const invoiceService = {
       .select(`
         *, 
         customers(*, profiles(*)), 
-        order_items(*, laundry_item_services(*, services(*))), 
+        order_items(
+          *, 
+          laundry_item_services(
+            *, 
+            services(*)
+          )
+        ), 
         payments(*)
       `)
       .eq('id', orderId)
       .single();
 
-    console.log('Fetched order data:', order);
+    console.log('DEBUG: Full order object:', JSON.stringify(order, null, 2));
 
     if (orderError) throw orderError;
     return order;
