@@ -8,6 +8,7 @@ import { LandingPage } from './pages/LandingPage';
 import { LoginForm } from './features/auth/components/LoginForm';
 import { RegisterForm } from './features/auth/components/RegisterForm';
 import { CustomerLayout } from './layouts/CustomerLayout';
+import { AdminLayout } from './layouts/AdminLayout';
 
 const EditProfilePage = lazy(() => import('./pages/EditProfilePage').then(m => ({ default: m.EditProfilePage })));
 const ChatListPage = lazy(() => import('./pages/admin/ChatListPage').then(m => ({ default: m.ChatListPage })));
