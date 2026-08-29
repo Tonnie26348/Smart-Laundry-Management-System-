@@ -8,6 +8,8 @@ export const invoiceService = {
       .eq('id', orderId)
       .single();
 
+    console.log('Fetched order data:', order);
+
     if (orderError) throw orderError;
     return order;
   },
