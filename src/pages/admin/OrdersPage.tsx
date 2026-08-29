@@ -25,13 +25,22 @@ export const OrdersPage = () => {
     fetchOrders();
   }, []);
 
-  const updateStatus = async (id: string, newStatus: string) => {
-    const { error } = await (supabase.from('orders') as any).update({ status: newStatus }).eq('id', id);
+  const updateStatus = async (order: any, newStatus: string) => {
+    const statusOrder = ['pending', 'washing', 'ready', 'completed'];
+    const currentIndex = statusOrder.indexOf(order.status);
+    const newIndex = statusOrder.indexOf(newStatus);
+
+    if (newIndex < currentIndex) {
+      alert('Cannot revert order status.');
+      return;
+    }
+
+    const { error } = await (supabase.from('orders') as any).update({ status: newStatus }).eq('id', order.id);
     if (error) {
       console.error('Failed to update status:', error);
       alert('Failed to update status: ' + error.message);
     } else {
-      setOrders(prev => prev.map(o => o.id === id ? { ...o, status: newStatus } : o));
+      setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: newStatus } : o));
     }
   };
 
@@ -50,7 +59,7 @@ export const OrdersPage = () => {
                     <td className="p-4">{o.customers?.profiles?.full_name}</td>
                     <td className="p-4 capitalize">{o.status}</td>
                     <td className="p-4 flex gap-2">
-                      <select onChange={(e) => updateStatus(o.id, e.target.value)} value={o.status}>
+                      <select onChange={(e) => updateStatus(o, e.target.value)} value={o.status}>
                         <option value="pending">Pending</option>
                         <option value="washing">Washing</option>
                         <option value="ready">Ready</option>
