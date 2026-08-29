@@ -11,7 +11,7 @@ export interface Review {
 
 export const reviewService = {
   async getAllReviews(): Promise<Review[]> {
-    const { data, error } = await (supabase.from('reviews') as any).select('*, orders(order_number), customers(full_name)');
+    const { data, error } = await (supabase.from('reviews') as any).select('*, orders(order_number), customers(profiles(full_name))');
     console.log('DEBUG: Fetched all reviews:', data, 'Error:', error);
     if (error) throw error;
     return data || [];

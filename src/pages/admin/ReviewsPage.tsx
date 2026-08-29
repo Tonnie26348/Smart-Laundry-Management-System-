@@ -58,9 +58,9 @@ export const ReviewsPage = () => {
                 ) : (
                   reviews.map(review => (
                     <tr key={review.id} className="border-t border-gray-100 hover:bg-gray-50">
-                      <td className="p-4">{review.orders?.order_number || 'N/A'}</td>
-                      <td className="p-4">{review.customers?.full_name || 'N/A'}</td>
-                      <td className="p-4">{review.rating} / 5</td>
+                    <td className="p-4">{review.orders?.order_number || 'N/A'}</td>
+                    <td className="p-4">{review.customers?.profiles?.full_name || 'N/A'}</td>
+                    <td className="p-4">{review.rating} / 5</td>
                       <td className="p-4">{review.comment}</td>
                       <td className="p-4">
                         <span className={`px-2 py-1 text-xs font-semibold rounded-full uppercase ${review.status === 'approved' ? 'bg-green-100 text-green-700' : review.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
