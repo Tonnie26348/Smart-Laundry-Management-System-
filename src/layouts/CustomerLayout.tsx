@@ -36,6 +36,7 @@ export const CustomerLayout = ({ children }: { children: ReactNode }) => {
     { name: 'Payments', path: "/payments", icon: CreditCard },
     { name: 'Messages', path: "/messages", icon: MessageSquare },
     { name: 'Notifications', path: "/notifications", icon: Bell },
+    { name: 'Receipts', path: "/receipts", icon: FileText },
     { name: 'Loyalty', path: "/loyalty", icon: Award },
     { name: 'Reviews', path: "/reviews", icon: Star },
     { name: 'Profile', path: "/profile", icon: User },

@@ -50,6 +50,7 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
     { name: 'Deliveries', path: "/admin/deliveries", icon: Truck, authorized: isAdmin || isManager },
     { name: 'Analytics', path: "/admin/analytics", icon: BarChart2, authorized: isAdmin || isManager },
     { name: 'Reports', path: "/admin/reports", icon: FileText, authorized: isAdmin || isManager },
+    { name: 'Receipts', path: "/admin/receipts", icon: FileText, authorized: isAdmin || isManager },
     { name: 'Audit Logs', path: "/admin/audit", icon: Shield, adminOnly: true },
     { name: 'Settings', path: "/admin/settings", icon: Settings, adminOnly: true },
     { name: 'Notifications', path: "/admin/notifications", icon: Bell, adminOnly: true },
