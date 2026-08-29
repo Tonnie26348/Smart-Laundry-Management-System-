@@ -42,5 +42,15 @@ Status: ${order.status.toUpperCase()}
 
 Thank you for choosing us!
 `;
+  },
+  downloadReceipt(order: any) {
+    const text = this.generateReceiptText(order);
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `receipt_${order.order_number || order.id.slice(0, 8)}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 };
