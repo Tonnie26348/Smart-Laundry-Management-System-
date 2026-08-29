@@ -4,7 +4,7 @@ export const invoiceService = {
   async getInvoiceData(orderId: string) {
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .select('*, customers(*, profiles(*)), order_items(*, laundry_item_services(*, services(*))), payments(*)')
+      .select('*, customers(*, profiles(*)), order_items(*, laundry_items(*)), payments(*)')
       .eq('id', orderId)
       .single();
 
@@ -13,13 +13,9 @@ export const invoiceService = {
   },
 
   generateReceiptText(order: any): string {
-    console.log('Order object for receipt:', order);
-    console.log('Order items:', order.order_items);
-    
-    const items = order.order_items.map((item: any) => {
-      const serviceName = item.laundry_item_services?.services?.name || 'Unknown';
-      return `${serviceName.padEnd(16)} ${item.quantity.toString().padEnd(7)} ${item.line_total.toLocaleString()}`;
-    }).join('\n');
+    const items = order.order_items.map((item: any) => 
+      `${(item.laundry_items?.name || 'Item').padEnd(16)} ${item.quantity.toString().padEnd(7)} ${(item.price_at_time * item.quantity).toLocaleString()}`
+    ).join('\n');
 
     return `
            SMART LAUNDRY
