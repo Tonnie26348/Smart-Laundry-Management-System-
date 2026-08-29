@@ -35,8 +35,8 @@ export const LandingPage = () => {
       {/* Hero Section */}
       <section className="px-6 py-16">
         <ThematicHero 
-            title="Laundry Redefined. Effortless Care."
-            subtitle="Experience the future of laundry with on-demand pickup, professional-grade cleaning, and seamless delivery. Focus on your day while we handle the rest."
+            title="Premium Laundry. Delivered to your doorstep."
+            subtitle="Enjoy stress-free laundry services in Nairobi. We pick up, clean, and deliver right to your door."
             imageUrl="/images/laundry/landing/laundry-hero-washing-machine.jpg"
             imageAlt="Professional handling modern laundry"
             variant="split"
