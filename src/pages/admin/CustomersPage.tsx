@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '@/layouts/AdminLayout';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/Input';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { Button } from '@/components/ui/Button';
+import { messagingService } from '@/features/messaging/services/messagingService';
 
 interface CustomerWithProfile {
   id: string;
+  profile_id: string;
   phone: string;
   address: string;
   loyalty_points: number;
@@ -19,20 +23,18 @@ export const CustomersPage = () => {
   const [customers, setCustomers] = useState<CustomerWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCustomers = async () => {
       setLoading(true);
-      console.log('Fetching customers...');
       const { data, error } = await supabase
         .from('customers')
         .select('*, profiles(full_name, email)');
 
       if (error) {
         console.error('Error fetching customers:', error);
-        alert('Fetch Error: ' + error.message);
       } else {
-        console.log('Fetched customers:', data);
         setCustomers(data as unknown as CustomerWithProfile[]);
       }
       setLoading(false);
@@ -53,7 +55,7 @@ export const CustomersPage = () => {
         <h1 className="text-2xl font-bold">Customers</h1>
         <Input placeholder="Search by name, email, or phone..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
         {loading ? <LoadingSpinner /> : (
-            <div className="bg-white shadow rounded-lg overflow-hidden">
+            <div className="bg-white shadow rounded-lg overflow-hidden overflow-x-auto">
                 <table className="min-w-full">
                     <thead>
                         <tr className="bg-gray-100 text-left">
@@ -61,6 +63,7 @@ export const CustomersPage = () => {
                             <th className="p-4">Email</th>
                             <th className="p-4">Phone</th>
                             <th className="p-4">Loyalty Points</th>
+                            <th className="p-4">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -70,6 +73,12 @@ export const CustomersPage = () => {
                                 <td className="p-4">{c.profiles?.email}</td>
                                 <td className="p-4">{c.phone}</td>
                                 <td className="p-4">{c.loyalty_points}</td>
+                                <td className="p-4">
+                                  <Button size="sm" onClick={async () => {
+                                      const convId = await messagingService.getOrCreateDirectConversation(c.profile_id);
+                                      navigate(`/admin/messaging?conversationId=${convId}`);
+                                  }}>Chat</Button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
