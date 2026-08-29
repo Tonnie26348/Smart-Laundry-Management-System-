@@ -5,7 +5,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { invoiceService } from '@/services/invoiceService';
 
-export const OrdersPage = () => {
+export const OrdersPage = () => { // Forced update
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
