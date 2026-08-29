@@ -26,7 +26,7 @@ export const LandingPage = () => {
       {/* Navigation */}
       <nav className="flex justify-between items-center px-6 py-4 border-b">
         <div className="text-2xl font-bold text-primary-600">Smart Laundry</div>
-        <div className="space-x-4">
+        <div className="flex flex-wrap gap-2 justify-center sm:justify-end sm:space-x-4">
           <Button variant="ghost" onClick={() => navigate('/login')}>Login</Button>
           <Button onClick={() => navigate('/register')}>Get Started</Button>
         </div>
