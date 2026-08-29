@@ -28,11 +28,19 @@ export const invoiceService = {
   generateReceiptText(order: any): string {
     console.log('Generating receipt for order:', order);
     
-    // Note: Based on submit_order_atomic.sql, order_items uses laundry_item_service_id
-    // to link to laundry_item_services, which links to services.
+    // The items are in order.order_items. 
+    // They are linked to laundry_item_services via laundry_item_service_id.
     const items = order.order_items.map((item: any) => {
       const serviceName = item.laundry_item_services?.services?.name || 'Unknown Item';
-      return `${serviceName.padEnd(16)} ${item.quantity.toString().padEnd(7)} ${item.line_total.toLocaleString()}`;
+      const quantity = item.quantity || 0;
+      // Based on 20260824_submit_order_atomic.sql, order_items table has 'price_at_time'.
+      // However, the mapping uses 'line_total'. Let's check the items log again.
+      // The previous debug log showed total_amount but no line_total in order_items.
+      // Wait, order_items returned from the select is likely different than the insertion payload.
+      // If the RPC inserted 'line_total', it should be there.
+      const price = item.line_total || (item.price_at_time * item.quantity);
+      
+      return `${serviceName.padEnd(16)} ${quantity.toString().padEnd(7)} ${price.toLocaleString()}`;
     }).join('\n');
 
     return `
