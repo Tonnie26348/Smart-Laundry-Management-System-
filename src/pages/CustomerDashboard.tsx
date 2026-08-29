@@ -8,10 +8,12 @@ export const CustomerDashboard = () => {
   const navigate = useNavigate();
   const [loyaltyPoints, setLoyaltyPoints] = useState(0);
   const [activeOrder, setActiveOrder] = useState<any>(null);
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         // Fetch customer record
@@ -29,12 +31,11 @@ export const CustomerDashboard = () => {
             .from('orders')
             .select('*')
             .eq('customer_id', customer.id)
-            .in('status', ['pending', 'pickup', 'washing', 'delivery'])
-            .order('created_at', { ascending: false })
-            .limit(1);
+            .order('created_at', { ascending: false });
 
           if (orders && orders.length > 0) {
-            setActiveOrder(orders[0]);
+            setActiveOrder(orders.find(o => ['pending', 'pickup', 'washing', 'ready', 'delivery'].includes(o.status)));
+            setRecentOrders(orders.slice(0, 5));
           }
         }
       }
@@ -95,31 +96,41 @@ export const CustomerDashboard = () => {
           )}
         </Card>
       </div>
-
+      
       {/* Recent Activity */}
       <div>
         <h2 className="text-xl font-bold mb-4">Recent Orders</h2>
         <Card className="p-0 overflow-hidden">
-          <table className="w-full text-left">
-            <thead className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              <tr>
-                <th className="px-6 py-3">Order #</th>
-                <th className="px-6 py-3">Date</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3 text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              <tr className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => navigate('/orders/ORD-001')}>
-                <td className="px-6 py-4 font-medium">ORD-001</td>
-                <td className="px-6 py-4 text-sm text-gray-500">Aug 20, 2026</td>
-                <td className="px-6 py-4">
-                  <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 uppercase">Completed</span>
-                </td>
-                <td className="px-6 py-4 text-right font-bold text-gray-900">KSh 1,200</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <tr>
+                  <th className="px-6 py-3">Order #</th>
+                  <th className="px-6 py-3">Date</th>
+                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3 text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {recentOrders.length === 0 ? (
+                  <tr><td className="px-6 py-4" colSpan={4}>No recent orders.</td></tr>
+                ) : (
+                  recentOrders.map(o => (
+                    <tr key={o.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 font-medium">{o.order_number || o.id.slice(0,8)}</td>
+                      <td className="px-6 py-4 text-sm text-gray-500">{new Date(o.created_at).toLocaleDateString()}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full uppercase ${o.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                          {o.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right font-bold text-gray-900">KSh {o.total_amount.toLocaleString()}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </Card>
       </div>
     </div>
