@@ -47,6 +47,7 @@ export const CustomerReviewsPage = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('No user found');
         const { data: customer } = await (supabase.from('customers').select('id').eq('profile_id', user.id).single() as any);
+        // Ensure order_id is included as required by the database schema
         await reviewService.submitReview({ ...newReview, customer_id: customer.id } as any);
         setNewReview({ order_id: '', rating: 5, comment: '' });
         fetchData();
