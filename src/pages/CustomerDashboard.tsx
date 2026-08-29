@@ -34,7 +34,7 @@ export const CustomerDashboard = () => {
             .order('created_at', { ascending: false });
 
           if (orders && orders.length > 0) {
-            setActiveOrder(orders.find(o => ['pending', 'pickup', 'washing', 'ready', 'delivery'].includes(o.status)));
+            setActiveOrder((orders as any[]).find(o => ['pending', 'pickup', 'washing', 'ready', 'delivery'].includes(o.status)));
             setRecentOrders(orders.slice(0, 5));
           }
         }
