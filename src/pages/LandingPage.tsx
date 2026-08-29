@@ -67,7 +67,9 @@ export const LandingPage = () => {
             </div>
             
             <p className="text-sm text-gray-500 pt-4">
-              Trusted by {customerCount !== null ? `${customerCount}+` : '...'} satisfied customers.
+              {customerCount && customerCount > 0 
+                ? `Trusted by ${customerCount}+ satisfied customers.` 
+                : 'Join our growing family of satisfied customers.'}
             </p>
         </ThematicHero>
       </section>
