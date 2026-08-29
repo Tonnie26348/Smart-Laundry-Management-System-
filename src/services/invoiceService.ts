@@ -4,7 +4,12 @@ export const invoiceService = {
   async getInvoiceData(orderId: string) {
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .select('*, customers(*, profiles(*)), order_items(*, laundry_items(*)), payments(*)')
+      .select(`
+        *, 
+        customers(*, profiles(*)), 
+        order_items(*, laundry_item_services(*, services(*))), 
+        payments(*)
+      `)
       .eq('id', orderId)
       .single();
 
@@ -15,9 +20,14 @@ export const invoiceService = {
   },
 
   generateReceiptText(order: any): string {
-    const items = order.order_items.map((item: any) => 
-      `${(item.laundry_items?.name || 'Item').padEnd(16)} ${item.quantity.toString().padEnd(7)} ${(item.price_at_time * item.quantity).toLocaleString()}`
-    ).join('\n');
+    console.log('Generating receipt for order:', order);
+    
+    // Note: Based on submit_order_atomic.sql, order_items uses laundry_item_service_id
+    // to link to laundry_item_services, which links to services.
+    const items = order.order_items.map((item: any) => {
+      const serviceName = item.laundry_item_services?.services?.name || 'Unknown Item';
+      return `${serviceName.padEnd(16)} ${item.quantity.toString().padEnd(7)} ${item.line_total.toLocaleString()}`;
+    }).join('\n');
 
     return `
            SMART LAUNDRY
