@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 
 export interface Notification {
   id: string;
-  profile_id: string;
+  user_id: string;
   title: string;
   message: string;
   is_read: boolean;

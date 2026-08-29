@@ -11,7 +11,7 @@ export const NotificationsPage = () => {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newNotification, setNewNotification] = useState({ title: '', message: '', profile_id: '' });
+  const [newNotification, setNewNotification] = useState({ title: '', message: '', user_id: '' });
 
   const fetchData = async () => {
     setLoading(true);
@@ -37,7 +37,7 @@ export const NotificationsPage = () => {
     if (!newNotification.title || !newNotification.message) return;
     try {
         await notificationService.createNotification(newNotification as any);
-        setNewNotification({ title: '', message: '', profile_id: '' });
+        setNewNotification({ title: '', message: '', user_id: '' });
         fetchData();
         alert('Notification sent!');
     } catch (error) {
@@ -53,7 +53,7 @@ export const NotificationsPage = () => {
         
         <div className="bg-white p-6 shadow rounded-lg border border-gray-200 space-y-4">
             <h2 className="font-bold">Send New Notification</h2>
-            <select className="w-full border p-2 rounded" value={newNotification.profile_id} onChange={e => setNewNotification({...newNotification, profile_id: e.target.value})}>
+            <select className="w-full border p-2 rounded" value={newNotification.user_id} onChange={e => setNewNotification({...newNotification, user_id: e.target.value})}>
                 <option value="">All Users</option>
                 {profiles.map(p => <option key={p.id} value={p.id}>{p.full_name}</option>)}
             </select>
