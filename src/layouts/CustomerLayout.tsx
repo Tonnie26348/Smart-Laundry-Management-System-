@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { supabase } from '@/lib/supabase';
 import { 
   Menu, Home, ShoppingCart, CreditCard, MessageSquare, 
-  Bell, Award, Star, User, LogOut 
+  Bell, Award, Star, User, LogOut, FileText 
 } from 'lucide-react';
 
 export const CustomerLayout = ({ children }: { children: ReactNode }) => {
