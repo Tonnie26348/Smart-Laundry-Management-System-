@@ -74,26 +74,50 @@ export const LandingPage = () => {
         </ThematicHero>
       </section>
 
-      {/* Features */}
-      <section className="bg-gray-50 py-16 px-6">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
-          <div className="text-center p-6">
-            <div className="w-12 h-12 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 font-bold">1</div>
-            <h3 className="text-xl font-bold mb-2">Schedule Pickup</h3>
-            <p className="text-gray-600">Tell us when and where. We'll be there to pick up your items.</p>
-          </div>
-          <div className="text-center p-6">
-            <div className="w-12 h-12 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 font-bold">2</div>
-            <h3 className="text-xl font-bold mb-2">Expert Care</h3>
-            <p className="text-gray-600">Our professionals treat your clothes with the highest quality standards.</p>
-          </div>
-          <div className="text-center p-6">
-            <div className="w-12 h-12 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 font-bold">3</div>
-            <h3 className="text-xl font-bold mb-2">Fresh Delivery</h3>
-            <p className="text-gray-600">Clean, folded, and fresh laundry delivered back to your doorstep.</p>
+      {/* How It Works */}
+      <section className="py-20 px-6 bg-gray-50">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
+          <div className="grid md:grid-cols-4 gap-8">
+            {[
+              { step: '1', title: 'Schedule', desc: 'Book a pickup via our app or website.' },
+              { step: '2', title: 'Pickup', desc: 'Our rider picks up your laundry at your convenience.' },
+              { step: '3', title: 'Clean', desc: 'We professionally clean and press your garments.' },
+              { step: '4', title: 'Deliver', desc: 'Get your fresh laundry delivered to your door.' },
+            ].map((item) => (
+              <div key={item.step} className="text-center">
+                <div className="w-12 h-12 bg-primary-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl">{item.step}</div>
+                <h3 className="font-bold mb-2">{item.title}</h3>
+                <p className="text-sm text-gray-600">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* Why Choose Us */}
+      <section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Smart Laundry?</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            {[
+              { title: 'Nairobi-Wide Service', desc: 'We operate across Nairobi, ensuring pickup and delivery wherever you are.' },
+              { title: 'Eco-Friendly Cleaning', desc: 'We use gentle, environmentally friendly detergents that are safe for your clothes and the planet.' },
+              { title: 'Fast Turnaround', desc: 'Get your laundry back in 24-48 hours, perfect for busy schedules.' },
+              { title: 'Affordable Pricing', desc: 'High-quality cleaning services at competitive prices tailored for you.' },
+            ].map((feature, i) => (
+              <div key={i} className="flex gap-4 p-6 border rounded-lg hover:border-primary-600 transition-colors">
+                <div className="text-primary-600 text-2xl">✓</div>
+                <div>
+                  <h3 className="font-bold mb-1">{feature.title}</h3>
+                  <p className="text-gray-600 text-sm">{feature.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 };
