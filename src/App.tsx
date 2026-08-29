@@ -47,6 +47,7 @@ const CustomerNotificationsPage = lazy(() => import('./pages/CustomerNotificatio
 const CustomerLoyaltyPage = lazy(() => import('./pages/CustomerLoyaltyPage').then(m => ({ default: m.CustomerLoyaltyPage })));
 const CustomerReviewsPage = lazy(() => import('./pages/CustomerReviewsPage').then(m => ({ default: m.CustomerReviewsPage })));
 const MessagingPage = lazy(() => import('./pages/MessagingPage').then(m => ({ default: m.MessagingPage })));
+const ReceiptsPage = lazy(() => import('./pages/ReceiptsPage').then(m => ({ default: m.ReceiptsPage })));
 const OfflinePage = lazy(() => import('./pages/Offline').then(m => ({ default: m.OfflinePage })));
 
 function App() {
@@ -252,6 +253,20 @@ function App() {
           <Route path="/admin/reports" element={
             <ProtectedRoute>
               <ReportsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/receipts" element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <ReceiptsPage />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/receipts" element={
+            <ProtectedRoute>
+              <CustomerLayout>
+                <ReceiptsPage />
+              </CustomerLayout>
             </ProtectedRoute>
           } />
           <Route path="/admin/deliveries" element={
