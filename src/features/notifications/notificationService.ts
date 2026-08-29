@@ -14,6 +14,7 @@ export const notificationService = {
   async createNotification(notification: Omit<Notification, 'id' | 'is_read' | 'created_at'>) {
     const { error } = await (supabase.from('notifications') as any).insert({
       ...notification,
+      type: notification.type || 'system',
       is_read: false
     });
     if (error) throw error;
