@@ -35,12 +35,20 @@ export const OrdersPage = () => { // Forced update
       return;
     }
 
+    // 1. Optimistic update
+    setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: newStatus } : o));
+
+    // 2. Perform the update
     const { error } = await (supabase.from('orders') as any).update({ status: newStatus }).eq('id', order.id);
+    
     if (error) {
       console.error('Failed to update status:', error);
       alert('Failed to update status: ' + error.message);
+      // 3. Rollback on failure
+      fetchOrders(); 
     } else {
-      setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: newStatus } : o));
+      // 4. Force a fresh fetch to ensure data integrity
+      fetchOrders();
     }
   };
 
