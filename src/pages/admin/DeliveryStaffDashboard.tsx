@@ -123,7 +123,7 @@ export const DeliveryStaffDashboard = () => {
             
             <h3 className="text-xl font-bold text-gray-800">Assigned Deliveries</h3>
             {deliveries.map(delivery => {
-                console.log('Delivery object:', delivery);
+                console.log('DEBUG: Delivery Object:', delivery);
                 return (
                 <Card key={delivery.id} className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
