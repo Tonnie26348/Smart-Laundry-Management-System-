@@ -44,9 +44,8 @@ export const EmployeesPage = () => {
                 <tr className="bg-gray-100 text-left">
                   <th className="p-4 w-1/4">Name</th>
                   <th className="p-4 w-1/4">Email</th>
-                  <th className="p-4 w-1/6">Employee #</th>
-                  <th className="p-4 w-1/6">Status</th>
-                  <th className="p-4 w-1/6">Action</th>
+                  <th className="p-4 w-1/4">Employee #</th>
+                  <th className="p-4 w-1/4">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -56,11 +55,6 @@ export const EmployeesPage = () => {
                     <td className="p-4 truncate">{e.profiles?.email || 'N/A'}</td>
                     <td className="p-4">{e.employee_number}</td>
                     <td className="p-4 capitalize">{e.employment_status}</td>
-                    <td className="p-4">
-                      <div className="border-2 border-blue-600 p-1 bg-yellow-100 rounded">
-                        <Button size="sm" onClick={() => navigate(`/admin/chat/${e.profiles?.id}`)}>Chat</Button>
-                      </div>
-                    </td>
                   </tr>
                 ))}
               </tbody>
