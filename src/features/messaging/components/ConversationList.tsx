@@ -1,26 +1,41 @@
-import { ConversationWithParticipants } from '../types/messaging';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { Card } from '@/components/ui/Card';
+import { messagingService } from '@/features/messaging/services/messagingService';
 
-interface ConversationListProps {
-  conversations: ConversationWithParticipants[];
-  activeConversationId?: string;
-  onSelect: (id: string) => void;
-}
+export const ConversationList = ({ onSelectConversation }: { onSelectConversation: (id: string) => void }) => {
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export const ConversationList = ({ conversations, activeConversationId, onSelect }: ConversationListProps) => {
+  useEffect(() => {
+    const loadConversations = async () => {
+      setLoading(true);
+      try {
+        const convs = await messagingService.getConversations();
+        setConversations(convs);
+      } catch (error) {
+        console.error('Error fetching conversations:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadConversations();
+  }, []);
+
+  if (loading) return <LoadingSpinner />;
+
   return (
-    <div className="flex flex-col">
-      {conversations.map((conv) => (
-        <button
-          key={conv.id}
-          onClick={() => onSelect(conv.id)}
-          className={`p-4 border-b text-left hover:bg-gray-50 ${activeConversationId === conv.id ? 'bg-blue-50' : ''}`}
+    <div className="space-y-2">
+      {conversations.map((c) => (
+        <Card 
+          key={c.id} 
+          className="p-3 cursor-pointer hover:bg-gray-50 transition-colors"
+          onClick={() => onSelectConversation(c.id)}
         >
-          <div className="font-semibold">{conv.title || 'Untitled Conversation'}</div>
-          <div className="text-sm text-gray-500 truncate">{conv.conversation_type}</div>
-          {conv.unread_count > 0 && (
-            <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">{conv.unread_count}</span>
-          )}
-        </button>
+          <p className="font-semibold">{c.title || 'Conversation'}</p>
+          <p className="text-xs text-gray-400">Last updated: {new Date(c.updated_at).toLocaleString()}</p>
+        </Card>
       ))}
     </div>
   );

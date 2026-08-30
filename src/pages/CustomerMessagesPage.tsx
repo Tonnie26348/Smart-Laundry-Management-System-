@@ -1,79 +1,41 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { ConversationList } from '@/features/messaging/components/ConversationList';
 import { ChatBox } from '@/components/chat/ChatBox';
 
 export const CustomerMessagesPage = () => {
-  const [messages, setMessages] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [adminId, setAdminId] = useState<string | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
-
-  const fetchMessages = async (userId: string, adminId: string) => {
-    const { data } = await supabase
-      .from('messages')
-      .select('*, profiles!messages_sender_id_fkey(full_name)')
-      .or(`and(sender_id.eq.${userId},receiver_id.eq.${adminId}),and(sender_id.eq.${adminId},receiver_id.eq.${userId})`)
-      .order('created_at', { ascending: true });
-    setMessages(data || []);
-  };
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const initChat = async () => {
+    const init = async () => {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       setCurrentUser(user);
-      
-      // Find administrator
-      const { data: admins } = await (supabase.from('profiles').select('id').eq('role', 'administrator') as any);
-      const admin = admins && admins.length > 0 ? admins[0] : null;
-      
-      if (admin && user) {
-        setAdminId(admin.id);
-        await fetchMessages(user.id, admin.id);
-      }
       setLoading(false);
     };
-    initChat();
+    init();
   }, []);
 
-  const sendMessage = async (text: string) => {
-    if (!currentUser || !adminId) return;
-
-    // Send message
-    await (supabase.from('messages') as any).insert({
-      sender_id: currentUser.id,
-      receiver_id: adminId,
-      message_text: text
-    });
-
-    // Send notification
-    await (supabase.from('notifications') as any).insert({
-      user_id: adminId,
-      title: 'New Message',
-      message: `New message from customer: ${text.substring(0, 50)}...`
-    });
-    
-    await fetchMessages(currentUser.id, adminId);
-  };
-
-  const refreshMessages = async () => {
-      if (currentUser && adminId) {
-          await fetchMessages(currentUser.id, adminId);
-      }
-  };
-
-  if (loading) return <LoadingSpinner />;
+  if (loading || !currentUser) return <LoadingSpinner />;
 
   return (
-      <div className="max-w-2xl mx-auto space-y-4">
-        <h2 className="text-xl font-bold">Messages</h2>
-        <ChatBox 
-          messages={messages} 
-          currentUserId={currentUser?.id} 
-          onSendMessage={sendMessage}
-          onRefresh={refreshMessages}
-        />
+    <div className="flex h-[calc(100vh-120px)] gap-6">
+      <div className="w-1/3 border-r pr-4 overflow-y-auto">
+        <h2 className="text-xl font-bold mb-4">Conversations</h2>
+        <ConversationList onSelectConversation={setConversationId} />
       </div>
+      <div className="flex-1">
+        {conversationId ? (
+          <ChatBox conversationId={conversationId} currentUserId={currentUser.id} />
+        ) : (
+          <div className="flex items-center justify-center h-full text-gray-500">
+            Select a conversation to start chatting
+          </div>
+        )}
+      </div>
+    </div>
   );
 };

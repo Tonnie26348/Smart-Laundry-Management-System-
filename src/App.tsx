@@ -12,6 +12,7 @@ import { AdminLayout } from './layouts/AdminLayout';
 
 const EditProfilePage = lazy(() => import('./pages/EditProfilePage').then(m => ({ default: m.EditProfilePage })));
 const OfflinePage = lazy(() => import('./pages/Offline').then(m => ({ default: m.OfflinePage })));
+const StaffMessagingPage = lazy(() => import('./pages/admin/StaffMessagingPage').then(m => ({ default: m.StaffMessagingPage })));
 const ChatListPage = lazy(() => import('./pages/admin/ChatListPage').then(m => ({ default: m.ChatListPage })));
 const ChatPage = lazy(() => import('./pages/admin/ChatPage').then(m => ({ default: m.ChatPage })));
 const StaffCustomersPage = lazy(() => import('./pages/admin/StaffCustomersPage').then(m => ({ default: m.StaffCustomersPage })));
@@ -153,9 +154,9 @@ function App() {
               <DeliveryStaffDashboard />
             </ProtectedRoute>
           } />
-          <Route path="/admin/messaging" element={
+          <Route path="/admin/messages" element={
             <ProtectedRoute>
-              <MessagingPage />
+              <StaffMessagingPage />
             </ProtectedRoute>
           } />
           <Route path="/admin/chat/:receiverId" element={

@@ -42,7 +42,7 @@ export const MessagingPage = () => {
         </div>
         {convLoading ? <LoadingSpinner /> : (
             <ChatLayout 
-                sidebar={<ConversationList conversations={conversations as unknown as ConversationWithParticipants[]} activeConversationId={activeConvId || undefined} onSelect={setActiveConvId} />}
+                sidebar={<ConversationList onSelectConversation={setActiveConvId} />}
                 content={activeConvId ? (
                     <>
                         <div className="p-4 border-b font-bold">{conversation?.title || 'Chat'}</div>

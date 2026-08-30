@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { messagingService } from '@/features/messaging/services/messagingService';
 
 interface Message {
   id: string;
@@ -11,22 +12,32 @@ interface Message {
 }
 
 interface ChatBoxProps {
-  messages: Message[];
+  conversationId: string;
   currentUserId: string;
-  onSendMessage: (text: string) => Promise<void>;
-  onRefresh: () => Promise<void>; // Added refresh callback
-  isLoading?: boolean;
 }
 
-export const ChatBox = ({ messages, currentUserId, onSendMessage, onRefresh, isLoading }: ChatBoxProps) => {
+export const ChatBox = ({ conversationId, currentUserId }: ChatBoxProps) => {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Polling mechanism
   useEffect(() => {
-    const interval = setInterval(onRefresh, 3000); // Poll every 3 seconds
-    return () => clearInterval(interval);
-  }, [onRefresh]);
+    const loadMessages = async () => {
+      setIsLoading(true);
+      const msgs = await messagingService.getMessages(conversationId);
+      setMessages(msgs);
+      setIsLoading(false);
+    };
+    loadMessages();
+
+    // Subscribe to real-time changes
+    const channel = messagingService.subscribeToConversation(conversationId, (newMessage) => {
+      setMessages((prev) => [...prev, newMessage]);
+    });
+
+    return () => { messagingService.unsubscribe(channel); };
+  }, [conversationId]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -36,9 +47,11 @@ export const ChatBox = ({ messages, currentUserId, onSendMessage, onRefresh, isL
 
   const handleSend = async () => {
     if (!newMessage.trim()) return;
-    await onSendMessage(newMessage);
+    await messagingService.sendMessage(conversationId, newMessage);
     setNewMessage('');
   };
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="flex flex-col h-[500px] border rounded-lg bg-white overflow-hidden shadow-sm">
@@ -64,7 +77,7 @@ export const ChatBox = ({ messages, currentUserId, onSendMessage, onRefresh, isL
           placeholder="Type a message..." 
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
         />
-        <Button onClick={handleSend} disabled={isLoading}>Send</Button>
+        <Button onClick={handleSend}>Send</Button>
       </div>
     </div>
   );

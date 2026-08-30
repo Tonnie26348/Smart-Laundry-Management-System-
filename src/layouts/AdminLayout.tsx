@@ -38,7 +38,7 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
 
   const navLinks = [
     { name: 'Dashboard', path: isStaff ? "/laundrystaff" : isManager ? "/manager" : "/admin", icon: Home },
-    { name: 'Messages', path: "/admin/chat", icon: MessageSquare },
+    { name: 'Messages', path: "/admin/messages", icon: MessageSquare },
     { name: 'Customers', path: isAdmin ? "/admin/customers" : "/admin/staff-customers", icon: Users },
     { name: 'Orders', path: "/admin/orders", icon: ShoppingCart, authorized: isAuthorized },
     { name: 'Services', path: "/admin/services", icon: Wrench, adminOnly: true },
