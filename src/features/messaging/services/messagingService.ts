@@ -109,9 +109,6 @@ export const messagingService = {
         .select('id')
         .eq('role', 'administrator') as any);
     
-    if (!admins || admins.length === 0) throw new Error('No administrator found');
-    const adminId = admins[0].id;
-
     // Create support conversation
     const { data: conv, error: convError } = await (supabase
       .from('conversations') as any)
@@ -126,11 +123,13 @@ export const messagingService = {
     
     if (convError) throw convError;
 
-    // Add participants (Customer + Admin)
-    await (supabase.from('conversation_participants') as any).insert([
-      { conversation_id: conv.id, user_id: user.id },
-      { conversation_id: conv.id, user_id: adminId }
-    ]);
+    // Add participants (Customer + Admin if found)
+    const participants: any[] = [{ conversation_id: conv.id, user_id: user.id }];
+    if (admins && admins.length > 0) {
+        participants.push({ conversation_id: conv.id, user_id: admins[0].id });
+    }
+
+    await (supabase.from('conversation_participants') as any).insert(participants);
 
     return conv.id;
   },
