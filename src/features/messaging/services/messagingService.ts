@@ -80,7 +80,11 @@ export const messagingService = {
     // Create new conversation
     const { data: conv, error: convError } = await (supabase
       .from('conversations') as any)
-      .insert({ conversation_type: 'direct', created_by: user.id })
+      .insert({
+        conversation_type: 'direct',
+        created_by: user.id,
+        last_message_at: new Date().toISOString()
+      })
       .select()
       .single();
     
@@ -111,7 +115,12 @@ export const messagingService = {
     // Create support conversation
     const { data: conv, error: convError } = await (supabase
       .from('conversations') as any)
-      .insert({ conversation_type: 'support', title: 'Support Request', created_by: user.id })
+      .insert({
+        conversation_type: 'support',
+        title: 'Support Request',
+        created_by: user.id,
+        last_message_at: new Date().toISOString()
+      })
       .select()
       .single();
     
