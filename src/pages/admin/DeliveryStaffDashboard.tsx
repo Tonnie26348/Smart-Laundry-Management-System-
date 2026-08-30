@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 export const DeliveryStaffDashboard = () => {
   const [pendingCount, setPendingCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
+  const [deliveries, setDeliveries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchDeliveryStats = async () => {
@@ -21,32 +22,33 @@ export const DeliveryStaffDashboard = () => {
             return;
         }
 
-        console.log('--- DIAGNOSTIC LOGS ---');
-        console.log('Current Staff User ID:', user.id);
-
-        // Fetch pending count
+        // Fetch counts
         const { count: pending, error: pendingError } = await supabase
           .from('deliveries')
           .select('*', { count: 'exact', head: true })
           .eq('assigned_to', user.id)
           .neq('status', 'delivered');
         
-        console.log('Pending count result:', pending, 'Pending error:', pendingError);
-
-        // Fetch completed count
         const { count: completed, error: completedError } = await supabase
           .from('deliveries')
           .select('*', { count: 'exact', head: true })
           .eq('assigned_to', user.id)
           .eq('status', 'delivered');
 
-        console.log('Completed count result:', completed, 'Completed error:', completedError);
+        // Fetch actual deliveries list
+        const { data: deliveriesData, error: deliveriesError } = await supabase
+          .from('deliveries')
+          .select('*, orders(order_number)')
+          .eq('assigned_to', user.id)
+          .order('created_at', { ascending: false });
 
         if (pendingError) throw pendingError;
         if (completedError) throw completedError;
+        if (deliveriesError) throw deliveriesError;
 
         setPendingCount(pending || 0);
         setCompletedCount(completed || 0);
+        setDeliveries(deliveriesData || []);
     } catch (err) {
         console.error('Error fetching delivery stats:', err);
     } finally {
@@ -105,17 +107,35 @@ export const DeliveryStaffDashboard = () => {
             <LoadingSpinner />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-700">Pending Deliveries</h3>
-              <p className="text-3xl font-bold text-yellow-600 mt-2">{pendingCount}</p>
-              {pendingCount === 0 && <p className="text-gray-500 mt-2">No pending deliveries.</p>}
-            </Card>
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-700">Completed Deliveries</h3>
-              <p className="text-3xl font-bold text-green-600 mt-2">{completedCount}</p>
-              {completedCount === 0 && <p className="text-gray-500 mt-2">No completed deliveries.</p>}
-            </Card>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-700">Pending Deliveries</h3>
+                <p className="text-3xl font-bold text-yellow-600 mt-2">{pendingCount}</p>
+                {pendingCount === 0 && <p className="text-gray-500 mt-2">No pending deliveries.</p>}
+                </Card>
+                <Card className="p-6">
+                <h3 className="text-lg font-semibold text-gray-700">Completed Deliveries</h3>
+                <p className="text-3xl font-bold text-green-600 mt-2">{completedCount}</p>
+                {completedCount === 0 && <p className="text-gray-500 mt-2">No completed deliveries.</p>}
+                </Card>
+            </div>
+            
+            <h3 className="text-xl font-bold text-gray-800">Assigned Deliveries</h3>
+            {deliveries.map(delivery => (
+                <Card key={delivery.id} className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p className="font-bold text-lg">Order #{delivery.orders?.order_number}</p>
+                            <p className="capitalize">Status: {delivery.status.replace('_', ' ')}</p>
+                        </div>
+                        <div className="text-sm text-gray-700">
+                            <p><span className="font-semibold">Pickup:</span> {delivery.pickup_address}</p>
+                            <p><span className="font-semibold">Delivery:</span> {delivery.delivery_address}</p>
+                        </div>
+                    </div>
+                </Card>
+            ))}
           </div>
         )}
       </div>
