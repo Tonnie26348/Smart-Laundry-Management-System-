@@ -21,23 +21,26 @@ export const DeliveryStaffDashboard = () => {
             return;
         }
 
-        // Fetch counts
+        console.log('--- DIAGNOSTIC LOGS ---');
+        console.log('Current Staff User ID:', user.id);
+
+        // Fetch pending count
         const { count: pending, error: pendingError } = await supabase
           .from('deliveries')
           .select('*', { count: 'exact', head: true })
           .eq('assigned_to', user.id)
           .neq('status', 'delivered');
         
-        console.log('Debug: Current User ID:', user.id);
-        console.log('Debug: Pending count result:', pending, 'Error:', pendingError);
+        console.log('Pending count result:', pending, 'Pending error:', pendingError);
 
+        // Fetch completed count
         const { count: completed, error: completedError } = await supabase
           .from('deliveries')
           .select('*', { count: 'exact', head: true })
           .eq('assigned_to', user.id)
           .eq('status', 'delivered');
 
-        console.log('Debug: Completed count result:', completed, 'Error:', completedError);
+        console.log('Completed count result:', completed, 'Completed error:', completedError);
 
         if (pendingError) throw pendingError;
         if (completedError) throw completedError;
