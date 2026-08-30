@@ -8,7 +8,7 @@ export const messagingService = {
 
     const { data, error } = await (supabase
       .from('conversations')
-      .select('*, conversation_participants!inner(user_id)')
+      .select('*, conversation_participants!inner(user_id, profiles(full_name, role)), customers(phone)')
       .eq('conversation_participants.user_id', user.id)
       .order('updated_at', { ascending: false }) as any);
 

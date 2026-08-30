@@ -23,6 +23,24 @@ export const ConversationList = ({ onSelectConversation }: { onSelectConversatio
     loadConversations();
   }, []);
 
+  const getConversationTitle = (c: any) => {
+    if (c.title) return c.title;
+    
+    // Find other participants
+    const participants = c.conversation_participants?.map((p: any) => p.profiles) || [];
+    const customer = c.customers;
+
+    if (customer?.phone) {
+      return `Customer: ${customer.phone}`;
+    }
+    
+    if (participants.length > 0) {
+      return participants.map((p: any) => `${p.full_name} (${p.role})`).join(', ');
+    }
+
+    return 'Conversation';
+  };
+
   if (loading) return <LoadingSpinner />;
 
   return (
@@ -33,8 +51,8 @@ export const ConversationList = ({ onSelectConversation }: { onSelectConversatio
           className="p-3 cursor-pointer hover:bg-gray-50 transition-colors"
           onClick={() => onSelectConversation(c.id)}
         >
-          <p className="font-semibold">{c.title || 'Conversation'}</p>
-          <p className="text-xs text-gray-400">Last updated: {new Date(c.updated_at).toLocaleString()}</p>
+          <p className="font-semibold truncate">{getConversationTitle(c)}</p>
+          <p className="text-xs text-gray-400">Last updated: {new Date(c.updated_at).toLocaleDateString()}</p>
         </Card>
       ))}
     </div>
