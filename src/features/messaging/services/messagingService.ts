@@ -18,8 +18,8 @@ export const messagingService = {
 
   async getMessages(conversationId: string): Promise<Message[]> {
     const { data, error } = await (supabase
-      .from('messages')
-      .select('*, profiles!messages_sender_id_fkey(full_name)')
+      .from('messages_v2')
+      .select('*, profiles!messages_v2_sender_id_fkey(full_name)')
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true }) as any);
 
@@ -31,21 +31,11 @@ export const messagingService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Get the other participant to set as receiver_id
-    const { data: participants } = await (supabase
-      .from('conversation_participants') as any)
-      .select('user_id')
-      .eq('conversation_id', conversationId)
-      .neq('user_id', user.id);
-
-    const receiverId = participants && participants.length > 0 ? participants[0].user_id : user.id;
-
     const { error } = await (supabase
-      .from('messages') as any)
+      .from('messages_v2') as any)
       .insert({
         conversation_id: conversationId,
         sender_id: user.id,
-        receiver_id: receiverId,
         message_text: text
       });
 
@@ -150,7 +140,7 @@ export const messagingService = {
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
-        table: 'messages',
+        table: 'messages_v2',
         filter: `conversation_id=eq.${conversationId}`
       }, (payload) => {
         onMessage(payload.new as Message);
