@@ -53,7 +53,7 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
     { name: 'Receipts', path: "/admin/receipts", icon: FileText, authorized: isAdmin || isManager },
     { name: 'Audit Logs', path: "/admin/audit", icon: Shield, adminOnly: true },
     { name: 'Settings', path: "/admin/settings", icon: Settings, adminOnly: true },
-    { name: 'Notifications', path: "/admin/notifications", icon: Bell, adminOnly: true },
+    { name: 'Notifications', path: isAdmin ? "/admin/notifications" : "/notifications/view", icon: Bell, authorized: isAuthorized },
     { name: 'Discounts', path: "/admin/discounts", icon: Percent, adminOnly: true },
     { name: 'Loyalty', path: "/admin/loyalty", icon: Award, adminOnly: true },
     { name: 'Reviews', path: "/admin/reviews", icon: Star, adminOnly: true },

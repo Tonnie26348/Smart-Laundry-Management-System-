@@ -22,7 +22,8 @@ const PaymentsPage = lazy(() => import('./pages/admin/PaymentsPage').then(m => (
 const EmployeesPage = lazy(() => import('./pages/admin/EmployeesPage').then(m => ({ default: m.EmployeesPage })));
 const AuditLogsPage = lazy(() => import('./pages/admin/AuditLogsPage').then(m => ({ default: m.AuditLogsPage })));
 const SettingsPage = lazy(() => import('./pages/admin/SettingsPage').then(m => ({ default: m.SettingsPage })));
-const NotificationsPage = lazy(() => import('./pages/admin/NotificationsPage').then(m => ({ default: m.NotificationsPage })));
+const StaffNotificationsView = lazy(() => import('./pages/StaffNotificationsView').then(m => ({ default: m.StaffNotificationsView })));
+const AdminNotificationsPage = lazy(() => import('./pages/admin/NotificationsPage').then(m => ({ default: m.NotificationsPage })));
 const DiscountsPage = lazy(() => import('./pages/admin/DiscountsPage').then(m => ({ default: m.DiscountsPage })));
 const LoyaltyPage = lazy(() => import('./pages/admin/LoyaltyPage').then(m => ({ default: m.LoyaltyPage })));
 const ReviewsPage = lazy(() => import('./pages/admin/ReviewsPage').then(m => ({ default: m.ReviewsPage })));
@@ -213,7 +214,14 @@ function App() {
           } />
           <Route path="/admin/notifications" element={
             <ProtectedRoute>
-              <NotificationsPage />
+              <AdminNotificationsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/notifications/view" element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <StaffNotificationsView />
+              </AdminLayout>
             </ProtectedRoute>
           } />
           <Route path="/staff/notifications" element={
