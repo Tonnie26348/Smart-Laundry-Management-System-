@@ -42,10 +42,29 @@ export const DeliveriesPage = () => {
     fetchDeliveriesAndStaff();
   }, []);
 
-  const updateStatus = async (id: string, newStatus: string) => {
-    const { error } = await (supabase.from('deliveries') as any).update({ status: newStatus }).eq('id', id);
-    if (error) alert('Failed to update status');
-    else fetchDeliveriesAndStaff();
+  const updateStatus = async (id: string, orderId: string, newStatus: string) => {
+    // 1. Update delivery status
+    const { error: deliveryError } = await (supabase.from('deliveries') as any)
+      .update({ status: newStatus })
+      .eq('id', id);
+
+    if (deliveryError) {
+      alert('Failed to update delivery status: ' + deliveryError.message);
+      return;
+    }
+
+    // 2. If delivered, update order status to completed
+    if (newStatus === 'delivered') {
+      const { error: orderError } = await (supabase.from('orders') as any)
+        .update({ status: 'completed' })
+        .eq('id', orderId);
+
+      if (orderError) {
+        alert('Delivery status updated, but failed to update order status: ' + orderError.message);
+      }
+    }
+    
+    fetchDeliveriesAndStaff();
   };
 
   const assignStaff = async (id: string, staffId: string) => {
@@ -76,8 +95,8 @@ export const DeliveriesPage = () => {
                         </select>
                     </td>
                     <td className="p-4 flex gap-2">
-                      <Button size="sm" onClick={() => updateStatus(d.id, 'picked_up')}>Picked Up</Button>
-                      <Button size="sm" onClick={() => updateStatus(d.id, 'delivered')}>Delivered</Button>
+                      <Button size="sm" onClick={() => updateStatus(d.id, d.order_id, 'picked_up')}>Picked Up</Button>
+                      <Button size="sm" onClick={() => updateStatus(d.id, d.order_id, 'delivered')}>Delivered</Button>
                     </td>
                   </tr>
                 ))}
