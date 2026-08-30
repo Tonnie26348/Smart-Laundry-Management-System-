@@ -4,8 +4,6 @@ import { AdminLayout } from '@/layouts/AdminLayout';
 import { supabase } from '@/lib/supabase';
 import { Input } from '@/components/ui/Input';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { Button } from '@/components/ui/Button';
-import { messagingService } from '@/features/messaging/services/messagingService';
 
 interface CustomerWithProfile {
   id: string;

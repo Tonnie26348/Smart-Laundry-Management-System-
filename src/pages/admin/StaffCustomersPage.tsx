@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '@/layouts/AdminLayout';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { messagingService } from '@/features/messaging/services/messagingService';
 
 interface Profile {
   id: string;
