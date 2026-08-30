@@ -104,13 +104,16 @@ export const messagingService = {
     if (!user) throw new Error('Not authenticated');
 
     // Find admin ID
-    const { data: admins, error: adminError } = await (supabase
+    const { data: allProfiles, error: profilesError } = await (supabase
         .from('profiles')
-        .select('id')
-        .eq('role', 'administrator') as any);
+        .select('id, role') as any);
     
-    console.log('Admins found:', admins);
-    if (adminError) console.error('Admin fetch error:', adminError);
+    console.log('All profiles fetched:', allProfiles);
+    if (profilesError) console.error('Profiles fetch error:', profilesError);
+
+    const admins = allProfiles?.filter((p: any) => p.role?.toLowerCase() === 'administrator');
+    
+    console.log('Filtered admins found:', admins);
 
     // Create support conversation
     const { data: conv, error: convError } = await (supabase
