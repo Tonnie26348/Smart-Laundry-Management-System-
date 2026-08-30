@@ -8,9 +8,11 @@ export const DeliveriesPage = () => {
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [staff, setStaff] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchDeliveriesAndStaff = async () => {
     setLoading(true);
+    setError(null);
     
     // Fetch deliveries
     const { data: deliveriesData, error: deliveriesError } = await supabase
@@ -20,14 +22,19 @@ export const DeliveriesPage = () => {
     // Fetch delivery staff
     const { data: staffData, error: staffError } = await (supabase
       .from('profiles')
-      .select('id, full_name')
+      .select('id, full_name, role')
       .eq('role', 'delivery_staff') as any);
-
+    
+    console.log('Debug: Raw staff data fetched:', staffData);
+    if (staffError) {
+        console.error('Debug: Staff fetch error:', staffError);
+        setError('Staff fetch error: ' + staffError.message);
+    }
+    
     if (deliveriesError) console.error('Error fetching deliveries:', deliveriesError);
     else setDeliveries(deliveriesData || []);
     
-    if (staffError) console.error('Error fetching staff:', staffError);
-    else setStaff(staffData || []);
+    setStaff(staffData || []);
     
     setLoading(false);
   };
@@ -52,6 +59,7 @@ export const DeliveriesPage = () => {
     <AdminLayout>
       <div className="space-y-6">
         <h1 className="text-2xl font-bold">Deliveries</h1>
+        {error && <div className="p-4 bg-red-100 text-red-700 rounded">{error}</div>}
         {loading ? <LoadingSpinner /> : (
           <div className="bg-white shadow rounded-lg overflow-hidden">
             <table className="min-w-full">
