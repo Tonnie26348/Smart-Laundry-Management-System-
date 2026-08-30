@@ -112,7 +112,6 @@ export const StaffCustomersPage = () => {
                             <th className="p-4">Name</th>
                             <th className="p-4">Email</th>
                             <th className="p-4">Phone</th>
-                            <th className="p-4">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -121,12 +120,6 @@ export const StaffCustomersPage = () => {
                                 <td className="p-4">{c.profiles?.full_name || 'N/A'}</td>
                                 <td className="p-4">{c.profiles?.email || 'N/A'}</td>
                                 <td className="p-4">{c.phone || 'N/A'}</td>
-                                <td className="p-4">
-                                  <Button size="sm" onClick={async () => {
-                                      const convId = await messagingService.getOrCreateDirectConversation(c.profile_id);
-                                      navigate(`/admin/messaging?conversationId=${convId}`);
-                                  }}>Chat</Button>
-                                </td>
                             </tr>
                         ))}
                     </tbody>
