@@ -38,7 +38,7 @@ export const DeliveryStaffDashboard = () => {
         // Fetch actual deliveries list
         const { data: deliveriesData, error: deliveriesError } = await supabase
           .from('deliveries')
-          .select('*, orders(order_number), pickup_address, delivery_address')
+          .select('*, orders(order_number), pickup_address:pickup_address_id(address), delivery_address:delivery_address_id(address)')
           .eq('assigned_to', user.id)
           .order('created_at', { ascending: false });
 
@@ -132,8 +132,8 @@ export const DeliveryStaffDashboard = () => {
                             <p className="capitalize">Status: {delivery.status.replace('_', ' ')}</p>
                         </div>
                         <div className="text-sm text-gray-700">
-                            <p><span className="font-semibold">Pickup:</span> {delivery.pickup_address || 'N/A'}</p>
-                            <p><span className="font-semibold">Delivery:</span> {delivery.delivery_address || 'N/A'}</p>
+                            <p><span className="font-semibold">Pickup:</span> {delivery.pickup_address?.address || 'N/A'}</p>
+                            <p><span className="font-semibold">Delivery:</span> {delivery.delivery_address?.address || 'N/A'}</p>
                         </div>
                     </div>
                 </Card>
