@@ -3,6 +3,7 @@ import { AdminLayout } from '@/layouts/AdminLayout';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
+import { MessageUserButton } from '@/components/chat/MessageUserButton';
 
 export const DeliveriesPage = () => {
   const [deliveries, setDeliveries] = useState<any[]>([]);
@@ -12,7 +13,7 @@ export const DeliveriesPage = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('deliveries')
-      .select('*, orders(order_number), customers(profiles(full_name))');
+      .select('*, orders(order_number), customers(profile_id, profiles(full_name))');
     if (error) console.error('Error fetching deliveries:', error);
     else setDeliveries(data || []);
     setLoading(false);
@@ -45,6 +46,7 @@ export const DeliveriesPage = () => {
                     <td className="p-4 flex gap-2">
                       <Button size="sm" onClick={() => updateStatus(d.id, 'picked_up')}>Picked Up</Button>
                       <Button size="sm" onClick={() => updateStatus(d.id, 'delivered')}>Delivered</Button>
+                      <MessageUserButton profileId={d.customers?.profile_id} label="Chat Customer" />
                     </td>
                   </tr>
                 ))}
