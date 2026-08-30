@@ -109,9 +109,10 @@ export const messagingService = {
         .select('id, role') as any);
     
     console.log('All profiles fetched:', allProfiles);
+    allProfiles?.forEach((p: any) => console.log(`Profile ID: ${p.id}, Role: "${p.role}"`));
     if (profilesError) console.error('Profiles fetch error:', profilesError);
 
-    const admins = allProfiles?.filter((p: any) => p.role?.toLowerCase() === 'administrator');
+    const admins = allProfiles?.filter((p: any) => p.role?.toString().toLowerCase().trim() === 'administrator');
     
     console.log('Filtered admins found:', admins);
 
