@@ -7,12 +7,12 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 
 export const DeliveryStaffDashboard = () => {
-  const [deliveries, setDeliveries] = useState<any[]>([]);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const fetchAssignedDeliveries = async () => {
+  const fetchDeliveryStats = async () => {
     setLoading(true);
-    
     try {
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         if (userError) throw userError;
@@ -21,23 +21,33 @@ export const DeliveryStaffDashboard = () => {
             return;
         }
 
-        const { data, error } = await supabase
+        // Fetch counts
+        const { count: pending, error: pendingError } = await supabase
           .from('deliveries')
-          .select('*, orders(order_number)')
+          .select('*', { count: 'exact', head: true })
           .eq('assigned_to', user.id)
-          .order('created_at', { ascending: false });
-          
-        if (error) throw error;
-        setDeliveries(data || []);
+          .neq('status', 'delivered');
+        
+        const { count: completed, error: completedError } = await supabase
+          .from('deliveries')
+          .select('*', { count: 'exact', head: true })
+          .eq('assigned_to', user.id)
+          .eq('status', 'delivered');
+
+        if (pendingError) throw pendingError;
+        if (completedError) throw completedError;
+
+        setPendingCount(pending || 0);
+        setCompletedCount(completed || 0);
     } catch (err) {
-        console.error('Error fetching deliveries:', err);
+        console.error('Error fetching delivery stats:', err);
     } finally {
         setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAssignedDeliveries();
+    fetchDeliveryStats();
   }, []);
 
   const updateDeliveryStatus = async (id: string, status: string) => {
@@ -48,7 +58,7 @@ export const DeliveryStaffDashboard = () => {
     if (error) {
         alert('Failed to update status: ' + error.message);
     } else {
-        fetchAssignedDeliveries();
+        fetchDeliveryStats();
     }
   };
 
@@ -78,7 +88,7 @@ export const DeliveryStaffDashboard = () => {
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => window.location.href='/admin/deliveries/pending'}>Pending Deliveries</Button>
             <Button variant="outline" size="sm" onClick={() => window.location.href='/admin/deliveries/completed'}>Completed Deliveries</Button>
-            <Button onClick={fetchAssignedDeliveries} variant="outline" size="sm">Refresh</Button>
+            <Button onClick={fetchDeliveryStats} variant="outline" size="sm">Refresh</Button>
           </div>
         </div>
         
@@ -87,74 +97,17 @@ export const DeliveryStaffDashboard = () => {
             <LoadingSpinner />
           </div>
         ) : (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-700">Assigned Deliveries ({deliveries.length})</h3>
-            {deliveries.length === 0 ? (
-              <Card className="p-8 text-center text-gray-500">
-                No assigned deliveries found.
-              </Card>
-            ) : (
-              deliveries.map(delivery => (
-                <Card key={delivery.id} className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-lg text-primary-700">Order #{delivery.orders?.order_number}</span>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${getStatusBadgeClass(delivery.status)}`}>
-                          {delivery.status.replace('_', ' ')}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Type: <span className="font-medium capitalize">{delivery.delivery_type}</span>
-                      </p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Pickup Information</h4>
-                      <p className="text-sm text-gray-700">{delivery.pickup_address || 'Not specified'}</p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Delivery Information</h4>
-                      <p className="text-sm text-gray-700">{delivery.delivery_address || 'Not specified'}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 flex flex-wrap gap-3 pt-4 border-t border-gray-100">
-                    {delivery.status !== 'delivered' && (
-                      <>
-                        <div className="flex items-center gap-2 mr-auto">
-                          <span className="text-xs font-semibold text-gray-500 uppercase">Update Status:</span>
-                          <select 
-                            className="text-sm border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-                            value={delivery.status}
-                            onChange={(e) => updateDeliveryStatus(delivery.id, e.target.value)}
-                          >
-                            <option value="assigned">Assigned</option>
-                            <option value="picked_up">Picked Up</option>
-                            <option value="in_transit">In Transit</option>
-                            <option value="failed">Failed</option>
-                          </select>
-                        </div>
-                        
-                        <Button 
-                          size="sm" 
-                          onClick={() => updateDeliveryStatus(delivery.id, 'delivered')}
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                        >
-                          Confirm Delivery
-                        </Button>
-                      </>
-                    )}
-                    {delivery.status === 'delivered' && (
-                      <span className="text-sm font-medium text-green-600 flex items-center gap-1">
-                        ✓ Delivery Completed
-                      </span>
-                    )}
-                  </div>
-                </Card>
-              ))
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-gray-700">Pending Deliveries</h3>
+              <p className="text-3xl font-bold text-yellow-600 mt-2">{pendingCount}</p>
+              {pendingCount === 0 && <p className="text-gray-500 mt-2">No pending deliveries.</p>}
+            </Card>
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold text-gray-700">Completed Deliveries</h3>
+              <p className="text-3xl font-bold text-green-600 mt-2">{completedCount}</p>
+              {completedCount === 0 && <p className="text-gray-500 mt-2">No completed deliveries.</p>}
+            </Card>
           </div>
         )}
       </div>
