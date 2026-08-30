@@ -26,16 +26,29 @@ export const PendingDeliveriesPage = () => {
     fetchDeliveries();
   }, []);
 
-  const updateDeliveryStatus = async (id: string, status: string) => {
-    const { error } = await (supabase.from('deliveries') as any)
+  const updateDeliveryStatus = async (id: string, orderId: string, status: string) => {
+    // 1. Update delivery status
+    const { error: deliveryError } = await (supabase.from('deliveries') as any)
       .update({ status })
       .eq('id', id);
 
-    if (error) {
-        alert('Failed to update status: ' + error.message);
-    } else {
-        fetchDeliveries();
+    if (deliveryError) {
+        alert('Failed to update delivery status: ' + deliveryError.message);
+        return;
     }
+
+    // 2. If delivered, update order status to completed
+    if (status === 'delivered') {
+        const { error: orderError } = await (supabase.from('orders') as any)
+            .update({ status: 'completed' })
+            .eq('id', orderId);
+        
+        if (orderError) {
+            alert('Delivery marked as delivered, but failed to update order status: ' + orderError.message);
+        }
+    }
+    
+    fetchDeliveries();
   };
 
   return (
@@ -61,8 +74,8 @@ export const PendingDeliveriesPage = () => {
                     </div>
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <Button size="sm" onClick={() => updateDeliveryStatus(delivery.id, 'picked_up')}>Picked Up</Button>
-                    <Button size="sm" onClick={() => updateDeliveryStatus(delivery.id, 'delivered')} className="bg-green-600">Delivered</Button>
+                    <Button size="sm" onClick={() => updateDeliveryStatus(delivery.id, delivery.order_id, 'picked_up')}>Picked Up</Button>
+                    <Button size="sm" onClick={() => updateDeliveryStatus(delivery.id, delivery.order_id, 'delivered')} className="bg-green-600">Delivered</Button>
                   </div>
                 </Card>
               ))
