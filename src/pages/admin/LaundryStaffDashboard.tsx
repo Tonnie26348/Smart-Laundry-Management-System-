@@ -19,11 +19,6 @@ export const LaundryStaffDashboard = () => {
             <p className="text-sm text-gray-700 mb-2">Receive, process, and update status.</p>
             <a href="/admin/orders" className="text-primary-600 hover:underline">Manage Orders</a>
           </Card>
-          <Card>
-            <h3 className="text-sm text-gray-500">Item Inspections</h3>
-            <p className="text-sm text-gray-700 mb-2">Record defects and upload photos.</p>
-            <a href="/admin/inspections" className="text-primary-600 hover:underline">Manage Inspections</a>
-          </Card>
         </div>
       </div>
     </AdminLayout>
