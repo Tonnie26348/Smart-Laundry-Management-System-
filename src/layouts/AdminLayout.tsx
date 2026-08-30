@@ -33,11 +33,12 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
 
   const isAdmin = role === 'administrator';
   const isManager = role === 'manager';
-  const isStaff = role === 'laundry_staff' || role === 'delivery_staff';
-  const isAuthorized = isAdmin || isManager || isStaff;
+  const isLaundryStaff = role === 'laundry_staff';
+  const isDeliveryStaff = role === 'delivery_staff';
+  const isAuthorized = isAdmin || isManager || isLaundryStaff || isDeliveryStaff;
 
   const navLinks = [
-    { name: 'Dashboard', path: isStaff ? "/laundrystaff" : isManager ? "/manager" : "/admin", icon: Home },
+    { name: 'Dashboard', path: isAdmin ? "/admin" : isManager ? "/manager" : isLaundryStaff ? "/laundrystaff" : "/deliverystaff", icon: Home },
     { name: 'Messages', path: "/admin/messages", icon: MessageSquare },
     { name: 'Customers', path: isAdmin ? "/admin/customers" : "/admin/staff-customers", icon: Users },
     { name: 'Orders', path: "/admin/orders", icon: ShoppingCart, authorized: isAuthorized },
