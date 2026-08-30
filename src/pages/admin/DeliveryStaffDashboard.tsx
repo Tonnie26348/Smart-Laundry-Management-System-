@@ -28,11 +28,16 @@ export const DeliveryStaffDashboard = () => {
           .eq('assigned_to', user.id)
           .neq('status', 'delivered');
         
+        console.log('Debug: Current User ID:', user.id);
+        console.log('Debug: Pending count result:', pending, 'Error:', pendingError);
+
         const { count: completed, error: completedError } = await supabase
           .from('deliveries')
           .select('*', { count: 'exact', head: true })
           .eq('assigned_to', user.id)
           .eq('status', 'delivered');
+
+        console.log('Debug: Completed count result:', completed, 'Error:', completedError);
 
         if (pendingError) throw pendingError;
         if (completedError) throw completedError;
