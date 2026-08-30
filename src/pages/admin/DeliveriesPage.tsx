@@ -25,9 +25,8 @@ export const DeliveriesPage = () => {
       .select('id, full_name, role')
       .eq('role', 'delivery_staff') as any);
     
-    console.log('Debug: Raw staff data fetched:', staffData);
     if (staffError) {
-        console.error('Debug: Staff fetch error:', staffError);
+        console.error('Staff fetch error:', staffError);
         setError('Staff fetch error: ' + staffError.message);
     }
     
@@ -73,7 +72,7 @@ export const DeliveriesPage = () => {
                     <td className="p-4">
                         <select onChange={(e) => assignStaff(d.id, e.target.value)} value={d.assigned_to || ''} className="border rounded p-1 text-sm">
                             <option value="">Unassigned</option>
-                            {staff.map(s => <option key={s.id} value={s.id}>{s.full_name}</option>)}
+                            {Array.isArray(staff) && staff.map(s => <option key={s.id} value={s.id}>{s.full_name}</option>)}
                         </select>
                     </td>
                     <td className="p-4 flex gap-2">
