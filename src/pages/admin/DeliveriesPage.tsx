@@ -3,7 +3,6 @@ import { AdminLayout } from '@/layouts/AdminLayout';
 import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
-import { MessageUserButton } from '@/components/chat/MessageUserButton';
 
 export const DeliveriesPage = () => {
   const [deliveries, setDeliveries] = useState<any[]>([]);
@@ -46,7 +45,6 @@ export const DeliveriesPage = () => {
                     <td className="p-4 flex gap-2">
                       <Button size="sm" onClick={() => updateStatus(d.id, 'picked_up')}>Picked Up</Button>
                       <Button size="sm" onClick={() => updateStatus(d.id, 'delivered')}>Delivered</Button>
-                      <MessageUserButton profileId={d.customers?.profile_id} label="Chat Customer" />
                     </td>
                   </tr>
                 ))}

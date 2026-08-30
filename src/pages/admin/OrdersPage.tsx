@@ -4,7 +4,6 @@ import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { invoiceService } from '@/services/invoiceService';
-import { MessageUserButton } from '@/components/chat/MessageUserButton';
 
 export const OrdersPage = () => { // Forced update
   const [orders, setOrders] = useState<any[]>([]);
@@ -72,7 +71,6 @@ export const OrdersPage = () => { // Forced update
                       {o.status === 'completed' && (
                         <Button size="sm" onClick={() => invoiceService.downloadReceipt(o)}>Receipt</Button>
                       )}
-                      <MessageUserButton profileId={o.customers?.profiles?.id} label="Message Customer" />
                     </td>
                   </tr>
                 ))}
