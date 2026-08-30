@@ -41,11 +41,6 @@ export const ConversationList = ({ onSelectConversation }: { onSelectConversatio
     
     // Find other participants
     const participants = c.conversation_participants?.map((p: any) => p.profiles) || [];
-    const customer = c.customers;
-
-    if (customer?.phone) {
-      return `Customer: ${customer.phone}`;
-    }
     
     if (participants.length > 0) {
       return participants.map((p: any) => `${p.full_name} (${p.role})`).join(', ');
