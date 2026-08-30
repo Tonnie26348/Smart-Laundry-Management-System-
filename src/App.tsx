@@ -39,6 +39,8 @@ const ItemsPage = lazy(() => import('./pages/admin/ItemsPage').then(m => ({ defa
 const PricingPage = lazy(() => import('./pages/admin/PricingPage').then(m => ({ default: m.PricingPage })));
 const AnalyticsPage = lazy(() => import('./pages/admin/AnalyticsPage').then(m => ({ default: m.AnalyticsPage })));
 const ReportsPage = lazy(() => import('./pages/admin/ReportsPage').then(m => ({ default: m.ReportsPage })));
+const PendingDeliveriesPage = lazy(() => import('./pages/admin/PendingDeliveriesPage').then(m => ({ default: m.PendingDeliveriesPage })));
+const CompletedDeliveriesPage = lazy(() => import('./pages/admin/CompletedDeliveriesPage').then(m => ({ default: m.CompletedDeliveriesPage })));
 const DeliveriesPage = lazy(() => import('./pages/admin/DeliveriesPage').then(m => ({ default: m.DeliveriesPage })));
 const CustomerDashboard = lazy(() => import('./pages/CustomerDashboard').then(m => ({ default: m.CustomerDashboard })));
 const OrderWizard = lazy(() => import('./pages/OrderWizard').then(m => ({ default: m.OrderWizard })));
@@ -290,6 +292,16 @@ function App() {
           <Route path="/admin/deliveries" element={
             <ProtectedRoute>
               <DeliveriesPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/deliveries/pending" element={
+            <ProtectedRoute>
+              <PendingDeliveriesPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/deliveries/completed" element={
+            <ProtectedRoute>
+              <CompletedDeliveriesPage />
             </ProtectedRoute>
           } />
         </Routes>

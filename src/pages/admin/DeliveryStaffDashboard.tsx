@@ -75,7 +75,11 @@ export const DeliveryStaffDashboard = () => {
         />
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold text-gray-900">Delivery Tasks</h2>
-          <Button onClick={fetchAssignedDeliveries} variant="outline" size="sm">Refresh</Button>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => window.location.href='/admin/deliveries/pending'}>Pending Deliveries</Button>
+            <Button variant="outline" size="sm" onClick={() => window.location.href='/admin/deliveries/completed'}>Completed Deliveries</Button>
+            <Button onClick={fetchAssignedDeliveries} variant="outline" size="sm">Refresh</Button>
+          </div>
         </div>
         
         {loading ? (
