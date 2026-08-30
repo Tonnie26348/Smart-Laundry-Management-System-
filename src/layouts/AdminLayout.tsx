@@ -35,26 +35,25 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
   const isManager = role === 'manager';
   const isLaundryStaff = role === 'laundry_staff';
   const isDeliveryStaff = role === 'delivery_staff';
-  const isAuthorized = isAdmin || isManager || isLaundryStaff || isDeliveryStaff;
 
   const navLinks = [
     { name: 'Dashboard', path: isAdmin ? "/admin" : isManager ? "/manager" : isLaundryStaff ? "/laundrystaff" : "/deliverystaff", icon: Home },
     { name: 'Messages', path: "/admin/messages", icon: MessageSquare },
     { name: 'Customers', path: isAdmin ? "/admin/customers" : "/admin/staff-customers", icon: Users },
-    { name: 'Orders', path: "/admin/orders", icon: ShoppingCart, authorized: isAuthorized },
+    { name: 'Orders', path: "/admin/orders", icon: ShoppingCart, allowedRoles: ['administrator', 'manager', 'laundry_staff', 'delivery_staff'] },
     { name: 'Services', path: "/admin/services", icon: Wrench, adminOnly: true },
     { name: 'Items', path: "/admin/items", icon: Package, adminOnly: true },
     { name: 'Pricing', path: "/admin/pricing", icon: Tag, adminOnly: true },
-    { name: 'Inventory', path: "/admin/inventory", icon: Package, authorized: isAdmin || isManager },
-    { name: 'Payments', path: "/admin/payments", icon: CreditCard, authorized: isAdmin || isManager },
-    { name: 'Employees', path: "/admin/employees", icon: User, authorized: isAdmin || isManager },
-    { name: 'Deliveries', path: "/admin/deliveries", icon: Truck, authorized: isAdmin || isManager },
-    { name: 'Analytics', path: "/admin/analytics", icon: BarChart2, authorized: isAdmin || isManager },
-    { name: 'Reports', path: "/admin/reports", icon: FileText, authorized: isAdmin || isManager },
-    { name: 'Receipts', path: "/admin/receipts", icon: FileText, authorized: isAdmin || isManager },
+    { name: 'Inventory', path: "/admin/inventory", icon: Package, allowedRoles: ['administrator', 'manager'] },
+    { name: 'Payments', path: "/admin/payments", icon: CreditCard, allowedRoles: ['administrator', 'manager'] },
+    { name: 'Employees', path: "/admin/employees", icon: User, allowedRoles: ['administrator', 'manager'] },
+    { name: 'Deliveries', path: "/admin/deliveries", icon: Truck, allowedRoles: ['administrator', 'manager'] },
+    { name: 'Analytics', path: "/admin/analytics", icon: BarChart2, allowedRoles: ['administrator', 'manager'] },
+    { name: 'Reports', path: "/admin/reports", icon: FileText, allowedRoles: ['administrator', 'manager'] },
+    { name: 'Receipts', path: "/admin/receipts", icon: FileText, allowedRoles: ['administrator', 'manager'] },
     { name: 'Audit Logs', path: "/admin/audit", icon: Shield, adminOnly: true },
     { name: 'Settings', path: "/admin/settings", icon: Settings, adminOnly: true },
-    { name: 'Notifications', path: isAdmin ? "/admin/notifications" : "/notifications/view", icon: Bell, authorized: isAuthorized },
+    { name: 'Notifications', path: isAdmin ? "/admin/notifications" : "/notifications/view", icon: Bell, allowedRoles: ['administrator', 'manager', 'laundry_staff', 'delivery_staff'] },
     { name: 'Discounts', path: "/admin/discounts", icon: Percent, adminOnly: true },
     { name: 'Loyalty', path: "/admin/loyalty", icon: Award, adminOnly: true },
     { name: 'Reviews', path: "/admin/reviews", icon: Star, adminOnly: true },
@@ -62,7 +61,7 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
 
   const filteredLinks = navLinks.filter(link => 
     (!link.adminOnly || isAdmin) && 
-    (!link.authorized || isAuthorized)
+    (!link.allowedRoles || (role && link.allowedRoles.includes(role)))
   );
 
   return (
