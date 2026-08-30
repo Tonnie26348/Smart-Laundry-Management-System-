@@ -38,7 +38,7 @@ export const DeliveryStaffDashboard = () => {
         // Fetch actual deliveries list
         const { data: deliveriesData, error: deliveriesError } = await supabase
           .from('deliveries')
-          .select('*, orders(order_number)')
+          .select('*, orders(order_number), pickup_address, delivery_address')
           .eq('assigned_to', user.id)
           .order('created_at', { ascending: false });
 
@@ -122,7 +122,9 @@ export const DeliveryStaffDashboard = () => {
             </div>
             
             <h3 className="text-xl font-bold text-gray-800">Assigned Deliveries</h3>
-            {deliveries.map(delivery => (
+            {deliveries.map(delivery => {
+                console.log('Delivery object:', delivery);
+                return (
                 <Card key={delivery.id} className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -130,12 +132,12 @@ export const DeliveryStaffDashboard = () => {
                             <p className="capitalize">Status: {delivery.status.replace('_', ' ')}</p>
                         </div>
                         <div className="text-sm text-gray-700">
-                            <p><span className="font-semibold">Pickup:</span> {delivery.pickup_address}</p>
-                            <p><span className="font-semibold">Delivery:</span> {delivery.delivery_address}</p>
+                            <p><span className="font-semibold">Pickup:</span> {delivery.pickup_address || 'N/A'}</p>
+                            <p><span className="font-semibold">Delivery:</span> {delivery.delivery_address || 'N/A'}</p>
                         </div>
                     </div>
                 </Card>
-            ))}
+            )})}
           </div>
         )}
       </div>
