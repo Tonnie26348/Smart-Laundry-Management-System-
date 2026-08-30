@@ -104,11 +104,14 @@ export const messagingService = {
     if (!user) throw new Error('Not authenticated');
 
     // Find admin ID
-    const { data: admins } = await (supabase
+    const { data: admins, error: adminError } = await (supabase
         .from('profiles')
         .select('id')
         .eq('role', 'administrator') as any);
     
+    console.log('Admins found:', admins);
+    if (adminError) console.error('Admin fetch error:', adminError);
+
     // Create support conversation
     const { data: conv, error: convError } = await (supabase
       .from('conversations') as any)
@@ -121,15 +124,25 @@ export const messagingService = {
       .select()
       .single();
     
-    if (convError) throw convError;
+    if (convError) {
+      console.error('Conv creation error:', convError);
+      throw convError;
+    }
 
     // Add participants (Customer + Admin if found)
     const participants: any[] = [{ conversation_id: conv.id, user_id: user.id }];
     if (admins && admins.length > 0) {
         participants.push({ conversation_id: conv.id, user_id: admins[0].id });
+    } else {
+        console.warn('No admin found to add as participant');
     }
 
-    await (supabase.from('conversation_participants') as any).insert(participants);
+    const { error: partError } = await (supabase.from('conversation_participants') as any).insert(participants);
+    
+    if (partError) {
+      console.error('Participant insertion error:', partError);
+      throw partError;
+    }
 
     return conv.id;
   },

@@ -26,13 +26,14 @@ export const ConversationList = ({ onSelectConversation }: { onSelectConversatio
   }, []);
 
   const startSupportChat = async () => {
+    console.log('New Support Chat button clicked');
     try {
       const convId = await messagingService.createSupportConversation();
       await loadConversations();
       onSelectConversation(convId);
     } catch (error) {
       console.error('Error creating support chat:', error);
-      alert('Failed to start support chat');
+      alert('Failed to start support chat: ' + error);
     }
   };
 
