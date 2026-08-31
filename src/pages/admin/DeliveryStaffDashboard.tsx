@@ -45,8 +45,8 @@ export const DeliveryStaffDashboard = () => {
         setDeliveries(deliveries);
         
         // Calculate counts from the fetched data
-        setPendingCount(deliveries.filter(d => d.status !== 'delivered').length);
-        setCompletedCount(deliveries.filter(d => d.status === 'delivered').length);
+        setPendingCount(deliveries.filter((d: Delivery) => d.status !== 'delivered').length);
+        setCompletedCount(deliveries.filter((d: Delivery) => d.status === 'delivered').length);
         
     } catch (err) {
         console.error('Error fetching delivery stats:', err);
