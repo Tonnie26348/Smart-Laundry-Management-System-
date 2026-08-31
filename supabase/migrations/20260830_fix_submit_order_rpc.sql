@@ -104,7 +104,7 @@ BEGIN
   UPDATE public.orders SET total_amount = v_total_price WHERE id = v_order_id;
 
   -- 7. Create Deliveries (INCLUDING ADDRESS STRINGS)
-  INSERT INTO public.deliveries (order_id, customer_id, pickup_address_id, delivery_address_id, pickup_address, delivery_address, delivery_type, status)
+  INSERT INTO public.deliveries (order_id, customer_id, pickup_address_id, delivery_address_id, pickup_address, delivery_address, status)
   VALUES (
     v_order_id, 
     v_customer_id, 
@@ -112,7 +112,6 @@ BEGIN
     v_delivery_addr_id, 
     v_pickup_addr_text, 
     v_delivery_addr_text, 
-    'pickup', 
     'pending'
   );
 
