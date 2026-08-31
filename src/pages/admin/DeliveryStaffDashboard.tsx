@@ -32,13 +32,14 @@ export const DeliveryStaffDashboard = () => {
             return;
         }
 
-        // Fetch actual deliveries list
+        // Fetch actual deliveries list (temporarily unfiltered for debugging)
         const { data: deliveriesData, error: deliveriesError } = await supabase
           .from('deliveries')
           .select('*, orders(order_number), pickup_address:pickup_address_id(address), delivery_address:delivery_address_id(address)')
-          .eq('assigned_to', user.id)
           .order('created_at', { ascending: false });
 
+        console.log('DEBUG: All deliveries fetched:', deliveriesData);
+        
         if (deliveriesError) throw deliveriesError;
 
         const deliveries = deliveriesData || [];
