@@ -6,10 +6,20 @@ import { supabase } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 
+interface Delivery {
+  id: string;
+  status: string;
+  assigned_to: string;
+  pickup_address: { address: string } | null;
+  delivery_address: { address: string } | null;
+  orders: { order_number: string } | null;
+  [key: string]: any;
+}
+
 export const DeliveryStaffDashboard = () => {
   const [pendingCount, setPendingCount] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
-  const [deliveries, setDeliveries] = useState<any[]>([]);
+  const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchDeliveryStats = async () => {
