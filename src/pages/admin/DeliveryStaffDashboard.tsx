@@ -22,19 +22,6 @@ export const DeliveryStaffDashboard = () => {
             return;
         }
 
-        // Fetch counts
-        const { count: pending, error: pendingError } = await supabase
-          .from('deliveries')
-          .select('*', { count: 'exact', head: true })
-          .eq('assigned_to', user.id)
-          .neq('status', 'delivered');
-        
-        const { count: completed, error: completedError } = await supabase
-          .from('deliveries')
-          .select('*', { count: 'exact', head: true })
-          .eq('assigned_to', user.id)
-          .eq('status', 'delivered');
-
         // Fetch actual deliveries list
         const { data: deliveriesData, error: deliveriesError } = await supabase
           .from('deliveries')
@@ -42,13 +29,15 @@ export const DeliveryStaffDashboard = () => {
           .eq('assigned_to', user.id)
           .order('created_at', { ascending: false });
 
-        if (pendingError) throw pendingError;
-        if (completedError) throw completedError;
         if (deliveriesError) throw deliveriesError;
 
-        setPendingCount(pending || 0);
-        setCompletedCount(completed || 0);
-        setDeliveries(deliveriesData || []);
+        const deliveries = deliveriesData || [];
+        setDeliveries(deliveries);
+        
+        // Calculate counts from the fetched data
+        setPendingCount(deliveries.filter(d => d.status !== 'delivered').length);
+        setCompletedCount(deliveries.filter(d => d.status === 'delivered').length);
+        
     } catch (err) {
         console.error('Error fetching delivery stats:', err);
     } finally {
